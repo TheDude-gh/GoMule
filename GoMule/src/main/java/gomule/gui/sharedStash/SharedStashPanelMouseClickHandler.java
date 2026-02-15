@@ -1,13 +1,14 @@
 package gomule.gui.sharedStash;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JOptionPane;
+
 import gomule.d2i.D2SharedStash;
 import gomule.gui.D2ViewClipboard;
 import gomule.gui.ItemRightClickMenu;
 import gomule.item.D2Item;
-
-import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 class SharedStashPanelMouseClickHandler extends MouseAdapter {
 
@@ -42,8 +43,9 @@ class SharedStashPanelMouseClickHandler extends MouseAdapter {
 
     private void handleLeftClick(MouseEvent e) {
         D2SharedStash sharedStash = sharedStashPanel.getSharedStash();
-        if (sharedStash == null) return;
-        Integer possibleStashTabClick = getPossibleStashTabClick(e.getX(), e.getY());
+        if (sharedStash == null) return;        
+        Integer possibleStashTabClick = getPossibleStashTabClick(e.getX(), e.getY(), sharedStash.GetPanesCount());
+        System.err.println("psSTabClick " + possibleStashTabClick + " x=" + e.getX() + " y=" + e.getY());
         setStashTab(possibleStashTabClick);
         if (isClickOnGoldButton(e.getX(), e.getY())) showGoldDialog();
 
@@ -99,12 +101,45 @@ class SharedStashPanelMouseClickHandler extends MouseAdapter {
         sharedStashPanel.build();
     }
 
-    private Integer getPossibleStashTabClick(int x, int y) {
-        if (x >= 26 && x <= 258 && y >= 50 && y <= 72) {
+    private Integer getPossibleStashTabClick(int x, int y, int pane_count) {
+        //D2R version, 3 panes
+        if(pane_count == 3) {
+            if (x >= 26 && x <= 258 && y >= 50 && y <= 72) {
+                if (x <= 103) {
+                    return 0;
+                }
+                if (x <= 181) {
+                    return 1;
+                }
+                return 2;
+            }
+        }
+        //D2R ROW, 6 panes
+        else if (pane_count >= 6) {
+            if (x >= 25 && x <= 325 && y >= 50 && y <= 72) {
+                if (x <= 75) {
+                    return 0;
+                }
+                if (x <= 125) {
+                    return 1;
+                }
+                if (x <= 175) {
+                    return 2;
+                }
+                if (x <= 225) {
+                    return 3;
+                }
+                if (x <= 275) {
+                    return 4;
+                }
+                return 5;
+            }
+        }
+        /*if (x >= 26 && x <= 258 && y >= 50 && y <= 72) {
             if (x <= 103) return 0;
             if (x <= 181) return 1;
             return 2;
-        }
+        }*/        
         return null;
     }
 }

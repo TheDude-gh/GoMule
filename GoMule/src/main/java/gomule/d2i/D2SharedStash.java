@@ -1,14 +1,19 @@
 package gomule.d2i;
 
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import gomule.gui.D2ItemListAdapter;
+import static gomule.gui.sharedStash.SharedStashPanel.getGridPointForItemCode;
 import gomule.item.D2Item;
 import gomule.util.D2Backup;
 import gomule.util.D2BitReader;
 import gomule.util.D2Project;
-
-import java.io.PrintWriter;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class D2SharedStash extends D2ItemListAdapter {
     private final List<D2SharedStashPane> panes;
@@ -28,6 +33,10 @@ public class D2SharedStash extends D2ItemListAdapter {
 
     public List<D2SharedStashPane> getPanes() {
         return panes;
+    }
+
+    public int GetPanesCount() {
+        return this.panes.size();
     }
 
     @Override
@@ -97,19 +106,37 @@ public class D2SharedStash extends D2ItemListAdapter {
         private final List<D2Item> items;
         private final D2Item[][] paneGrid;
         private final int gold;
+        private final int stash_num;
 
-        D2SharedStashPane(List<D2Item> items, D2Item[][] paneGrid, int gold) {
+        D2SharedStashPane(List<D2Item> items, D2Item[][] paneGrid, int gold, int stash_num) {
             this.items = items;
             this.paneGrid = paneGrid;
             this.gold = gold;
+            this.stash_num = stash_num;
         }
 
-        public static D2SharedStashPane fromItems(List<D2Item> items, int gold) {
-            return new D2SharedStashPane(items, constructPaneGrid(items), gold);
+        public static D2SharedStashPane fromItems(List<D2Item> items, int gold, int stash_num) {
+            return new D2SharedStashPane(items, constructPaneGrid(items, stash_num), gold, stash_num);
         }
 
-        private static D2Item[][] constructPaneGrid(List<D2Item> items) {
-            D2Item[][] grid = new D2Item[10][10];
+        private static D2Item[][] constructPaneGrid(List<D2Item> items, int stash_num) {
+            //D2Item[][] grid = new D2Item[10][10];
+            D2Item[][] grid;
+            
+            if(stash_num >= 6) {                
+                grid = new D2Item[11][9];
+                for (D2Item item : items) {
+                    int[] point = getGridPointForItemCode(item.getItemCode());
+                    int x = point[0]; //row
+                    int y = point[1]; //col
+                    if(x == -1) continue;
+                    grid[x][y] = item;
+                }
+                return grid;
+            }
+
+            grid = new D2Item[10][10];
+
             for (D2Item item : items) {
                 for (int i = item.get_col(); i < (int) item.get_col() + (int) item.get_width(); i++) {
                     for (int j = item.get_row(); j < (int) item.get_row() + (int) item.get_height(); j++) {
@@ -127,6 +154,10 @@ public class D2SharedStash extends D2ItemListAdapter {
 
         public int getGold() {
             return gold;
+        }
+
+        public int getStashNum() {
+            return this.stash_num;
         }
 
         public D2Item getItemCovering(int col, int row) {
@@ -177,13 +208,13 @@ public class D2SharedStash extends D2ItemListAdapter {
             item.setCharLvl(75);
             List<D2Item> items = new ArrayList<>(this.items);
             items.add(item);
-            return D2SharedStashPane.fromItems(items, gold);
+            return D2SharedStashPane.fromItems(items, gold, this.stash_num);
         }
 
         public D2SharedStashPane removeItem(D2Item item) {
             List<D2Item> items = new ArrayList<>(this.items);
             items.remove(item);
-            return D2SharedStashPane.fromItems(items, gold);
+            return D2SharedStashPane.fromItems(items, gold, this.stash_num);
         }
     }
 

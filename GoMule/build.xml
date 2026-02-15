@@ -22,7 +22,7 @@
 
   <target name="compile" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac destdir="${build}" debug="on" source="1.4" target="1.4"  classpath="${classpath}">
+    <javac destdir="${build}" debug="on" release="11"  classpath="${classpath}">
         <src path="${src}"/>
     </javac>
   </target>
@@ -36,7 +36,7 @@
 
   <target name="compileOptimized" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac destdir="${build}" optimize="on" source="1.4" target="1.4" classpath="${classpath}">
+    <javac destdir="${build}" optimize="on" release="11" classpath="${classpath}">
         <src path="${src}"/>
     </javac>
   </target>

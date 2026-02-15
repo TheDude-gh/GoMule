@@ -1,8 +1,5 @@
 package gomule.d2i;
 
-import gomule.item.D2Item;
-import gomule.util.D2BitReader;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gomule.d2i.D2SharedStashReader.STASH_HEADER_START;
+import gomule.item.D2Item;
+import gomule.util.D2BitReader;
 
 public class D2SharedStashWriter {
     private final File file;
@@ -28,11 +27,30 @@ public class D2SharedStashWriter {
     public void write(D2SharedStash stash) {
         D2BitReader bitReader = new D2BitReader(originalContent.clone());
         int[] stashHeaderOffsets = bitReader.findBytes(STASH_HEADER_START);
-        if (stashHeaderOffsets.length != 3) throw new RuntimeException("Stash unsupported");
+        if (stashHeaderOffsets.length != 3 && stashHeaderOffsets.length != 7) throw new RuntimeException("Stash unsupported");
         List<byte[]> stashPanes = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            stashPanes.add(writeStashPane(stash.getPane(i), bitReader, stashHeaderOffsets[i], bitReader.findNextFlag("JM", stashHeaderOffsets[i])));
+        
+        System.err.println("write pane size " + stashHeaderOffsets.length);
+
+        for (int i = 0; i < stashHeaderOffsets.length; i++) {
+            
+            int panesize = i < 6 ? (stashHeaderOffsets[i + 1] - stashHeaderOffsets[i]) : bitReader.get_length() - stashHeaderOffsets[i];
+            System.err.println("pane num " + i + ", offset=" + stashHeaderOffsets[i] + ", len=" + panesize);
+
+            //part 1-5 is 10x10 grid stash
+            if(i < 6) {
+                stashPanes.add(writeStashPane(stash.getPane(i), bitReader, stashHeaderOffsets[i], bitReader.findNextFlag("JM", stashHeaderOffsets[i])));
+            }
+            //part 5 is materials stash, there items are separated by byte
+            /*else if (i == 5) {
+                stashPanes.add(writeStashPaneMaterial(stash.getPane(i), bitReader, stashHeaderOffsets[i], bitReader.findNextFlag("JM", stashHeaderOffsets[i])));
+            }*/
+            //7th part has no JM, and is not shown in gomule, so just write it as is
+            else {
+                stashPanes.add(writeStashPaneFull(stash.getPane(i), bitReader, stashHeaderOffsets[i]));
+            }
         }
+
         writeToFile(stashPanes);
     }
 
@@ -58,7 +76,7 @@ public class D2SharedStashWriter {
     public void writeHeader(D2SharedStash.D2SharedStashPane pane, D2BitReader bitWriter, long length) {
         bitWriter.skipBytes(8);
         long version = bitWriter.read(8);
-        if (version != 99) throw new RuntimeException("Overwriting wrong version stash");
+        if (version != 105) throw new RuntimeException("Overwriting wrong version stash");
         bitWriter.skipBytes(3);
         bitWriter.write(pane.getGold(), 24);
         bitWriter.skipBytes(1);
@@ -66,7 +84,7 @@ public class D2SharedStashWriter {
     }
 
     private void writeItemBytes(D2SharedStash.D2SharedStashPane pane, D2BitReader writer) {
-        writer.write(19786, 16);
+        writer.write(0x4D4A, 16); //JM
         List<D2Item> items = pane.getItems();
         writer.write(items.size(), 16);
         for (D2Item item : items) {
@@ -74,6 +92,44 @@ public class D2SharedStashWriter {
             writer.setBytes(writer.get_byte_pos(), bytesToWrite);
             writer.set_byte_pos(writer.get_byte_pos() + bytesToWrite.length);
         }
+    }
+/*
+    private byte[] writeStashPaneMaterial(D2SharedStash.D2SharedStashPane pane, D2BitReader bitReader, int stashHeaderOffset, int itemListStartOffset) {
+        bitReader.set_byte_pos(stashHeaderOffset);        
+        int itemByteLength = pane.getItems().stream().map(it -> it.get_bytes().length).reduce(4, Integer::sum); 
+        byte[] oldHeaderBytes = bitReader.get_bytes(itemListStartOffset - stashHeaderOffset);
+        D2BitReader writer = new D2BitReader(new byte[oldHeaderBytes.length + itemByteLength]);
+        writer.setBytes(0, oldHeaderBytes);
+        writeHeader(pane, writer, writer.get_length());
+        writer.set_byte_pos(itemListStartOffset - stashHeaderOffset);
+        writeItemBytesMaterial(pane, writer);
+        return writer.getFileContent();
+    }
+
+    private void writeItemBytesMaterial(D2SharedStash.D2SharedStashPane pane, D2BitReader writer) {
+        writer.write(0x4D4A, 16); //JM
+        List<D2Item> items = pane.getItems();
+        writer.write(items.size(), 16);
+
+        //int num_items = items.size();
+        int counter = 0;
+
+        for (D2Item item : items) {            
+            byte[] bytesToWrite = item.get_bytes();
+            writer.setBytes(writer.get_byte_pos(), bytesToWrite);            
+            counter++;
+            System.err.println("Write in=" + counter + ", size=" + bytesToWrite.length);
+            writer.set_byte_pos(writer.get_byte_pos() + bytesToWrite.length);
+        }
+    }*/
+
+    private byte[] writeStashPaneFull(D2SharedStash.D2SharedStashPane pane, D2BitReader bitReader, int stashHeaderOffset) {
+        bitReader.set_byte_pos(stashHeaderOffset);
+        
+        byte[] oldPaneBytes = bitReader.get_bytes(bitReader.get_length() - stashHeaderOffset);
+        D2BitReader writer = new D2BitReader(new byte[oldPaneBytes.length]);
+        writer.setBytes(0, oldPaneBytes);
+        return writer.getFileContent();
     }
 
     private byte[] concatenate(List<byte[]> panes) {

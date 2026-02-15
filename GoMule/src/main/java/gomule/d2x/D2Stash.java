@@ -20,15 +20,15 @@
  ******************************************************************************/
 package gomule.d2x;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
 import gomule.gui.D2ItemListAdapter;
 import gomule.item.D2Item;
 import gomule.util.D2Backup;
 import gomule.util.D2BitReader;
 import gomule.util.D2Project;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 
 /**
  * @author Marco
@@ -45,6 +45,8 @@ public class D2Stash extends D2ItemListAdapter {
     private boolean iSC;
 
     private int iCharLvl = 75; // default char lvl for properties
+
+    private int STASH_REVISION = 105;
 
     private File lFile;
 
@@ -67,6 +69,8 @@ public class D2Stash extends D2ItemListAdapter {
             iSC = true;
             iHC = true;
         }
+
+        //System.err.println("File Stash " + iFileName);
 
         iBR = new D2BitReader(iFileName);
 
@@ -140,6 +144,9 @@ public class D2Stash extends D2ItemListAdapter {
 
         long lCalculated = calculateAtmaCheckSum();
 
+        //System.err.println("Test " + lOriginal + " - " + lCalculated + " = " + (lOriginal == lCalculated ));
+
+
         if (lOriginal == lCalculated) {
             iBR.set_byte_pos(3);
 
@@ -147,7 +154,9 @@ public class D2Stash extends D2ItemListAdapter {
 
             long lVersionNr = iBR.read(16);
 
-            if (lVersionNr == 99) {
+            //System.err.println("Rev " + lVersionNr + "(" + STASH_REVISION + ") num=" + lNumItems);
+
+            if (lVersionNr == STASH_REVISION) {
                 readItems(lNumItems);
             } else {
                 throw new Exception("Stash Version Incorrect!");
@@ -173,13 +182,14 @@ public class D2Stash extends D2ItemListAdapter {
             lCheckSum = upshift + add;
         }
 
-//		System.err.println("Test " + lOriginal + " - " + lCheckSum + " = " + (lOriginal == lCheckSum) );
+        //System.err.println("Test " + lOriginal + " - " + lCheckSum + " = " + (lOriginal == lCheckSum) );
         return lCheckSum;
     }
 
     private void readItems(long pNumItems) throws Exception {
         iBR.set_byte_pos(11);
         for (int i = 0; i < pNumItems; i++) {
+            System.err.println("In " + (i + 1));
             D2Item lItem = new D2Item(iFileName, iBR, iCharLvl);
             iItems.add(lItem);
         }
@@ -207,7 +217,7 @@ public class D2Stash extends D2ItemListAdapter {
 
         iBR.set_byte_pos(3);
         iBR.write(iItems.size(), 16);
-        iBR.write(99, 16); // version 99
+        iBR.write(STASH_REVISION, 16); // version 99
 //        iBR.replace_bytes(11, iBR.get_length(), newbytes);
 
         long lCheckSum1 = calculateAtmaCheckSum();

@@ -21,18 +21,18 @@
 
 package gomule.item;
 
+import java.awt.Color;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import gomule.D2Files;
 import gomule.util.D2BitReader;
 import gomule.util.D2ItemException;
 import randall.d2files.D2TxtFile;
 import randall.d2files.D2TxtFileItemProperties;
 import randall.flavie.D2ItemInterface;
-
-import java.awt.*;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 //an item class
 //manages one item
@@ -98,6 +98,7 @@ public class D2Item implements Comparable, D2ItemInterface {
     private boolean iTypeArmor;
     private short iCurDur;
     private boolean questItem;
+    private int iStashCount = 0;
 
     private short iMaxDur;
 
@@ -119,6 +120,8 @@ public class D2Item implements Comparable, D2ItemInterface {
     private String iFP;
 
     private String iGUID;
+
+    private String iDiff = "";
 
     private boolean iBody = false;
 
@@ -160,6 +163,9 @@ public class D2Item implements Comparable, D2ItemInterface {
 
         try {
             int startOfItemInBytes = pFile.get_byte_pos();
+
+            //System.err.println("curpos " + Integer.toHexString(startOfItemInBytes) + " " + startOfItemInBytes);
+
             read_item(pFile);
             int endOfItemInBytes = pFile.getNextByteBoundaryInBits() / 8;
             int lLengthToNextJM = endOfItemInBytes - startOfItemInBytes;
@@ -245,7 +251,12 @@ public class D2Item implements Comparable, D2ItemInterface {
     private void readExtend(D2BitReader pFile) throws Exception {
         // 9,5 bytes already read (common data)
         item_type = huffmanLookupTable.readHuffmanEncodedString(pFile);
+
+        //System.err.println("dbg item type " + item_type);
+
         iItemType = D2TxtFile.search(item_type);
+        //System.err.println("dbg item type " + item_type);
+
         height = Short.parseShort(iItemType.get("invheight"));
         width = Short.parseShort(iItemType.get("invwidth"));
         image_file = iItemType.get("invfile");
@@ -327,6 +338,8 @@ public class D2Item implements Comparable, D2ItemInterface {
             }
         }
 
+        long qskip = 0;
+        long questdif = 0;
         long lHasGUID = pFile.read(1);
 
         if (lHasGUID == 1) { // GUID ???
@@ -339,8 +352,30 @@ public class D2Item implements Comparable, D2ItemInterface {
                         + " 0x" + Integer.toHexString((int) pFile.read(32))
                         + " 0x" + Integer.toHexString((int) pFile.read(32));
             } else {
-                pFile.read(3);
+                qskip = pFile.read(3);
             }
+        }
+
+        //System.err.println("dbg " + (iTypeMisc ? "misc " : "") + iType + (check_flag(22) ? " simple" : ""));
+
+        if(iTypeMisc && iType.startsWith("ques") && check_flag(22)) {
+            //read 3 bits and shift by 1 to add previously read hasGUID bit
+            if(lHasGUID == 1) {
+                questdif = (qskip << 1) + lHasGUID;
+            }
+            else {
+                questdif = (pFile.read(3) << 1) + lHasGUID;
+            }
+
+          if(questdif == 0) {
+              iDiff = "Normal";
+          }
+          else if(questdif == 1) {
+              iDiff = "Nightmare";
+          }
+          else if(questdif == 2) {
+              iDiff = "Hell";
+          }
         }
 
         // flag 22 is a simple item (extend2)
@@ -360,6 +395,15 @@ public class D2Item implements Comparable, D2ItemInterface {
         if (iType != null && iType2 != null && iType.startsWith("rune")) {
             readPropertiesGems();
             iRune = true;
+        }
+
+        //simple item end
+        if (check_flag(22)) {
+            //new in D2R ROW, flag if item is in material stash, and if yes, count follows
+            long hasCount = pFile.read(1);
+            if(hasCount > 0) {
+                iStashCount = (int)pFile.read(8);
+            }
         }
 
         D2TxtFileItemProperties lItemType = D2TxtFile.ITEM_TYPES.searchColumns(
@@ -449,15 +493,15 @@ public class D2Item implements Comparable, D2ItemInterface {
             }
         }
 
-        if ("bkd".equals(item_type) && pFile.read(8) != 0) {
+        //if ("bkd".equals(item_type) && pFile.read(8) != 0) {
             /*
             Strange case with this quest item, it seems to have a trailing 10th byte of 00
             This needs to be skipped over, it's not clear if there's a general rule here but
             I've implemented it as a specific one just in case. This code reads and checks if there's a zero
             and then resets the skip if there is.
              */
-            pFile.set_byte_pos(pFile.get_pos() - 8);
-        }
+          //  pFile.set_byte_pos(pFile.get_pos() - 8);
+        //}
     }
 
     private void readExtend1(D2BitReader pFile) throws Exception {
@@ -813,6 +857,8 @@ public class D2Item implements Comparable, D2ItemInterface {
             iSocketNrTotal = (short) pFile.read(4);
         }
 
+        pFile.read(1); //D2RW?? unknown
+
         int[] lSet = new int[5];
 
         if (quality == 5) {
@@ -836,6 +882,12 @@ public class D2Item implements Comparable, D2ItemInterface {
         if (iRuneWord) {
             readProperties(pFile, 0);
         }
+
+        //new in D2R ROW, flag if item is in material stash, and if yes, count follows
+        long hasCount = pFile.read(1);
+        if (hasCount > 0) {
+            iStashCount = (int) pFile.read(8);
+        }            
     }
 
     private void applyAutomodLvl() {
@@ -1349,6 +1401,10 @@ public class D2Item implements Comparable, D2ItemInterface {
         return iItem.get_length();
     }
 
+    public String getItemCode() {
+        return this.item_type;
+    }
+
     public String getItemName() {
         return iItemName;
     }
@@ -1357,8 +1413,16 @@ public class D2Item implements Comparable, D2ItemInterface {
         return iItemName;
     }
 
+    public int GetStashCount() {
+        return iStashCount;
+    }
+
     public String getFingerprint() {
         return iFP;
+    }
+
+    public String getDifficulty() {
+        return iDiff;
     }
 
     public short getIlvl() {

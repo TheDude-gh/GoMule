@@ -143,7 +143,7 @@ public class D2Character extends D2ItemListAdapter {
         iReader.set_byte_pos(4);
         long lVersion = iReader.read(32);
 //        System.err.println("Version: " + lVersion);
-        if (lVersion != 99) throw new Exception("Incorrect Character version: " + lVersion);
+        if (lVersion != 105) throw new Exception("Incorrect Character version: " + lVersion);
         iReader.set_byte_pos(8);
         long lSize = iReader.read(32);
         if (iReader.get_length() != lSize) throw new Exception("Incorrect FileSize: " + lSize);
@@ -153,20 +153,23 @@ public class D2Character extends D2ItemListAdapter {
         if (!Arrays.equals(calculatedChecksum, checksumFromFile)) throw new Exception("Incorrect Checksum");
         iReader.set_byte_pos(16);
 //		long lWeaponSet = iReader.read(32);
-        iReader.set_byte_pos(267);
+        iReader.set_byte_pos(299);
         StringBuffer lCharName = new StringBuffer();
         for (int i = 0; i < 16; i++) {
             long lChar = iReader.read(8);
             if (lChar != 0) lCharName.append((char) lChar);
         }
         iCharName = lCharName.toString();
-        iReader.set_byte_pos(36);
+
+        int revoff = -16;
+
+        iReader.set_byte_pos(36 + revoff);
         iReader.skipBits(2);
         iHC = iReader.read(1) == 1;
-        iReader.set_byte_pos(37);
+        iReader.set_byte_pos(37 + revoff);
 //		long lCharTitle = iReader.read(8);
         iReader.read(8);
-        iReader.set_byte_pos(40);
+        iReader.set_byte_pos(40 + revoff);
         lCharCode = iReader.read(8);
         switch ((int) lCharCode) {
             case 0:
@@ -190,14 +193,20 @@ public class D2Character extends D2ItemListAdapter {
             case 6:
                 cClass = "ass";
                 break;
+            case 7:
+                cClass = "war";
+                break;
+
         }
-        iReader.set_byte_pos(43);
+        iReader.set_byte_pos(43 + revoff);
         iCharLevel = iReader.read(8);
         if (iCharLevel < 1 || iCharLevel > 99)
             throw new Exception("Invalid char level: " + iCharLevel + " (should be between 1-99)");
+
         iCharClass = D2TxtFile.getCharacterCode((int) lCharCode);
         iTitleString = " Lvl " + iCharLevel + " " + D2TxtFile.getCharacterCode((int) lCharCode);
-        iReader.set_byte_pos(177);
+
+        iReader.set_byte_pos(177 + revoff);
         if (iReader.read(8) == 1) ;//MERC IS DEAD?
         iReader.skipBits(8);
         if (iReader.read(32) != 0) {
@@ -216,15 +225,15 @@ public class D2Character extends D2ItemListAdapter {
         }
         lWoo = iReader.findNextFlag("Woo!", 0);
         if (lWoo == -1) throw new Exception("Error: Act Quests block not found");
-        if (lWoo != 335) System.err.println("Warning: Act Quests block not on expected position");
+        if (lWoo != 403) System.err.println("Warning: Act Quests block not on expected position");
         iWS = iReader.findNextFlag("WS", lWoo);
         if (iWS == -1) throw new Exception("Error: Waypoints not found");
         int lW4 = iReader.findNextFlag("w4", lWoo);
         if (lW4 == -1) throw new Exception("Error: NPC State control block not found");
-        if (lW4 != 714) System.err.println("Warning: NPC State control block not on expected position");
+        if (lW4 != 782) System.err.println("Warning: NPC State control block not on expected position");
         iGF = iReader.findNextFlag("gf", lW4);
         if (iGF == -1) throw new Exception("Error: Stats block not found");
-        if (iGF != 765) System.err.println("Warning: Stats block not on expected position");
+        if (iGF != 833) System.err.println("Warning: Stats block not on expected position");
         iIF = iReader.findNextFlag("if", iGF);
         if (iIF == -1) throw new Exception("Error: Skills block not found");
         iJF = iReader.findNextFlag("jf", iIF);

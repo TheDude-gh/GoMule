@@ -477,9 +477,11 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
 
         iCharacter = null;
 
-        String lText = "Character disconnected";
+        String lText = "Character disconnected *\n";
 
         if (pEx != null) {
+            lText += pEx.getMessage() + "\n"; //getExStr() +
+
             lText += "\n";
             StackTraceElement trace[] = pEx.getStackTrace();
             for (int i = 0; i < trace.length; i++) {
@@ -1999,8 +2001,21 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
 
                     }
 //				cClass = "ass";
-                    break;
+                case 7:
+                    switch (iSkillSlot) {
+                        case 0:
+                            lEmptyBackground = D2ImageCache.getImage("WarTab1.jpg");
+                            break;
+                        case 1:
+                            lEmptyBackground = D2ImageCache.getImage("WarTab2.jpg");
+                            break;
+                        case 2:
+                            lEmptyBackground = D2ImageCache.getImage("WarTab3.jpg");
+                            break;
 
+                    }
+                    break;
+//				cClass = "war";
 
             }
 

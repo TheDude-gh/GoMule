@@ -6,7 +6,7 @@
  */
 package gomule.item;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
 
 /**
@@ -290,6 +290,41 @@ public class D2BodyLocations {
                 iSkillLocs[28] = new Point(173, 307);
                 iSkillLocs[29] = new Point(112, 370);
                 break;
+            case 7:
+//          cClass = "war";
+                iSkillLocs[0] = new Point(112, 64);
+                iSkillLocs[1] = new Point(50, 125);
+                iSkillLocs[2] = new Point(173, 125);
+                iSkillLocs[3] = new Point(50, 187);
+                iSkillLocs[4] = new Point(112, 187);
+                iSkillLocs[5] = new Point(173, 248);
+                iSkillLocs[6] = new Point(50, 307);
+                iSkillLocs[7] = new Point(112, 307);
+                iSkillLocs[8] = new Point(50, 370);
+                iSkillLocs[9] = new Point(173, 370);
+
+                iSkillLocs[10] = new Point(112, 64);
+                iSkillLocs[11] = new Point(173, 64);
+                iSkillLocs[12] = new Point(50, 125);
+                iSkillLocs[13] = new Point(112, 187);
+                iSkillLocs[14] = new Point(173, 187);
+                iSkillLocs[15] = new Point(50, 248);
+                iSkillLocs[16] = new Point(112, 248);
+                iSkillLocs[17] = new Point(173, 307);
+                iSkillLocs[18] = new Point(50, 370);
+                iSkillLocs[19] = new Point(112, 370);
+
+                iSkillLocs[20] = new Point(112, 64);
+                iSkillLocs[21] = new Point(173, 64);
+                iSkillLocs[22] = new Point(50, 125);
+                iSkillLocs[23] = new Point(173, 125);
+                iSkillLocs[24] = new Point(112, 187);
+                iSkillLocs[25] = new Point(50, 248);
+                iSkillLocs[26] = new Point(173, 248);
+                iSkillLocs[27] = new Point(50, 307);
+                iSkillLocs[28] = new Point(173, 307);
+                iSkillLocs[29] = new Point(112, 370);
+                break;                
         }
         return iSkillLocs;
     }

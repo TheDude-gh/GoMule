@@ -1,13 +1,17 @@
 package gomule.gui.sharedStash;
 
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import gomule.d2i.D2SharedStash;
 import gomule.gui.D2FileManager;
 import randall.util.RandallPanel;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 class SharedStashGoldTransferPanel extends JPanel {
     private final SharedStashPanel sharedStashPanel;
@@ -59,7 +63,9 @@ class SharedStashGoldTransferPanel extends JPanel {
 
     private void updateSelectedStashGoldValue(int gold) {
         D2SharedStash sharedStash = sharedStashPanel.getSharedStash();
-        sharedStash.replacePane(sharedStashPanel.getSelectedStashPaneIndex(), D2SharedStash.D2SharedStashPane.fromItems(sharedStashPanel.getSelectedStashPane().getItems(), gold));
+        sharedStash.replacePane(
+            sharedStashPanel.getSelectedStashPaneIndex(), 
+            D2SharedStash.D2SharedStashPane.fromItems(sharedStashPanel.getSelectedStashPane().getItems(), gold, sharedStashPanel.getSelectedStashPane().getStashNum()));
         sharedStash.setModified(true);
     }
 

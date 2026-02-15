@@ -188,3 +188,8 @@ gradle-app.setting
 
 #GoMule specific
 projects/*
+# Ignore Gradle build output directory
+build
+
+# Ignore Kotlin plugin data
+.kotlin

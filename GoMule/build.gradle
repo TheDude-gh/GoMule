@@ -2,11 +2,10 @@ plugins {
     id 'java'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -33,7 +32,7 @@ jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 task copyJarToDistribution(type: Copy) {
@@ -64,7 +63,11 @@ task createDistribution {
 task distribution(type: Zip) {
     from 'build/tmp/distribution/'
     include 'GoMule/**'
-    archiveName 'GoMuleR4.4.20-BETA_Resurrected_2.7.zip'
+
+}
+
+tasks.withType(JavaCompile) {
+    options.deprecation = true
 }
 
 copyJarToDistribution.dependsOn jar
