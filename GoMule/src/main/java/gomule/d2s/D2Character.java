@@ -21,7 +21,14 @@
 
 package gomule.d2s;
 
+import java.awt.Point;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
 import com.google.common.collect.Iterables;
+
 import gomule.D2Files;
 import gomule.gui.D2ItemListAdapter;
 import gomule.item.D2BodyLocations;
@@ -35,12 +42,6 @@ import randall.d2files.D2FileReader;
 import randall.d2files.D2FileWriter;
 import randall.d2files.D2TxtFile;
 import randall.d2files.D2TxtFileItemProperties;
-
-import java.awt.*;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 //a character class
 //manages one character file
@@ -218,7 +219,7 @@ public class D2Character extends D2ItemListAdapter {
             iReader.skipBits(-32);
             extractMercName(iReader.read(16), hireCol);
             iReader.skipBits(16);
-            cMercInfo.put("xp", new Long(iReader.read(32)));
+            cMercInfo.put("xp", Long.valueOf(iReader.read(32)));
             setMercLevel(hireCol);
         } else {
             iReader.skipBits(64);

@@ -853,11 +853,11 @@ public class D2Item implements Comparable, D2ItemInterface {
 
         }
 
+        pFile.read(1); //D2RW?? unknown. Seens in some arrow/bolt stacks, its just 1 bit, no more data follows when =1. Meaning unclear
+
         if (iSocketed) {
             iSocketNrTotal = (short) pFile.read(4);
         }
-
-        pFile.read(1); //D2RW?? unknown
 
         int[] lSet = new int[5];
 

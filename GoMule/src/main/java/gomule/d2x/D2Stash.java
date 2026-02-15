@@ -189,7 +189,6 @@ public class D2Stash extends D2ItemListAdapter {
     private void readItems(long pNumItems) throws Exception {
         iBR.set_byte_pos(11);
         for (int i = 0; i < pNumItems; i++) {
-            System.err.println("In " + (i + 1));
             D2Item lItem = new D2Item(iFileName, iBR, iCharLvl);
             iItems.add(lItem);
         }

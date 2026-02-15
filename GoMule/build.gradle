@@ -67,6 +67,7 @@ task distribution(type: Zip) {
 }
 
 tasks.withType(JavaCompile) {
+;		options.compilerArgs << '-Xlint:unchecked'
     options.deprecation = true
 }
 

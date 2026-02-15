@@ -20,6 +20,14 @@
  ******************************************************************************/
 package randall.flavie;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
 import gomule.D2Files;
 import gomule.d2i.D2SharedStash;
 import gomule.d2i.D2SharedStashReader;
@@ -29,13 +37,6 @@ import gomule.gui.D2FileManager;
 import gomule.item.D2Item;
 import gomule.item.D2Prop;
 import randall.d2files.D2TxtFile;
-
-import javax.swing.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Marco
@@ -200,9 +201,9 @@ public class DirectD2Files {
                     if (pItem.isRune()) {
                         Long lRuneCount = (Long) iFlavie.iRuneCount.get(pItem.getName());
                         if (lRuneCount == null) {
-                            lRuneCount = new Long(1);
+                            lRuneCount = Long.valueOf(1);
                         } else {
-                            lRuneCount = new Long(lRuneCount.longValue() + 1);
+                            lRuneCount = Long.valueOf(lRuneCount.longValue() + 1);
                         }
                         iFlavie.iRuneCount.put(pItem.getName(), lRuneCount);
                     }

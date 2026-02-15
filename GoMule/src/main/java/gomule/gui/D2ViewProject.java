@@ -21,14 +21,34 @@
 
 package gomule.gui;
 
-import gomule.util.D2Project;
-
-import javax.swing.*;
-import javax.swing.tree.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
+
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
+import gomule.util.D2Project;
 
 public class D2ViewProject extends JPanel {
     /**
@@ -158,7 +178,7 @@ public class D2ViewProject extends JPanel {
                             ((CharTreeNode) lLast).remove();
                         }
                     }
-                } else if (e.getModifiers() == KeyEvent.ALT_MASK) {
+                } else if (e.getModifiersEx() == KeyEvent.ALT_DOWN_MASK) {
                     if (e.getKeyCode() == KeyEvent.VK_V || e.getKeyCode() == KeyEvent.VK_O || e.getKeyCode() == KeyEvent.VK_M) {
                         int lSelected[] = iTree.getSelectionRows();
                         for (int i = 0; i < lSelected.length; i++) {
@@ -429,28 +449,28 @@ public class D2ViewProject extends JPanel {
 
             if (iFileOpened) {
                 JMenuItem lOpen = new JMenuItem("Move to Top");
-                lOpen.setAccelerator(KeyStroke.getKeyStroke(new Character('M'), KeyEvent.ALT_MASK));
+                lOpen.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('M'), KeyEvent.ALT_DOWN_MASK));
                 lMenu.add(lOpen);
                 lOpen.addActionListener(new ActionNodeView(this));
 
                 JMenuItem lFullDump = new JMenuItem("Full Dump");
-                lFullDump.setAccelerator(KeyStroke.getKeyStroke(new Character('F'), KeyEvent.ALT_MASK));
+                lFullDump.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('F'), KeyEvent.ALT_DOWN_MASK));
 //				lMenu.add(lFullDump);
                 lFullDump.addActionListener(new ActionNodeFullDump(this));
 
                 JMenuItem lClose = new JMenuItem("Close");
-                lClose.setAccelerator(KeyStroke.getKeyStroke(new Character('C'), KeyEvent.ALT_MASK));
+                lClose.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('C'), KeyEvent.ALT_DOWN_MASK));
                 lMenu.add(lClose);
                 lClose.addActionListener(new ActionNodeClose(this));
             } else {
                 if (iItemListRead) {
                     JMenuItem lOpen = new JMenuItem("View");
-                    lOpen.setAccelerator(KeyStroke.getKeyStroke(new Character('V'), KeyEvent.ALT_MASK));
+                    lOpen.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('V'), KeyEvent.ALT_DOWN_MASK));
                     lMenu.add(lOpen);
                     lOpen.addActionListener(new ActionNodeView(this));
                 } else {
                     JMenuItem lOpen = new JMenuItem("Open");
-                    lOpen.setAccelerator(KeyStroke.getKeyStroke(new Character('O'), KeyEvent.ALT_MASK));
+                    lOpen.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('O'), KeyEvent.ALT_DOWN_MASK));
                     lMenu.add(lOpen);
                     lOpen.addActionListener(new ActionNodeView(this));
                 }
