@@ -1965,6 +1965,7 @@ public class D2Character extends D2ItemListAdapter {
         return
                 "Name:       " + getCharName() + "\n" +
                         "Class:      " + getCharClass() + "\n" +
+                        "Hardcore:   " + isHC() + "\n" +
                         "Experience: " + getCharExp() + "\n" +
                         "Level:      " + getCharLevel() + "\n" +
                         /*"NOTIMP:     " + getCharDead() + "\n"+*/ "\n" + "            Naked/Gear" + "\n" +
