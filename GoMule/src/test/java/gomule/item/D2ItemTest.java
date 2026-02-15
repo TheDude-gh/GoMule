@@ -461,7 +461,7 @@ public class D2ItemTest {
     }
 
     @Test
-    public void foo() throws Exception {
+    public void ring_with_trailing_zero() throws Exception {
         String expected = "Ocher Ring of Fortune\n" +
                 "Ring\n" +
                 "Required Level: 31\n" +
@@ -471,6 +471,14 @@ public class D2ItemTest {
                 "Lightning Resist +17%\n" +
                 "19% Better Chance of Getting Magic Items\n";
         byte[] bytes = decode("10 00 80 00 05 18 F4 FC D8 C0 7F 16 B5 57 A5 60 18 90 90 22 1B 94 BB FF 00");
+        runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
+    @Test
+    public void jade_figurine() throws Exception {
+        String expected = "A Jade Figurine\n" +
+                "Version: Resurrected\n";
+        byte[] bytes = decode("10 00 A0 00 04 58 04 DD F6 2B 00");
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
