@@ -161,7 +161,14 @@ public class D2Item implements Comparable, D2ItemInterface {
         try {
             int startOfItemInBytes = pFile.get_byte_pos();
             read_item(pFile);
-            int endOfItemInBytes = pFile.getNextByteBoundaryInBits() / 8;
+            int currentEndOfItemInBytes = pFile.getNextByteBoundaryInBits() / 8;
+            pFile.set_byte_pos(currentEndOfItemInBytes);
+            int endOfItemInBytes;
+            if (pFile.get_length() - 1 > pFile.get_byte_pos() && pFile.read(8) == 0) {
+                endOfItemInBytes = currentEndOfItemInBytes + 1;
+            } else {
+                endOfItemInBytes = currentEndOfItemInBytes;
+            }
             int lLengthToNextJM = endOfItemInBytes - startOfItemInBytes;
             pFile.set_byte_pos(startOfItemInBytes);
             iItem = new D2BitReader(pFile.get_bytes(lLengthToNextJM));
@@ -643,8 +650,8 @@ public class D2Item implements Comparable, D2ItemInterface {
                     .getRow(rare_name_1 - 156);
             D2TxtFileItemProperties lRareName2 = D2TxtFile.RARESUFFIX
                     .getRow(rare_name_2 - 1);
-                iItemName = D2Files.getInstance().getTranslations().getTranslation(lRareName1.get("name")) + " "
-                        + D2Files.getInstance().getTranslations().getTranslation(lRareName2.get("name"));
+            iItemName = D2Files.getInstance().getTranslations().getTranslation(lRareName1.get("name")) + " "
+                    + D2Files.getInstance().getTranslations().getTranslation(lRareName2.get("name"));
 
             rare_prefixes = new short[3];
             rare_suffixes = new short[3];
@@ -799,18 +806,23 @@ public class D2Item implements Comparable, D2ItemInterface {
 
             if ("1".equals(iItemType.get("stackable"))) {
                 iStackable = true;
+                pFile.read(1);
                 iCurDur = (short) pFile.read(9);
             }
         } else if (isTypeMisc()) {
             if ("1".equals(iItemType.get("stackable"))) {
                 iStackable = true;
+                pFile.read(1);
                 iCurDur = (short) pFile.read(9);
             }
 
         }
 
         if (iSocketed) {
+            pFile.read(1);
             iSocketNrTotal = (short) pFile.read(4);
+        } else if (!iStackable) {
+            pFile.read(1);
         }
 
         int[] lSet = new int[5];
@@ -1600,10 +1612,10 @@ public class D2Item implements Comparable, D2ItemInterface {
 
                 retStr = retStr
                         + D2Files.getInstance()
-                                .getTranslations()
-                                .getTranslation(D2TxtFile.PREFIX
-                                        .getRow(rare_prefixes[x])
-                                        .get("Name"))
+                        .getTranslations()
+                        .getTranslation(D2TxtFile.PREFIX
+                                .getRow(rare_prefixes[x])
+                                .get("Name"))
                         + " ";
             }
         }
@@ -1616,10 +1628,10 @@ public class D2Item implements Comparable, D2ItemInterface {
 
                 retStr = retStr
                         + D2Files.getInstance()
-                                .getTranslations()
-                                .getTranslation(D2TxtFile.SUFFIX
-                                        .getRow(rare_suffixes[x])
-                                        .get("Name"))
+                        .getTranslations()
+                        .getTranslation(D2TxtFile.SUFFIX
+                                .getRow(rare_suffixes[x])
+                                .get("Name"))
                         + " ";
             }
         }

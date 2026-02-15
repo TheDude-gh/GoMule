@@ -143,7 +143,7 @@ public class D2Character extends D2ItemListAdapter {
         iReader.set_byte_pos(4);
         long lVersion = iReader.read(32);
 //        System.err.println("Version: " + lVersion);
-        if (lVersion != 99) throw new Exception("Incorrect Character version: " + lVersion);
+        if (lVersion != 105) throw new Exception("Incorrect Character version: " + lVersion);
         iReader.set_byte_pos(8);
         long lSize = iReader.read(32);
         if (iReader.get_length() != lSize) throw new Exception("Incorrect FileSize: " + lSize);
@@ -151,22 +151,17 @@ public class D2Character extends D2ItemListAdapter {
         iReader.set_byte_pos(12);
         byte[] checksumFromFile = iReader.get_bytes(4);
         if (!Arrays.equals(calculatedChecksum, checksumFromFile)) throw new Exception("Incorrect Checksum");
-        iReader.set_byte_pos(16);
-//		long lWeaponSet = iReader.read(32);
-        iReader.set_byte_pos(267);
+        iReader.set_byte_pos(299);
         StringBuffer lCharName = new StringBuffer();
         for (int i = 0; i < 16; i++) {
             long lChar = iReader.read(8);
             if (lChar != 0) lCharName.append((char) lChar);
         }
         iCharName = lCharName.toString();
-        iReader.set_byte_pos(36);
+        iReader.set_byte_pos(20);
         iReader.skipBits(2);
         iHC = iReader.read(1) == 1;
-        iReader.set_byte_pos(37);
-//		long lCharTitle = iReader.read(8);
-        iReader.read(8);
-        iReader.set_byte_pos(40);
+        iReader.set_byte_pos(24);
         lCharCode = iReader.read(8);
         switch ((int) lCharCode) {
             case 0:
@@ -191,13 +186,13 @@ public class D2Character extends D2ItemListAdapter {
                 cClass = "ass";
                 break;
         }
-        iReader.set_byte_pos(43);
+        iReader.set_byte_pos(27);
         iCharLevel = iReader.read(8);
         if (iCharLevel < 1 || iCharLevel > 99)
             throw new Exception("Invalid char level: " + iCharLevel + " (should be between 1-99)");
         iCharClass = D2TxtFile.getCharacterCode((int) lCharCode);
         iTitleString = " Lvl " + iCharLevel + " " + D2TxtFile.getCharacterCode((int) lCharCode);
-        iReader.set_byte_pos(177);
+        iReader.set_byte_pos(161);
         if (iReader.read(8) == 1) ;//MERC IS DEAD?
         iReader.skipBits(8);
         if (iReader.read(32) != 0) {
@@ -216,15 +211,15 @@ public class D2Character extends D2ItemListAdapter {
         }
         lWoo = iReader.findNextFlag("Woo!", 0);
         if (lWoo == -1) throw new Exception("Error: Act Quests block not found");
-        if (lWoo != 335) System.err.println("Warning: Act Quests block not on expected position");
+        if (lWoo != 403) System.err.println("Warning: Act Quests block not on expected position");
         iWS = iReader.findNextFlag("WS", lWoo);
         if (iWS == -1) throw new Exception("Error: Waypoints not found");
         int lW4 = iReader.findNextFlag("w4", lWoo);
         if (lW4 == -1) throw new Exception("Error: NPC State control block not found");
-        if (lW4 != 714) System.err.println("Warning: NPC State control block not on expected position");
+        if (lW4 != 782) System.err.println("Warning: NPC State control block not on expected position");
         iGF = iReader.findNextFlag("gf", lW4);
         if (iGF == -1) throw new Exception("Error: Stats block not found");
-        if (iGF != 765) System.err.println("Warning: Stats block not on expected position");
+        if (iGF != 833) System.err.println("Warning: Stats block not on expected position");
         iIF = iReader.findNextFlag("if", iGF);
         if (iIF == -1) throw new Exception("Error: Skills block not found");
         iJF = iReader.findNextFlag("jf", iIF);
@@ -659,7 +654,8 @@ public class D2Character extends D2ItemListAdapter {
                     counter = 0;
                     for (int z = pVals[0]; z > -1; z = z - 1) {
                         if (D2TxtFile.SKILLS.getRow(z).get("charclass").equals(cClass)) {
-                            if (D2TxtFile.SKILL_DESC.getRow(z).get("SkillPage").equals(page)) {
+                            String skillDesc = D2TxtFile.SKILLS.getRow(z).get("skilldesc");
+                            if (D2TxtFile.SKILL_DESC.searchColumns("skilldesc", skillDesc).get("SkillPage").equals(page)) {
                                 counter++;
                             }
                         }
@@ -1411,12 +1407,12 @@ public class D2Character extends D2ItemListAdapter {
                 if (page == 0) continue;
                 skillTrees[page - 1] = skillTrees[page - 1]
                         + D2Files.getInstance()
-                                .getTranslations()
-                                .getTranslation(D2TxtFile.SKILL_DESC
-                                        .searchColumns(
-                                                "skilldesc",
-                                                ((D2TxtFileItemProperties) skillArr.get(x)).get("skilldesc"))
-                                        .get("str name"))
+                        .getTranslations()
+                        .getTranslation(D2TxtFile.SKILL_DESC
+                                .searchColumns(
+                                        "skilldesc",
+                                        ((D2TxtFileItemProperties) skillArr.get(x)).get("skilldesc"))
+                                .get("str name"))
                         + ": " + initSkills[page - 1][skillCounter[page - 1]] + "/"
                         + cSkills[page - 1][skillCounter[page - 1]] + "\n";
                 skillCounter[page - 1]++;

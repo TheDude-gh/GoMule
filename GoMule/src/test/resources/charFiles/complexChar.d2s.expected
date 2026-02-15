@@ -87,7 +87,7 @@ Titan's Revenge
 Ceremonial Javelin
 Throw Damage: 74 - 197
 One Hand Damage: 74 - 145
-Quantity: 143
+Quantity: 156
 Required Level: 42
 Required Strength: 25
 Required Dexterity: 109
@@ -713,7 +713,7 @@ BigBoobsBigBow's Titan's Revenge
 Matriarchal Javelin
 Throw Damage: 169 - 324
 One Hand Damage: 149 - 274
-Quantity: 143
+Quantity: 156
 Required Level: 55
 Required Strength: 97
 Required Dexterity: 141
@@ -743,8 +743,8 @@ Required Strength: 156
 Fingerprint: 0x3b767fa8
 Item Level: 99
 Version: Resurrected
-100% Chance to cast level 47 Chain Lightning when you Die
 Indestructible
+100% Chance to cast level 47 Chain Lightning when you Die
 +35% Faster Block Rate
 25% Increased Chance of Blocking
 Adds 1 - 74 Lightning Damage

@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class D2ItemTest {
 
-    public static final byte[] HEALTH_POT = new byte[]{16, 4, -96, 8, 21, 0, 0, 79, -76, 0};
-    public static final byte[] SMALL_CHARM = new byte[]{16, 0, -128, 0, 5, 36, 68, -40, 79, -40, -114, -124, 14, 11, 80, -80, 12, 0, -76, 120, -10, 31};
+    public static final byte[] HEALTH_POT = decode("10 04 A0 08 15 00 00 4F B4 00");
+    public static final byte[] SMALL_CHARM = decode("10 00 80 00 05 24 44 D8 4F D8 8E 84 0E 0B 50 B0 0C 00 68 F1 EC 3F");
 
     @Test
     public void viridianSmallCharm() throws Exception {
@@ -35,8 +35,7 @@ public class D2ItemTest {
                 "+2 to All Skills\n" +
                 "All Stats +5\n" +
                 "All Resistances +26\n";
-        byte[] bytes = {16, 0, -128, 0, -115, 8, -32, 89, 24, -114, 8, -3, -47, -82, 55, 32, 2, -128, -110, 0, 37, 1, -91, 1, -91, 19, -30, 82, -120, 91, 33, -82, -123, -72, 63, -6, 15};
-        runItemDumpComparison(expected, loadD2Item(bytes));
+        runItemDumpComparison(expected, loadD2Item(decode("10 00 80 00 8D 08 E0 59 18 8E 08 FD D1 AE 37 20 02 00 25 01 4A 02 4A 03 4A 27 C4 A5 10 B7 42 5C 0B 71 7F F4 1F")));
     }
 
     @Test
@@ -61,8 +60,7 @@ public class D2ItemTest {
                 "Set (3 items): +15 to Dexterity\n" +
                 "Set (4 items): +15 to Dexterity\n" +
                 "\n";
-        byte[] bytes = {16, 64, -128, 0, 77, 38, -128, 27, 13, 22, -106, -64, 123, -29, -94, 8, -48, 64, 98, -63, 57, 32, 101, 1, 53, 7, -112, 19, -12, -64, -16, -28, 40, -104, -2, 23, -16, -6, 47, -32, -11, 95, -64, -21, 63};
-        runItemDumpComparison(expected, loadD2Item(bytes));
+        runItemDumpComparison(expected, loadD2Item(decode("10 40 80 00 4D 26 80 1B 0D 16 96 C0 7B E3 A2 08 D0 40 62 81 73 40 CA 02 6A 0E 20 27 E8 81 E1 C9 51 30 FD 2F E0 F5 5F C0 EB BF 80 D7 7F")));
     }
 
     @Test
@@ -82,8 +80,7 @@ public class D2ItemTest {
                 "+49% Enhanced Defense\n" +
                 "Fire Resist +14%\n" +
                 "23% Better Chance of Getting Magic Items\n";
-        byte[] bytes = {16, 0, -128, 0, -115, 42, -64, -84, 27, 10, 28, 65, -50, 111, 70, 109, 87, 73, 84, 69, -36, -4, 72, -71, 52, 11, 11, 72, 16, -128, 16, -29, -124, 53, 30, 3, 40, 123, 93, 80, -68, 4, 0, -12, 31};
-        runItemDumpComparison(expected, loadD2Item(bytes));
+        runItemDumpComparison(expected, loadD2Item(decode("10 00 80 00 8D 2A C0 AC 1B 0A 1C 41 CE 6F 46 6D 57 49 54 45 DC FC 48 B9 34 0B 0B 48 10 00 21 C6 09 6B 3C 06 50 F6 BA A0 78 09 00 E8 3F")));
     }
 
     @Test
@@ -114,7 +111,7 @@ public class D2ItemTest {
                 "Weapons: +10 to Strength\n" +
                 "Armor: +10 to Strength\n" +
                 "Shields: +10 to Strength\n";
-        byte[] bytes = {16, 8, -128, 0, 5, 72, 84, -4, -66, 19, 33, 117, 39, 22, 86, 48, -126, -111, 7, -14, 31, 16, 0, -96, 0, 53, 0, -32, 124, 92, 0, 16, 0, -96, 0, 53, 4, -32, 124, 92, 0};
+        byte[] bytes = {16, 8, -128, 0, 5, 72, 84, -4, -66, 19, 33, 117, 39, 22, 86, 48, -126, -111, 7, -28, 63, 16, 0, -96, 0, 53, 0, -32, 124, 92, 0, 16, 0, -96, 0, 53, 4, -32, 124, 92, 0};
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
@@ -139,6 +136,24 @@ public class D2ItemTest {
                 "Version: Resurrected\n" +
                 "Level 59 Barbarian\n";
         runItemDumpComparison(expected, loadD2Item(decode("10 00 A1 00 05 88 84 3B 65 59 5E 6E E7 01 00")));
+    }
+
+    @Test
+    public void rejuvPot() throws Exception {
+        String expected =  "Rejuvenation Potion\n" +
+                "Version: Resurrected\n" +
+                "Replenishes Mana 35%\n" +
+                "Replenishes Health 35%\n";
+        runItemDumpComparison(expected, loadD2Item(decode("10 00 A0 00 15 08 E0 EC 28 00")));
+    }
+
+    @Test
+    public void rejuvPot_withoutExtraByte() throws Exception {
+        String expected =  "Rejuvenation Potion\n" +
+                "Version: Resurrected\n" +
+                "Replenishes Mana 35%\n" +
+                "Replenishes Health 35%\n";
+        runItemDumpComparison(expected, loadD2Item(decode("10 00 A0 00 15 08 E0 EC 28")));
     }
 
     @Test
@@ -238,8 +253,7 @@ public class D2ItemTest {
                 "Weapons: +50% Enhanced Damage\n" +
                 "Armor: +5% to Maximum Cold Resist\n" +
                 "Shields: +5% to Maximum Cold Resist\n";
-        byte[] bytes = {16, 8, -128, 12, -53, 46, 0, -48, -84, 77, -8, -81, 27, 61, -31, 4, 42, 0, 0, 0, 0, 0, 0, 0, -64, -107, -81, -41, -19, -10, 70, -110, -126, 17, -111, -6, 31, -31, -37, 55, 37, 106, 23, 94, 24, 73, 74, -104, 74, 77, -104, 77, -55, 31, -3, 7, 16, 0, -96, 8, 51, 0, -32, 124, 62, 5, 0, 0, 0, 0, 0, 0, 0, 96, 13, 29, -112, 34, -81, -16, 51, 0, 16, 0, -96, 8, 51, 4, -32, 124, 35, 5, 0, 0, 0, 0, 0, 0, 0, 120, -4, -127, 55, -69, -67, 68, 56, 0, 16, 0, -96, 8, 51, 8, -32, 48, -37, 2, 0, 0, 0, 0, 0, 0, 0, -12, 103, 32, 4, 70, 80, -50, 23, 0, 16, 0, -96, 8, 51, 12, -32, 48, 95, 5, 0, 0, 0, 0, 0, 0, 0, -112, 66, -92, -19, -10, -111, 72, 43, 0, 16, 0, -96, 8, 51, 16, -32, 48, 62};
-        runItemDumpComparison(expected, loadD2Item(bytes));
+        runItemDumpComparison(expected, loadD2Item(decode("10 08 80 0C CB 2E 00 D0 AC 4D F8 AF 1B 3D E1 04 2A 00 00 00 00 00 00 00 C0 95 AF D7 ED F6 46 92 82 11 11 F5 3F C2 B7 6F 4A D4 2E BC 30 92 94 30 95 9A 30 9B 92 3F FA 0F 10 00 A0 08 33 00 E0 7C 3E 05 00 00 00 00 00 00 00 60 0D 1D 90 22 AF F0 33 00 10 00 A0 08 33 04 E0 7C 23 05 00 00 00 00 00 00 00 78 FC 81 37 BB BD 44 38 00 10 00 A0 08 33 08 E0 30 DB 02 00 00 00 00 00 00 00 F4 67 20 04 46 50 CE 17 00 10 00 A0 08 33 0C E0 30 5F 05 00 00 00 00 00 00 00 90 42 A4 ED F6 91 48 2B 00 10 00 A0 08 33 10 E0 30 3E 00")));
     }
 
     @Test
@@ -248,7 +262,7 @@ public class D2ItemTest {
                 "Matriarchal Javelin\n" +
                 "Throw Damage: 169 - 324\n" +
                 "One Hand Damage: 149 - 274\n" +
-                "Quantity: 142\n" +
+                "Quantity: 156\n" +
                 "Required Level: 55\n" +
                 "Required Strength: 97\n" +
                 "Required Dexterity: 141\n" +
@@ -267,7 +281,7 @@ public class D2ItemTest {
                 "Replenishes quantity\n" +
                 "Required Level +7\n" +
                 "Ethereal\n";
-        byte[] bytes = decode("10 40 C0 01 0D 11 E0 59 39 A0 1C 11 B1 5E 8F 8C 10 4A 3B 13 7A 7B 13 9B 13 4A 3B 13 7A BB 03 60 50 C0 11 00 1A 01 B4 08 B1 62 55 C8 2C C8 78 14 A6 40 5C 0E 60 64 9F 32 50 32 5E 02 00 EA E7 F9 E3 F9 0F");
+        byte[] bytes = decode("10 40 C0 01 0D 11 E0 59 39 A0 1C 11 B1 5E 8F 8C 10 4A 3B 13 7A 7B 13 9B 13 4A 3B 13 7A BB 03 60 50 20 27 00 34 02 68 11 62 C5 AA 90 59 90 F1 28 4C 81 B8 1C C0 C8 3E 65 A0 64 BC 04 00 D4 CF F3 C7 F3 1F");
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
@@ -281,8 +295,7 @@ public class D2ItemTest {
                 "Version: Resurrected\n" +
                 "+1 to Javelin and Spear Skills (Amazon Only)\n" +
                 "+3 to Maximum Damage\n";
-        byte[] bytes = {16, 0, -128, 0, 5, 92, 68, -40, 109, -64, -46, -73, -110, -84, 82, -128, -115, -87, 88, 24, 96, 24, -128, 26, -16, 18, 0, -56, 127};
-        runItemDumpComparison(expected, loadD2Item(bytes));
+        runItemDumpComparison(expected, loadD2Item(decode("10 00 80 00 05 5C 44 D8 6D C0 D2 B7 92 AC 52 80 8D A9 B0 30 C0 30 00 35 E0 25 00 90 FF 00")));
     }
 
     @Test
@@ -299,18 +312,17 @@ public class D2ItemTest {
                 "+40 to Mana\n" +
                 "+20 Cold Absorb\n" +
                 "Cannot Be Frozen\n";
-        byte[] bytes = {16, 0, -128, 0, -117, 25, -32, -4, -40, -80, 87, -81, 46, -91, -67, 51, 17, 4, -48, 18, 32, 77, -8, -59, -58, 67, 11, 50, 74, -108, 76, -1, 3};
-        runItemDumpComparison(expected, loadD2Item(bytes));
+        runItemDumpComparison(expected, loadD2Item(decode("10 00 80 00 8B 19 E0 FC D8 B0 57 AF 2E A5 BD 33 11 08 A0 25 40 9A F0 8B 8D 87 16 64 94 28 99 FE 07")));
     }
 
     @Test
     public void standardOfHeroes() throws Exception {
         String expected = "Standard of Heroes\n" +
                 "Required Level: 90\n" +
-                "Fingerprint: 0xa4366601\n" +
+                "Fingerprint: 0xe2dad357\n" +
                 "Item Level: 99\n" +
                 "Version: Resurrected\n";
-        byte[] bytes = decode("10008000055496CC1802CC6C48C7C7FFFB0F");
+        byte[] bytes = decode("10 00 80 00 05 00 84 CC 18 AE A6 B5 C5 C7 C7 FF F3 1F");
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
@@ -374,8 +386,7 @@ public class D2ItemTest {
                 + "Weapons: 30% Better Chance of Getting Magic Items\n"
                 + "Armor: 25% Better Chance of Getting Magic Items\n"
                 + "Shields: 25% Better Chance of Getting Magic Items\n";
-        byte[] bytes = {16, 72, -128, 12, -51, 12, 0, -102, 25, -119, -94, 59, -37, -85, 2, 10, -108, 8, -15, 60, -96, -1, 0, 104, 32, 24, 57, -95, 47, -123, -66, 21, -6, 90, -24, -29, -127, -56, -61, 77, 15, -98, 63, -6, 15, 16, 0, -96, 8, 53, 0, -32, 124, -66, 2, 16, 0, -96, 8, 51, 4, -32, 48, 76, 0, 16, 0, -96, 8, 53, 8, -32, 108, -65, 3, 16, 0, -96, 8, 53, 12, -32, 48, 95, 1};
-        runItemDumpComparison(expected, loadD2Item(bytes));
+        runItemDumpComparison(expected, loadD2Item(decode("10 48 80 0C CD 0C 00 9A 19 89 A2 3B DB AB 02 0A 94 08 F1 3C 40 FF 01 D0 40 30 72 42 5F 0A 7D 2B F4 B5 D0 C7 03 91 87 9B 1E 3C 7F F4 1F 10 00 A0 08 35 00 E0 7C BE 02 10 00 A0 08 33 04 E0 30 4C 00 10 00 A0 08 35 08 E0 6C BF 03 10 00 A0 08 35 0C E0 30 5F 01")));
     }
 
     @Test
@@ -422,7 +433,7 @@ public class D2ItemTest {
                 "Version: Resurrected\n" +
                 "Weapons: Armor: Damage Reduced by 7\n" +
                 "Shields: Damage Reduced by 7\n";
-        byte[] bytes = decode("10 08 80 04 05 00 D4 92 D4 1E 4F 6A 8C AA 02 BA 1A 10 50 44 98 FF 10 98 90 98 C6 83 A0 84 67 F2 FC 07 10 00 A0 00 35 00 E0 7C B6 01 10 00 A0 00 35 04 E0 7C F6 01 10 00 A0 00 35 08 E0 7C 98 00 10");
+        byte[] bytes = decode("10 08 80 04 05 84 D5 92 D4 1E 4F 6A 8C AA 82 51 1B 10 50 44 30 FF 21 30 21 31 8D 07 41 09 CF E4 F9 0F 10 00 A0 00 35 00 E0 7C B6 01 10 00 A0 00 35 04 E0 7C F6 01 10 00 A0 00 35 08 E0 7C 98 00");
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
@@ -435,7 +446,31 @@ public class D2ItemTest {
                 + "Version: Resurrected\n"
                 + "Monster Fire Immunity is Sundered\n"
                 + "Fire Resist -86%\n";
-        byte[] bytes = decode("10 00 80 00 05 0C 54 D8 6D 00 DC CC 4F 1B 5F 91 0C 27 E4 F4 62 E9 3F");
+        byte[] bytes = decode("10 00 80 00 05 00 54 D8 6D 00 DC CC 4F 1B 5F 91 0C 4E C8 E9 C5 D2 7F");
+        runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
+    @Test
+    public void key() throws Exception {
+        String expected = "Key\n" +
+                "Fingerprint: 0x60c6dbc3\n" +
+                "Item Level: 68\n" +
+                "Version: Resurrected\n";
+        byte[] bytes = decode("10 00 80 00 05 C0 44 1A 50 61 78 DB 18 8C 28 C8 E0 3F");
+        runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
+    @Test
+    public void foo() throws Exception {
+        String expected = "Ocher Ring of Fortune\n" +
+                "Ring\n" +
+                "Required Level: 31\n" +
+                "Fingerprint: 0x7b5167fc\n" +
+                "Item Level: 85\n" +
+                "Version: Resurrected\n" +
+                "Lightning Resist +17%\n" +
+                "19% Better Chance of Getting Magic Items\n";
+        byte[] bytes = decode("10 00 80 00 05 18 F4 FC D8 C0 7F 16 B5 57 A5 60 18 90 90 22 1B 94 BB FF 00");
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
@@ -448,8 +483,12 @@ public class D2ItemTest {
         assertEquals(10, d2Item.getItemLength());
     }
 
-    private byte[] decode(String s) {
+    public static byte[] decode(String s) {
         return BaseEncoding.base16().decode(s.replaceAll(" ", ""));
+    }
+
+    public static String encodeWithSpaces(byte[] bytes) {
+        return BaseEncoding.base16().withSeparator(" ", 2).encode(bytes);
     }
 
     private void runItemDumpComparison(String expected, D2Item d2Item) {

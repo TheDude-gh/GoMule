@@ -20,8 +20,12 @@ public class MapBasedTranslations implements Translations {
         try {
             ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
             MAPPER.readTree(inputStream)
-                    .forEach(node -> mapBuilder.put(
-                            node.get("Key").textValue(), node.get("enUS").textValue()));
+                    .forEach(node -> {
+                        if (node.path("id").intValue() == 27893 || node.path("id").intValue() == 27502 || node.path("id").intValue() == 27542)
+                            return;
+                        mapBuilder.put(
+                                node.get("Key").textValue(), node.get("enUS").textValue());
+                    });
             return new MapBasedTranslations(mapBuilder.build());
         } catch (IOException e) {
             throw new RuntimeException(e);
