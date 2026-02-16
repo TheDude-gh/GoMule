@@ -127,7 +127,7 @@ public class D2ItemTest {
     public void khalimsEye() throws Exception {
         String expected = "Khalim's Eye\n" +
                 "Version: Resurrected\n";
-        runItemDumpComparison(expected, loadD2Item(decode("10 00 A0 00 05 90 64 73 40 15")));
+        runItemDumpComparison(expected, loadD2Item(decode("10 00 A0 00 05 88 64 73 40 25 10")));
     }
 
     @Test
@@ -148,12 +148,21 @@ public class D2ItemTest {
     }
 
     @Test
-    public void rejuvPot_withoutExtraByte() throws Exception {
+    public void rejuvPot_afterRoW() throws Exception {
         String expected =  "Rejuvenation Potion\n" +
                 "Version: Resurrected\n" +
                 "Replenishes Mana 35%\n" +
                 "Replenishes Health 35%\n";
-        runItemDumpComparison(expected, loadD2Item(decode("10 00 A0 00 15 08 E0 EC 28")));
+        runItemDumpComparison(expected, loadD2Item(decode("10 00 A0 00 15 08 E0 EC 28 01 00")));
+    }
+
+    @Test
+    public void rejuvPot_single_inMaterialStash() throws Exception {
+        String expected =  "Rejuvenation Potion\n" +
+                "Version: Resurrected\n" +
+                "Replenishes Mana 35%\n" +
+                "Replenishes Health 35%\n";
+        runItemDumpComparison(expected, loadD2Item(decode("10 00 A0 00 25 00 F4 EC 28 03 00")));
     }
 
     @Test
@@ -483,12 +492,28 @@ public class D2ItemTest {
     }
 
     @Test
+    public void bugged_golden_bird() throws Exception {
+        String expected = "The Golden Bird\n" +
+                "Version: Resurrected\n";
+        byte[] bytes = decode("10 00 A0 00 05 60 64 6D BF 12");
+        runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
+    @Test
+    public void golden_bird() throws Exception {
+        String expected = "The Golden Bird\n" +
+                "Version: Resurrected\n";
+        byte[] bytes = decode("10 20 A0 00 05 58 64 6D BF 02");
+        runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
+    @Test
     public void cairn_stones_partial_read() throws Exception {
-        D2Item d2Item = loadD2Item(decode("10 00 A0 00 05 C8 54 A5 31 00"));
+        D2Item d2Item = loadD2Item(decode("10 00 A0 00 05 C8 54 A5 31 00 00"));
         String expected = "Key to the Cairn Stones\n" +
                 "Version: Resurrected\n";
         runItemDumpComparison(expected, d2Item);
-        assertEquals(10, d2Item.getItemLength());
+        assertEquals(11, d2Item.getItemLength());
     }
 
     public static byte[] decode(String s) {

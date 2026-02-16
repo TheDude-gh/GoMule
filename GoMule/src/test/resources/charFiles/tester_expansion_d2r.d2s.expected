@@ -1,0 +1,80 @@
+Name:       tester
+Class:      Amazon
+Hardcore:   false
+Experience: 0
+Level:      1
+
+            Naked/Gear
+Strength:   20/20
+Dexterity:  25/25
+Vitality:   20/20
+Energy:     15/15
+HP:         50/50
+Mana:       15/15
+Stamina:    84/84
+Defense:    6/6
+AR:         95/95
+
+Fire:       0/-40/-100
+Cold:       0/-40/-100
+Lightning:  0/-40/-100
+Poison:     0/-40/-100
+
+MF:         0       Block:      125
+GF:         0       FR/W:       0
+FHR:        0       IAS:        0
+FCR:        0
+
+Magic Arrow: 0/0
+Fire Arrow: 0/0
+Cold Arrow: 0/0
+Multiple Shot: 0/0
+Exploding Arrow: 0/0
+Ice Arrow: 0/0
+Guided Arrow: 0/0
+Strafe: 0/0
+Immolation Arrow: 0/0
+Freezing Arrow: 0/0
+
+Inner Sight: 0/0
+Critical Strike: 0/0
+Dodge: 0/0
+Slow Missiles: 0/0
+Avoid: 0/0
+Penetrate: 0/0
+Decoy: 0/0
+Evade: 0/0
+Valkyrie: 0/0
+Pierce: 0/0
+
+Jab: 0/0
+Power Strike: 0/0
+Poison Javelin: 0/0
+Impale: 0/0
+Lightning Bolt: 0/0
+Charged Strike: 0/0
+Plague Javelin: 0/0
+Fend: 0/0
+Lightning Strike: 0/0
+Lightning Fury: 0/0
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Mercenary:
+
+
+

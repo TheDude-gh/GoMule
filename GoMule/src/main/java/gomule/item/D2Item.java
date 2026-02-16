@@ -152,6 +152,8 @@ public class D2Item implements Comparable, D2ItemInterface {
 
     private final HuffmanLookupTable huffmanLookupTable = HuffmanLookupTable.withStandardDictionary();
 
+    private int materialStashStackSize = 0;
+
     public D2Item(String pFileName, D2BitReader pFile, long pCharLvl)
             throws Exception {
         iFileName = pFileName;
@@ -161,14 +163,7 @@ public class D2Item implements Comparable, D2ItemInterface {
         try {
             int startOfItemInBytes = pFile.get_byte_pos();
             read_item(pFile);
-            int currentEndOfItemInBytes = pFile.getNextByteBoundaryInBits() / 8;
-            pFile.set_byte_pos(currentEndOfItemInBytes);
-            int endOfItemInBytes;
-            if (pFile.get_length() - 1 > pFile.get_byte_pos() && pFile.read(8) == 0) {
-                endOfItemInBytes = currentEndOfItemInBytes + 1;
-            } else {
-                endOfItemInBytes = currentEndOfItemInBytes;
-            }
+            int endOfItemInBytes = pFile.getNextByteBoundaryInBits() / 8;
             int lLengthToNextJM = endOfItemInBytes - startOfItemInBytes;
             pFile.set_byte_pos(startOfItemInBytes);
             iItem = new D2BitReader(pFile.get_bytes(lLengthToNextJM));
@@ -367,6 +362,10 @@ public class D2Item implements Comparable, D2ItemInterface {
         if (iType != null && iType2 != null && iType.startsWith("rune")) {
             readPropertiesGems();
             iRune = true;
+        }
+
+        if (check_flag(22)) {
+            readMaterialStashStackSize(pFile);
         }
 
         D2TxtFileItemProperties lItemType = D2TxtFile.ITEM_TYPES.searchColumns(
@@ -847,6 +846,21 @@ public class D2Item implements Comparable, D2ItemInterface {
         }
         if (iRuneWord) {
             readProperties(pFile, 0);
+        }
+
+        readMaterialStashStackSize(pFile);
+    }
+
+    private boolean isStackableInTxtFiles() {
+        D2TxtFileItemProperties code = D2TxtFile.MISC.searchColumns("code", item_type);
+        return code != null && code.get("AdvancedStashStackable").equals("1");
+    }
+
+    private void readMaterialStashStackSize(D2BitReader pFile) {
+        //new in D2R ROW, flag if item could be in material stash
+        long hasCount = pFile.read(1);
+        if (hasCount > 0 && isStackableInTxtFiles()) {
+            this.materialStashStackSize = (int) pFile.read(8);
         }
     }
 
