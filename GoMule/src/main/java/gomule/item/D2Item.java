@@ -338,44 +338,39 @@ public class D2Item implements Comparable, D2ItemInterface {
             }
         }
 
-        long qskip = 0;
-        long questdif = 0;
-        long lHasGUID = pFile.read(1);
+        //System.err.println("dbg " + (iTypeMisc ? "misc " : "") + iType + (check_flag(22) ? " simple" : ""));
+        //compact misc quest items
+        if (iTypeMisc && iType.startsWith("ques") && check_flag(22)) {
+            long questdif = pFile.read(3);
 
-        if (lHasGUID == 1) { // GUID ???
-            if (iType.startsWith("rune") || iType.startsWith("gem")
-                    || iType.startsWith("amu") || iType.startsWith("rin")
-                    || isCharm() || !isTypeMisc()) {
-
-                iGUID = "0x" + Integer.toHexString((int) pFile.read(32))
-                        + " 0x" + Integer.toHexString((int) pFile.read(32))
-                        + " 0x" + Integer.toHexString((int) pFile.read(32))
-                        + " 0x" + Integer.toHexString((int) pFile.read(32));
-            } else {
-                qskip = pFile.read(3);
+            if (questdif == 0) {
+                iDiff = "Normal";
+            } 
+            else if (questdif == 1) {
+                iDiff = "Nightmare";
+            } 
+            else if (questdif == 2) {
+                iDiff = "Hell";
             }
         }
+        //items with GUID flag
+        else {
+            long lHasGUID = pFile.read(1);
 
-        //System.err.println("dbg " + (iTypeMisc ? "misc " : "") + iType + (check_flag(22) ? " simple" : ""));
+            if (lHasGUID == 1) { // GUID ???
+                if (iType.startsWith("rune") || iType.startsWith("gem")
+                        || iType.startsWith("amu") || iType.startsWith("rin")
+                        || isCharm() || !isTypeMisc()) {
 
-        if(iTypeMisc && iType.startsWith("ques") && check_flag(22)) {
-            //read 3 bits and shift by 1 to add previously read hasGUID bit
-            if(lHasGUID == 1) {
-                questdif = (qskip << 1) + lHasGUID;
-            }
-            else {
-                questdif = (pFile.read(3) << 1) + lHasGUID;
-            }
-
-          if(questdif == 0) {
-              iDiff = "Normal";
-          }
-          else if(questdif == 1) {
-              iDiff = "Nightmare";
-          }
-          else if(questdif == 2) {
-              iDiff = "Hell";
-          }
+                    iGUID = "0x" + Integer.toHexString((int) pFile.read(32))
+                            + " 0x" + Integer.toHexString((int) pFile.read(32))
+                            + " 0x" + Integer.toHexString((int) pFile.read(32))
+                            + " 0x" + Integer.toHexString((int) pFile.read(32));
+                } 
+                else {
+                    pFile.read(3); //skip empty
+                }
+            }        
         }
 
         // flag 22 is a simple item (extend2)
