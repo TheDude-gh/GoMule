@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import static gomule.model.VersionController.CURRENT_FILE_VERSION;
+
 /**
  * @author Marco
  * <p>
@@ -147,7 +149,7 @@ public class D2Stash extends D2ItemListAdapter {
 
             long lVersionNr = iBR.read(16);
 
-            if (lVersionNr == 105) {
+            if (lVersionNr == CURRENT_FILE_VERSION) {
                 readItems(lNumItems);
             } else {
                 throw new Exception("Stash Version Incorrect!");
@@ -207,7 +209,7 @@ public class D2Stash extends D2ItemListAdapter {
 
         iBR.set_byte_pos(3);
         iBR.write(iItems.size(), 16);
-        iBR.write(105, 16); // version 105
+        iBR.write(CURRENT_FILE_VERSION, 16);
 //        iBR.replace_bytes(11, iBR.get_length(), newbytes);
 
         long lCheckSum1 = calculateAtmaCheckSum();

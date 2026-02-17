@@ -8,6 +8,8 @@ import gomule.util.D2BitReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gomule.model.VersionController.CURRENT_FILE_VERSION;
+
 public class D2SharedStashReader {
 
     static final byte[] STASH_HEADER_START = BaseEncoding.base16().decode("55AA55AA");
@@ -30,7 +32,7 @@ public class D2SharedStashReader {
     private D2SharedStashPane readSharedStashPane(D2BitReader bitReader, String filename) throws Exception {
         int stashPaneStart = bitReader.get_byte_pos();
         D2SharedStash.Header header = D2SharedStash.Header.fromBytes(bitReader);
-        if (header.getVersion() != 105)
+        if (header.getVersion() != CURRENT_FILE_VERSION)
             throw new RuntimeException("Incorrect shared stash version: " + header.getVersion());
         bitReader.set_byte_pos(bitReader.findNextFlag("JM", bitReader.get_byte_pos()));
         bitReader.skipBytes(2);
