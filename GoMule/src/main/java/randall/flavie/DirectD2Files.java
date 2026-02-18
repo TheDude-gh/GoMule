@@ -112,7 +112,7 @@ public class DirectD2Files {
                     }
                 } else if (lD2FileName.endsWith(".d2x")) {
                     try {
-                        D2Stash lStash = new D2StashReader().readStash(lD2FileName);
+                        D2Stash lStash = new D2StashReader().readStash(iFlavie.getVariant(), lD2FileName);
                         lItems = lStash.getItemList();
                     } catch (Exception e) {
                         errStr = errStr + ("Error with stash " + lD2FileName + "\n");

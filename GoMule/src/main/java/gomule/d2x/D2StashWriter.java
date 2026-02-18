@@ -1,6 +1,7 @@
 package gomule.d2x;
 
 import gomule.item.D2Item;
+import gomule.model.VersionController.Variant;
 import gomule.util.D2BitReader;
 
 import java.io.File;
@@ -8,17 +9,19 @@ import java.io.File;
 import static gomule.model.VersionController.CURRENT_FILE_VERSION;
 
 public class D2StashWriter {
+    private final Variant variant;
     private final File file;
-    public static final int CHECKSUM_BYTE_OFFSET_START = 7;
+    public static final int CHECKSUM_BYTE_OFFSET_START = 9;
     public static final int CHECKSUM_BYTE_LENGTH = 4;
-    public static final int HEADER_BYTE_LENGTH = 11;
+    public static final int HEADER_BYTE_LENGTH = 13;
 
-    public D2StashWriter(File file) {
+    public D2StashWriter(Variant variant, File file) {
+        this.variant = variant;
         this.file = file;
     }
 
-    public D2StashWriter(String filename) {
-        this(new File(filename));
+    public D2StashWriter(Variant variant, String filename) {
+        this(variant, new File(filename));
     }
 
     private void writeHeaderWithoutChecksum(D2Stash stash, D2BitReader bitWriter) {
@@ -27,6 +30,7 @@ public class D2StashWriter {
         bitWriter.write('X', 8);
         bitWriter.write(stash.getNrItems(), 16);
         bitWriter.write(CURRENT_FILE_VERSION, 16);
+        bitWriter.write(variant.getStashIdentifier(), 16);
         bitWriter.skipBytes(4);
     }
 

@@ -202,7 +202,7 @@ public class D2ViewClipboard extends RandallPanel implements D2ItemContainer, D2
             iStash = null;
         }
         iFileName = pProject.getProjectDir() + File.separator + "Clipboard.d2x";
-        iStash = stashReader.readStash(iFileName);
+        iStash = stashReader.readStash(iFileManager.getVariant(), iFileName);
         iStash.addD2ItemListListener(this);
         iItems = iStash.getItemList();
         if (iItemModel != null) {

@@ -28,6 +28,7 @@ import gomule.d2x.D2Stash;
 import gomule.d2x.D2StashReader;
 import gomule.gui.sharedStash.D2ViewSharedStash;
 import gomule.item.D2Item;
+import gomule.model.VersionController;
 import gomule.util.D2Project;
 import randall.d2files.D2TxtFile;
 import randall.flavie.Flavie;
@@ -113,6 +114,7 @@ public class D2FileManager extends JFrame {
     private JButton dumpBut;
 
     private JButton flavieSingle;
+    private final VersionController.Variant variant = VersionController.Variant.EXPANSION;
 
     private D2FileManager() {
         D2TxtFile.constructTxtFiles("d2111");
@@ -412,7 +414,7 @@ public class D2FileManager extends JFrame {
                 if (lDumpList != null) {
                     for (int x = 0; x < lDumpList.size(); x++) {
                         try {
-                            D2Stash d2Stash = stashReader.readStash((String) lDumpList.get(x));
+                            D2Stash d2Stash = stashReader.readStash(variant, (String) lDumpList.get(x));
                             if (!projTxtDump(
                                     (String) lDumpList.get(x),
                                     (D2ItemList) d2Stash,
@@ -515,7 +517,8 @@ public class D2FileManager extends JFrame {
                     iProject.isCountAll(),
                     iProject.isCountEthereal(),
                     iProject.isCountStash(),
-                    iProject.isCountChar());
+                    iProject.isCountChar(),
+                    variant);
             //			JOptionPane.showMessageDialog(iContentPane,
             //			"Flavie says reports generated successfully.\nFile: " + System.getProperty("user.dir") +
             // File.separatorChar + reportName + ".html",
@@ -1701,7 +1704,7 @@ public class D2FileManager extends JFrame {
             iItemLists.put(pFileName, lList);
             iViewProject.notifyItemListRead(pFileName);
         } else if (pFileName.toLowerCase().endsWith(".d2x")) {
-            lList = stashReader.readStash(pFileName);
+            lList = stashReader.readStash(variant, pFileName);
 
             int lType = getProject().getType();
             if (lType == D2Project.TYPE_SC && (!lList.isSC() || lList.isHC())) {
@@ -1774,6 +1777,10 @@ public class D2FileManager extends JFrame {
 
     public void defaultCursor() {
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    }
+
+    public VersionController.Variant getVariant() {
+        return variant;
     }
 
     class D2MenuListener implements ActionListener {

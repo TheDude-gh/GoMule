@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import static gomule.item.D2ItemTest.decode;
+import static gomule.model.VersionController.Variant.EXPANSION;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class D2StashReaderTest {
@@ -21,31 +22,43 @@ public class D2StashReaderTest {
 
     @Test
     public void testBadFilenames() {
-        assertEquals("Incorrect Stash file name", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(null)).getMessage());
-        assertEquals("Incorrect Stash file name", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash("bla.wrong")).getMessage());
+        assertEquals("Incorrect Stash file name", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, null)).getMessage());
+        assertEquals("Incorrect Stash file name", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "bla.wrong")).getMessage());
     }
 
     @Test
     public void testNonD2XStash() {
         String stashBytes = "46325801006900640267071004A0080588144FB400";
-        assertEquals("Incorrect Stash type: F2X", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash("foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+        assertEquals("Incorrect Stash type: F2X", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
     }
 
     @Test
     public void testWrongVersionStash() {
-        String stashBytes = "44325801006300640264071004A0080588144FB400";
-        assertEquals("Stash Version Incorrect! Expected: 105 Found: 99", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash("foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+        String stashBytes = "44325801006300020064828F1D1004A0080588144FB400";
+        assertEquals("Stash Version Incorrect! Expected: 105 Found: 99", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+    }
+
+    @Test
+    public void testWrongVariantStash() {
+        String stashBytes = "44 32 58 01 00 69 00 01 00 64 02 9B 1D 10 04 A0 08 05 88 14 4F B4 00";
+        assertEquals("Unrecognized variant, found: 1 expected: EXPANSION (2)", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+    }
+
+    @Test
+    public void testGarbledVariantStash() {
+        String stashBytes = "44 32 58 01 00 69 00 63 00 64 02 CC 1D 10 04 A0 08 05 88 14 4F B4 00";
+        assertEquals("Unrecognized variant, found: 99 expected: EXPANSION (2)", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
     }
 
     @Test
     public void testWrongChecksumStash() {
-        String stashBytes = "44325801006900640267071004A0080588144DB400";
-        assertEquals("Checksum Incorrect! Expected: 124191332 Found: 124191324", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash("foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+        String stashBytes = "44325801006900020064829B1D1004A0080588144DB400";
+        assertEquals("Checksum Incorrect! Expected: 496730724 Found: 496730716", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
     }
 
     @Test
     public void testEmptyRead() {
-        D2Stash d2Stash = new D2StashReader().readStash("foo.d2x");
+        D2Stash d2Stash = new D2StashReader().readStash(EXPANSION, "foo.d2x");
         StringWriter actual = new StringWriter();
         d2Stash.fullDump(new PrintWriter(actual));
         Assertions.assertEquals("foo.d2x\n" +
@@ -55,7 +68,7 @@ public class D2StashReaderTest {
 
     @Test
     public void testSimpleRead() {
-        D2Stash d2Stash = new D2StashReader().readStash("foo.d2x", new D2BitReader(decode("44325801006900640267071004A0080588144FB400")));
+        D2Stash d2Stash = new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode("44325801006900020064829B1D1004A0080588144FB400")));
         assertTrue(d2Stash.isHC());
         assertTrue(d2Stash.isSC());
         StringWriter actual = new StringWriter();
@@ -71,14 +84,14 @@ public class D2StashReaderTest {
 
     @Test
     public void testSCRead() {
-        D2Stash d2Stash = new D2StashReader().readStash("sc_foo.d2x");
+        D2Stash d2Stash = new D2StashReader().readStash(EXPANSION, "sc_foo.d2x");
         assertFalse(d2Stash.isHC());
         assertTrue(d2Stash.isSC());
     }
 
     @Test
     public void testHCRead() {
-        D2Stash d2Stash = new D2StashReader().readStash("hc_foo.d2x");
+        D2Stash d2Stash = new D2StashReader().readStash(EXPANSION, "hc_foo.d2x");
         assertTrue(d2Stash.isHC());
         assertFalse(d2Stash.isSC());
     }

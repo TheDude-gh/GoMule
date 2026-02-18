@@ -1,6 +1,7 @@
 package gomule.d2x;
 
 import gomule.item.D2Item;
+import gomule.model.VersionController.Variant;
 import gomule.util.D2BitReader;
 
 import java.io.File;
@@ -9,13 +10,14 @@ import java.util.ArrayList;
 import static gomule.d2x.D2Stash.FIXED_STASH_CHAR_LEVEL;
 import static gomule.d2x.D2StashWriter.*;
 import static gomule.model.VersionController.CURRENT_FILE_VERSION;
+import static gomule.model.VersionController.Variant.tryParse;
 
 public class D2StashReader {
-    public D2Stash readStash(String filename) {
-        return readStash(filename, new D2BitReader(filename));
+    public D2Stash readStash(Variant variant, String filename) {
+        return readStash(variant, filename, new D2BitReader(filename));
     }
 
-    public D2Stash readStash(String filename, D2BitReader bitReader) {
+    public D2Stash readStash(Variant variant, String filename, D2BitReader bitReader) {
         if (filename == null || !filename.toLowerCase().endsWith(".d2x")) {
             throw new RuntimeException("Incorrect Stash file name");
         }
@@ -26,40 +28,46 @@ public class D2StashReader {
             iSC = true;
             iHC = true;
         }
-        return new D2Stash(filename, checkHeaderAndLoadItems(filename, bitReader), iSC, iHC, bitReader.isNewFile());
+        return new D2Stash(variant, filename, checkHeaderAndLoadItems(variant, filename, bitReader), iSC, iHC, bitReader.isNewFile());
     }
 
-    private ArrayList<D2Item> checkHeaderAndLoadItems(String filename, D2BitReader bitReader) {
+    private ArrayList<D2Item> checkHeaderAndLoadItems(Variant variant, String filename, D2BitReader bitReader) {
         if (!bitReader.isNewFile()) {
             bitReader.set_byte_pos(0);
             byte[] startingBytes = bitReader.get_bytes(3);
             String lStart = new String(startingBytes);
             if (!"D2X".equals(lStart)) throw new RuntimeException("Incorrect Stash type: " + lStart);
+            checkChecksum(bitReader);
+            checkVersionAndVariant(variant, bitReader);
             return readItems(filename, bitReader);
         } else {
             return new ArrayList<>();
         }
     }
 
-    private ArrayList<D2Item> readItems(String filename, D2BitReader bitReader) {
+    private void checkVersionAndVariant(Variant expectedVariant, D2BitReader bitReader) {
+        bitReader.set_byte_pos(5);
+        long versionNumber = bitReader.read(16);
+        if (versionNumber != CURRENT_FILE_VERSION)
+            throw new RuntimeException("Stash Version Incorrect! Expected: " + CURRENT_FILE_VERSION + " Found: " + versionNumber);
+        int variantAsInt = (int) bitReader.read(16);
+        Variant variantOrNull = tryParse(variantAsInt);
+        if (variantOrNull != expectedVariant)
+            throw new RuntimeException("Unrecognized variant, found: " + variantAsInt + " expected: " + expectedVariant + " (" + expectedVariant.getStashIdentifier() + ")");
+    }
+
+    private void checkChecksum(D2BitReader bitReader) {
         bitReader.set_byte_pos(CHECKSUM_BYTE_OFFSET_START);
         long originalChecksum = bitReader.read(CHECKSUM_BYTE_LENGTH * 8);
         long calculatedChecksum = calculateChecksum(bitReader);
-        if (originalChecksum == calculatedChecksum) {
-            bitReader.set_byte_pos(3);
-            long numItems = bitReader.read(16);
-            long versionNumber = bitReader.read(16);
-            if (versionNumber == CURRENT_FILE_VERSION) {
-                return readItemBytes(filename, bitReader, numItems);
-            } else {
-                throw new RuntimeException("Stash Version Incorrect! Expected: " + CURRENT_FILE_VERSION + " Found: " + versionNumber);
-            }
-        } else {
+        if (originalChecksum != calculatedChecksum) {
             throw new RuntimeException("Checksum Incorrect! Expected: " + originalChecksum + " Found: " + calculatedChecksum);
         }
     }
 
-    private ArrayList<D2Item> readItemBytes(String filename, D2BitReader bitReader, long numItems) {
+    private ArrayList<D2Item> readItems(String filename, D2BitReader bitReader) {
+        bitReader.set_byte_pos(3);
+        long numItems = bitReader.read(16);
         bitReader.set_byte_pos(HEADER_BYTE_LENGTH);
         ArrayList<D2Item> items = new ArrayList<>();
         for (int i = 0; i < numItems; i++) {

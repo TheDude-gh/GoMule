@@ -22,6 +22,7 @@ package gomule.d2x;
 
 import gomule.gui.D2ItemListAdapter;
 import gomule.item.D2Item;
+import gomule.model.VersionController.Variant;
 import gomule.util.D2Backup;
 import gomule.util.D2BitReader;
 import gomule.util.D2Project;
@@ -38,9 +39,9 @@ public class D2Stash extends D2ItemListAdapter {
     private final boolean iSC;
     public static final int FIXED_STASH_CHAR_LEVEL = 75; // default char lvl for properties
 
-    public D2Stash(String filename, ArrayList<D2Item> d2Items, boolean iSC, boolean iHC, boolean isNewFile) {
+    public D2Stash(Variant variant, String filename, ArrayList<D2Item> d2Items, boolean iSC, boolean iHC, boolean isNewFile) {
         super(filename);
-        this.stashWriter = new D2StashWriter(filename);
+        this.stashWriter = new D2StashWriter(variant, filename);
         this.filename = filename;
         this.iHC = iHC;
         this.iSC = iSC;
