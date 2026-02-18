@@ -21,6 +21,7 @@
 package gomule.gui;
 
 import gomule.d2x.D2Stash;
+import gomule.d2x.D2StashReader;
 import gomule.item.D2Item;
 import gomule.item.D2ItemRenderer;
 import gomule.util.D2CellStringRenderer;
@@ -60,6 +61,7 @@ public class D2ViewClipboard extends RandallPanel implements D2ItemContainer, D2
     private JTextField iBank;
 
     private JScrollPane lPane;
+    private final D2StashReader stashReader = new D2StashReader();
 
     private D2ViewClipboard(D2FileManager pFileManager) {
         iFileManager = pFileManager;
@@ -200,7 +202,7 @@ public class D2ViewClipboard extends RandallPanel implements D2ItemContainer, D2
             iStash = null;
         }
         iFileName = pProject.getProjectDir() + File.separator + "Clipboard.d2x";
-        iStash = new D2Stash(iFileName);
+        iStash = stashReader.readStash(iFileName);
         iStash.addD2ItemListListener(this);
         iItems = iStash.getItemList();
         if (iItemModel != null) {

@@ -1,7 +1,6 @@
 package gomule.d2i;
 
 import com.google.common.io.BaseEncoding;
-import gomule.item.D2Item;
 import gomule.util.D2BitReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +12,7 @@ import java.nio.file.Files;
 import static gomule.d2i.D2SharedStash.D2SharedStashPane;
 import static gomule.item.D2ItemTest.HEALTH_POT;
 import static gomule.item.D2ItemTest.SMALL_CHARM;
+import static gomule.util.TestHelpers.loadItem;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -125,20 +125,5 @@ public class D2SharedStashWriterTest {
                         readBackPane.getItems().get(j).get_bytes());
             }
         }
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private D2Item loadItem(byte[] b) throws Exception {
-        return loadItem(b, 2, 2);
-    }
-
-    private D2Item loadItem(byte[] b, int col, int row) throws Exception {
-        D2Item item = new D2Item("foo", new D2BitReader(b), 75);
-        item.set_col((short) col);
-        item.set_row((short) row);
-        item.set_location((short) 0);
-        item.set_body_position((short) 0);
-        item.set_panel((short) 5);
-        return item;
     }
 }

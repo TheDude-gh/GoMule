@@ -25,6 +25,7 @@ import gomule.d2i.D2SharedStash;
 import gomule.d2i.D2SharedStashReader;
 import gomule.d2s.D2Character;
 import gomule.d2x.D2Stash;
+import gomule.d2x.D2StashReader;
 import gomule.gui.D2FileManager;
 import gomule.item.D2Item;
 import gomule.item.D2Prop;
@@ -111,7 +112,7 @@ public class DirectD2Files {
                     }
                 } else if (lD2FileName.endsWith(".d2x")) {
                     try {
-                        D2Stash lStash = new D2Stash(lD2FileName);
+                        D2Stash lStash = new D2StashReader().readStash(lD2FileName);
                         lItems = lStash.getItemList();
                     } catch (Exception e) {
                         errStr = errStr + ("Error with stash " + lD2FileName + "\n");

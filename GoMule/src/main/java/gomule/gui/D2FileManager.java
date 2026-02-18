@@ -25,6 +25,7 @@ import gomule.d2i.D2SharedStash;
 import gomule.d2i.D2SharedStashReader;
 import gomule.d2s.D2Character;
 import gomule.d2x.D2Stash;
+import gomule.d2x.D2StashReader;
 import gomule.gui.sharedStash.D2ViewSharedStash;
 import gomule.item.D2Item;
 import gomule.util.D2Project;
@@ -70,6 +71,7 @@ public class D2FileManager extends JFrame {
     private static final String CURRENT_VERSION = "R0.45: Resurrected";
     private static final D2FileManager iCurrent = new D2FileManager();
     private final D2SharedStashReader sharedStashReader;
+    private final D2StashReader stashReader;
     private final JSplitPane lSplit;
     private final JSplitPane rSplit;
     private HashMap iItemLists = new HashMap();
@@ -115,6 +117,7 @@ public class D2FileManager extends JFrame {
     private D2FileManager() {
         D2TxtFile.constructTxtFiles("d2111");
         sharedStashReader = new D2SharedStashReader();
+        stashReader = new D2StashReader();
         iOpenWindows = new ArrayList();
         iContentPane = new JPanel();
         iDesktopPane = new JDesktopPane();
@@ -409,7 +412,7 @@ public class D2FileManager extends JFrame {
                 if (lDumpList != null) {
                     for (int x = 0; x < lDumpList.size(); x++) {
                         try {
-                            D2Stash d2Stash = new D2Stash((String) lDumpList.get(x));
+                            D2Stash d2Stash = stashReader.readStash((String) lDumpList.get(x));
                             if (!projTxtDump(
                                     (String) lDumpList.get(x),
                                     (D2ItemList) d2Stash,
@@ -1698,7 +1701,7 @@ public class D2FileManager extends JFrame {
             iItemLists.put(pFileName, lList);
             iViewProject.notifyItemListRead(pFileName);
         } else if (pFileName.toLowerCase().endsWith(".d2x")) {
-            lList = new D2Stash(pFileName);
+            lList = stashReader.readStash(pFileName);
 
             int lType = getProject().getType();
             if (lType == D2Project.TYPE_SC && (!lList.isSC() || lList.isHC())) {
