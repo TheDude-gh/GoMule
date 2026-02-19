@@ -41,13 +41,13 @@ public class D2StashReaderTest {
     @Test
     public void testWrongVariantStash() {
         String stashBytes = "44 32 58 01 00 69 00 01 00 64 02 9B 1D 10 04 A0 08 05 88 14 4F B4 00";
-        assertEquals("Unrecognized variant, found: 1 expected: EXPANSION (2)", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+        assertEquals("Unrecognized variant, found: null (1) expected: EXPANSION (2)", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
     }
 
     @Test
     public void testGarbledVariantStash() {
         String stashBytes = "44 32 58 01 00 69 00 63 00 64 02 CC 1D 10 04 A0 08 05 88 14 4F B4 00";
-        assertEquals("Unrecognized variant, found: 99 expected: EXPANSION (2)", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+        assertEquals("Unrecognized variant, found: null (99) expected: EXPANSION (2)", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
     }
 
     @Test

@@ -1,7 +1,6 @@
 package gomule.gui;
 
 import com.google.common.io.Closeables;
-import gomule.util.D2Project;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,14 +8,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public class FileManagerProperties {
-    private static File getFileManagerPropertiesFile() throws IOException {
-        File lProjectsDir = new File(D2Project.PROJECTS_ROOT_DIR);
-        if (!lProjectsDir.exists()) {
-            lProjectsDir.mkdir();
-        }
-
-        File lProps = new File(D2Project.PROJECTS_ROOT_DIR + File.separator + "projects.properties");
+public class WorkspaceProperties { //TODO combine with FileManagerProperties
+    private static File getWorkspacePropertiesFile(File workspaceDir) throws IOException {
+        File lProps = new File(workspaceDir, "workspace.properties");
         if (!lProps.exists()) {
             lProps.createNewFile();
         }
@@ -24,10 +18,10 @@ public class FileManagerProperties {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static Properties loadFileManagerProperties() {
+    public static Properties loadWorkspaceProperties(File workspaceDir) {
         FileInputStream fileInputStream = null;
         try {
-            fileInputStream = new FileInputStream(getFileManagerPropertiesFile());
+            fileInputStream = new FileInputStream(getWorkspacePropertiesFile(workspaceDir));
             Properties properties = new Properties();
             properties.load(fileInputStream);
             return properties;
@@ -38,10 +32,10 @@ public class FileManagerProperties {
         }
     }
 
-    public static void saveFileManagerProperties(Properties properties) {
+    public static void saveWorkspaceProperties(File workspaceDir, Properties properties) {
         FileOutputStream out = null;
         try {
-            out = new FileOutputStream(getFileManagerPropertiesFile());
+            out = new FileOutputStream(getWorkspacePropertiesFile(workspaceDir));
             properties.store(out, null);
         } catch (IOException ex) {
             D2FileManager.displayErrorDialog(ex);

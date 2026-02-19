@@ -51,6 +51,9 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import java.util.Queue;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -69,7 +72,7 @@ public class D2FileManager extends JFrame {
      */
     private static final long serialVersionUID = 4010435064410504579L;
 
-    private static final String CURRENT_VERSION = "R0.45: Resurrected";
+    private static final String CURRENT_VERSION = "R0.45";
     private static final D2FileManager iCurrent = new D2FileManager();
     private final D2SharedStashReader sharedStashReader;
     private final D2StashReader stashReader;
@@ -114,7 +117,9 @@ public class D2FileManager extends JFrame {
     private JButton dumpBut;
 
     private JButton flavieSingle;
-    private final VersionController.Variant variant = VersionController.Variant.EXPANSION;
+    private VersionController.Variant variant;
+    private VersionController.Version version;
+    private Properties workspaceProperties;
 
     private D2FileManager() {
         D2TxtFile.constructTxtFiles("d2111");
@@ -126,9 +131,13 @@ public class D2FileManager extends JFrame {
         iDesktopPane.setDragMode(1);
 
         iContentPane.setLayout(new BorderLayout());
+        iProperties = FileManagerProperties.loadFileManagerProperties();
+        variant = VersionController.Variant.valueOf(iProperties.getProperty("variant", "EXPANSION"));
+        version = VersionController.Version.valueOf(iProperties.getProperty("version", "D2R3"));
 
         createToolbar();
         createMenubar();
+        initializeProject();
         createLeftPane();
         createRightPane();
 
@@ -228,11 +237,11 @@ public class D2FileManager extends JFrame {
         lDialog.setVisible(true);
     }
 
-    private void checkProjectsModel() {
+    private void loadProjectsModel() {
         iProjectModel.removeAllElements();
-        File lProjectsDir = new File(D2Project.PROJECTS_DIR);
+        File lProjectsDir = D2Project.getWorkspaceDir(this);
         if (!lProjectsDir.exists()) {
-            lProjectsDir.mkdir();
+            lProjectsDir.mkdirs();
         } else {
             File lList[] = lProjectsDir.listFiles();
             for (int i = 0; i < lList.length; i++) {
@@ -252,7 +261,7 @@ public class D2FileManager extends JFrame {
         iLeftPane = new RandallPanel();
 
         iProjectModel = new DefaultComboBoxModel();
-        checkProjectsModel();
+        loadProjectsModel();
         iChangeProject = new JComboBox(iProjectModel);
         iChangeProject.setPreferredSize(new Dimension(190, 20));
         iChangeProject.setSelectedItem(iProject.getProjectName());
@@ -323,17 +332,17 @@ public class D2FileManager extends JFrame {
                 }
                 D2Project delProjName = iProject;
                 if (JOptionPane.showConfirmDialog(
-                                iContentPane,
-                                "Are you sure you want to delete this project? (Your clipboard will be lost!)",
-                                "Really?",
-                                JOptionPane.YES_NO_OPTION)
+                        iContentPane,
+                        "Are you sure you want to delete this project? (Your clipboard will be lost!)",
+                        "Really?",
+                        JOptionPane.YES_NO_OPTION)
                         == 0) {
                     setProject("GoMule");
                     if (!delProjName.delProj()) {
                         JOptionPane.showMessageDialog(
                                 iContentPane, "Error deleting project!", "Error!", JOptionPane.ERROR_MESSAGE);
                     } else {
-                        checkProjectsModel();
+                        loadProjectsModel();
                     }
                 }
             }
@@ -344,10 +353,10 @@ public class D2FileManager extends JFrame {
         clProj.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 if (JOptionPane.showConfirmDialog(
-                                iContentPane,
-                                "Are you sure you want to clear this project?",
-                                "Really?",
-                                JOptionPane.YES_NO_OPTION)
+                        iContentPane,
+                        "Are you sure you want to clear this project?",
+                        "Really?",
+                        JOptionPane.YES_NO_OPTION)
                         == 0) {
                     closeWindows();
                     if (!iProject.clearProj()) {
@@ -484,24 +493,24 @@ public class D2FileManager extends JFrame {
             String reportName;
             if (singleDump) {
                 String fileName = ((D2ItemContainer)
-                                iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame())))
+                        iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame())))
                         .getFileName();
                 if (fileName.endsWith(".d2s")) {
                     reportName = (((D2ViewChar) iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame())))
-                                    .getChar()
-                                    .getCharName()
+                            .getChar()
+                            .getCharName()
                             + iProject.getReportName());
 
                 } else if (fileName.endsWith(".d2i")) {
                     reportName = ((((D2ViewSharedStash)
-                                            iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()))))
-                                    .getSharedStashName()
+                            iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()))))
+                            .getSharedStashName()
                             + iProject.getReportName());
                     reportName = reportName.replace(".d2i", "");
                 } else {
                     reportName =
                             ((((D2ViewStash) iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()))))
-                                            .getStashName()
+                                    .getStashName()
                                     + iProject.getReportName());
                     reportName = reportName.replace(".d2x", "");
                 }
@@ -640,13 +649,13 @@ public class D2FileManager extends JFrame {
         });
 
         pickFrom = new JButton("Pickup From ...");
-        pickChooser = new JComboBox(new String[] {"Stash", "Inventory", "Cube", "Equipped"});
+        pickChooser = new JComboBox(new String[]{"Stash", "Inventory", "Cube", "Equipped"});
         pickFrom.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
 
                 if (iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()) > -1) {
                     D2ItemList iList = ((D2ItemContainer)
-                                    iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame())))
+                            iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame())))
                             .getItemLists();
                     iList.ignoreItemListEvents();
                     try {
@@ -693,7 +702,7 @@ public class D2FileManager extends JFrame {
         });
 
         dropTo = new JButton("Drop To ...");
-        dropChooser = new JComboBox(new String[] {"Stash", "Inventory", "Cube"});
+        dropChooser = new JComboBox(new String[]{"Stash", "Inventory", "Cube"});
 
         dropTo.addActionListener(new ActionListener() {
 
@@ -737,8 +746,8 @@ public class D2FileManager extends JFrame {
                                 iContentPane,
                                 "Char/Stash dump was a success.\nFile: "
                                         + (((D2ItemContainer) iOpenWindows.get(
-                                                        iOpenWindows.indexOf(iDesktopPane.getSelectedFrame())))
-                                                .getFileName())
+                                        iOpenWindows.indexOf(iDesktopPane.getSelectedFrame())))
+                                        .getFileName())
                                         + ".txt",
                                 "Success!",
                                 JOptionPane.INFORMATION_MESSAGE);
@@ -890,8 +899,6 @@ public class D2FileManager extends JFrame {
                 closeListener();
             }
         });
-
-        checkProjects();
     }
 
     public D2Project getProject() {
@@ -1044,10 +1051,116 @@ public class D2FileManager extends JFrame {
         rearrangeWindows.addActionListener(e -> rearrangeWindows());
         iToolbar.addSeparator();
         iToolbar.add(rearrangeWindows);
-
         iToolbar.addSeparator();
-
+        iToolbar.add(createVersionSwitcher());
+        iToolbar.addSeparator();
+        iToolbar.add(createVariantSwitcher());
+        iToolbar.addSeparator();
         iContentPane.add(iToolbar, BorderLayout.NORTH);
+    }
+
+    private <T extends Enum<T>> JComboBox<String> createSwitcher(
+            String label,
+            T[] values,
+            Supplier<T> getCurrentValue,
+            String tooltip,
+            Function<T, String> nameExtractor,
+            Function<String, T> valueParser,
+            Function<T, Boolean> onSelect
+    ) {
+        iToolbar.add(new JLabel(label + ": "));
+
+        String[] names = Arrays.stream(values).map(nameExtractor).toArray(String[]::new);
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(names);
+
+        JComboBox<String> switcher = new JComboBox<>(model);
+        switcher.setSelectedItem(nameExtractor.apply(getCurrentValue.get()));
+        switcher.setToolTipText("<html><font color=white>" + tooltip + "</font></html>");
+
+        switcher.addActionListener(e -> {
+            T selectedValue = valueParser.apply((String) switcher.getSelectedItem());
+            if (!selectedValue.equals(getCurrentValue.get())) {
+                boolean success = onSelect.apply(selectedValue);
+                if (!success) {
+                    SwingUtilities.invokeLater(() -> {
+                        switcher.setSelectedItem(nameExtractor.apply(getCurrentValue.get()));
+                    });
+                }
+            }
+        });
+        switcher.setMaximumSize(switcher.getPreferredSize());
+        return switcher;
+    }
+
+    private JComboBox<String> createVersionSwitcher() {
+        JComboBox<String> switcher = createSwitcher(
+                "Version",
+                VersionController.Version.values(),
+                () -> this.version,
+                "Switch between game versions",
+                VersionController.Version::getHumanName,
+                VersionController.Version::fromHumanName,
+                this::switchGameVersion
+        );
+        switcher.setEnabled(false);
+        return switcher;
+    }
+
+    private JComboBox<String> createVariantSwitcher() {
+        return createSwitcher(
+                "Variant",
+                VersionController.Variant.values(),
+                () -> this.variant,
+                "Switch between game variants",
+                VersionController.Variant::getHumanName,
+                VersionController.Variant::fromHumanName,
+                this::switchGameVariant
+        );
+    }
+
+    private boolean switchGameVersion(VersionController.Version selectedVersion) {
+        return onSwitcher("Version", (it) -> this.version = it, selectedVersion);
+    }
+
+    private boolean switchGameVariant(VersionController.Variant selectedVariant) {
+        return onSwitcher("Variant", (it) -> this.variant = it, selectedVariant);
+    }
+
+    private <T extends Enum<T>> boolean onSwitcher(String type, Consumer<T> consumer, T newValue) {
+        workCursor();
+        if (this.iProperties.getProperty("skip_switch_warning", "false").equals("false")) {
+            JCheckBox dontShowAgain = new JCheckBox("Don't show this again");
+            Object[] message = {
+                    "Switching game " + type.toLowerCase() + " will close all open windows and reload data.\n\n" +
+                            "All changes will be saved automatically.\n\nContinue?",
+                    dontShowAgain
+            };
+
+            int result = JOptionPane.showOptionDialog(
+                    this,
+                    message,
+                    "Switch Game " + type,
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null, null, null
+            );
+
+            if (dontShowAgain.isSelected()) {
+                this.iProperties.setProperty("skip_switch_warning", "true");
+            }
+
+            if (result != JOptionPane.YES_OPTION) {
+                return false;
+            }
+        }
+
+        closeWindows();
+        setAndSaveWorkspaceProperties();
+        consumer.accept(newValue);
+        initializeProject();
+        loadProjectsModel();
+        defaultCursor();
+        return true;
     }
 
     private void rearrangeWindows() {
@@ -1103,25 +1216,13 @@ public class D2FileManager extends JFrame {
                 }));
     }
 
-    private void checkProjects() {
+    private void initializeProject() {
         try {
-            iProperties = FileManagerProperties.loadFileManagerProperties();
-            String lCurrent = iProperties.getProperty("current-project"); // ,
-            // "DefaultProject");
-
-            if (lCurrent != null) {
-                String lProjectDirStr = D2Project.PROJECTS_DIR + File.separator + lCurrent;
-                File lProjectDir = new File(lProjectDirStr);
-                if (!lProjectDir.exists()) {
-                    lCurrent = null;
-                }
-            }
-            if (lCurrent == null) {
-                lCurrent = "GoMule";
-            }
-
-            iProject = new D2Project(this, lCurrent);
-            //			iBtnProjectSelection.setText(lCurrent);
+            File workspaceDir = D2Project.getWorkspaceDir(this);
+            if (!workspaceDir.exists()) workspaceDir.mkdirs();
+            workspaceProperties = WorkspaceProperties.loadWorkspaceProperties(workspaceDir);
+            String lCurrent = workspaceProperties.getProperty("current-project");
+            iProject = new D2Project(this, lCurrent == null ? "GoMule" : lCurrent);
         } catch (Exception pEx) {
             displayErrorDialog(pEx);
             iProject = null;
@@ -1136,7 +1237,6 @@ public class D2FileManager extends JFrame {
      * windows save on close
      */
     public void closeListener() {
-        iProperties.setProperty("current-project", iProject.getProjectName());
         Rectangle bounds = getBounds();
         iProperties.setProperty("win-state", String.valueOf(getExtendedState()));
         iProperties.setProperty("win-ldiv-loc", String.valueOf(lSplit.getDividerLocation()));
@@ -1147,9 +1247,17 @@ public class D2FileManager extends JFrame {
             iProperties.setProperty("win-height", String.valueOf(bounds.height));
             iProperties.setProperty("win-width", String.valueOf(bounds.width));
         }
+        iProperties.setProperty("variant", variant.name());
+        iProperties.setProperty("version", version.name());
         FileManagerProperties.saveFileManagerProperties(iProperties);
+        setAndSaveWorkspaceProperties();
         closeWindows();
         System.exit(0);
+    }
+
+    private void setAndSaveWorkspaceProperties() {
+        workspaceProperties.setProperty("current-project", iProject.getProjectName());
+        WorkspaceProperties.saveWorkspaceProperties(D2Project.getWorkspaceDir(this), workspaceProperties);
     }
 
     public void closeFileName(String pFileName) {
@@ -1489,17 +1597,23 @@ public class D2FileManager extends JFrame {
                 }
             }
 
-            public void internalFrameClosed(InternalFrameEvent arg0) {}
+            public void internalFrameClosed(InternalFrameEvent arg0) {
+            }
 
-            public void internalFrameClosing(InternalFrameEvent arg0) {}
+            public void internalFrameClosing(InternalFrameEvent arg0) {
+            }
 
-            public void internalFrameDeactivated(InternalFrameEvent arg0) {}
+            public void internalFrameDeactivated(InternalFrameEvent arg0) {
+            }
 
-            public void internalFrameDeiconified(InternalFrameEvent arg0) {}
+            public void internalFrameDeiconified(InternalFrameEvent arg0) {
+            }
 
-            public void internalFrameIconified(InternalFrameEvent arg0) {}
+            public void internalFrameIconified(InternalFrameEvent arg0) {
+            }
 
-            public void internalFrameOpened(InternalFrameEvent arg0) {}
+            public void internalFrameOpened(InternalFrameEvent arg0) {
+            }
         });
         iViewProject.notifyFileOpened(pContainer.getFileName());
 
@@ -1557,7 +1671,7 @@ public class D2FileManager extends JFrame {
         String[] fNamesOut = new String[pStashChooser.getSelectedFiles().length];
         File[] stashList = pStashChooser.getSelectedFiles();
         if (pStashChooser.getSelectedFiles().length == 0 && pStashChooser.getSelectedFile() != null) {
-            stashList = new File[] {pStashChooser.getSelectedFile()};
+            stashList = new File[]{pStashChooser.getSelectedFile()};
             fNamesOut = new String[1];
         }
 
@@ -1620,7 +1734,7 @@ public class D2FileManager extends JFrame {
         String[] fNamesOut = new String[pSharedStashChooser.getSelectedFiles().length];
         File[] stashList = pSharedStashChooser.getSelectedFiles();
         if (pSharedStashChooser.getSelectedFiles().length == 0 && pSharedStashChooser.getSelectedFile() != null) {
-            stashList = new File[] {pSharedStashChooser.getSelectedFile()};
+            stashList = new File[]{pSharedStashChooser.getSelectedFile()};
             fNamesOut = new String[1];
         }
 
@@ -1777,6 +1891,10 @@ public class D2FileManager extends JFrame {
 
     public void defaultCursor() {
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    }
+
+    public VersionController.Version getVersion() {
+        return version;
     }
 
     public VersionController.Variant getVariant() {

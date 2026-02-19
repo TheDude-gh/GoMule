@@ -3,12 +3,11 @@ package gomule.d2i;
 import com.google.common.io.BaseEncoding;
 import gomule.d2i.D2SharedStash.D2SharedStashPane;
 import gomule.item.D2Item;
+import gomule.model.VersionController;
 import gomule.util.D2BitReader;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gomule.model.VersionController.CURRENT_FILE_VERSION;
 
 public class D2SharedStashReader {
 
@@ -32,7 +31,7 @@ public class D2SharedStashReader {
     private D2SharedStashPane readSharedStashPane(D2BitReader bitReader, String filename) throws Exception {
         int stashPaneStart = bitReader.get_byte_pos();
         D2SharedStash.Header header = D2SharedStash.Header.fromBytes(bitReader);
-        if (header.getVersion() != CURRENT_FILE_VERSION)
+        if (header.getVersion() != VersionController.Version.D2R3.getFileVersionIdentifier())
             throw new RuntimeException("Incorrect shared stash version: " + header.getVersion());
         bitReader.set_byte_pos(bitReader.findNextFlag("JM", bitReader.get_byte_pos()));
         bitReader.skipBytes(2);

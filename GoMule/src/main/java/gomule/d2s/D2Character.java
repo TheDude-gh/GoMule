@@ -28,6 +28,7 @@ import gomule.item.D2BodyLocations;
 import gomule.item.D2Item;
 import gomule.item.D2ItemRenderer;
 import gomule.item.D2Prop;
+import gomule.model.VersionController;
 import gomule.util.D2Backup;
 import gomule.util.D2BitReader;
 import gomule.util.D2Project;
@@ -41,8 +42,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-
-import static gomule.model.VersionController.CURRENT_FILE_VERSION;
 
 //a character class
 //manages one character file
@@ -145,7 +144,7 @@ public class D2Character extends D2ItemListAdapter {
         iReader.set_byte_pos(4);
         long lVersion = iReader.read(32);
 //        System.err.println("Version: " + lVersion);
-        if (lVersion != CURRENT_FILE_VERSION) throw new Exception("Incorrect Character version: " + lVersion);
+        if (lVersion != VersionController.Version.D2R3.getFileVersionIdentifier()) throw new Exception("Incorrect Character version: " + lVersion);
         iReader.set_byte_pos(8);
         long lSize = iReader.read(32);
         if (iReader.get_length() != lSize) throw new Exception("Incorrect FileSize: " + lSize);

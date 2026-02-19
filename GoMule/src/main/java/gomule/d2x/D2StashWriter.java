@@ -1,12 +1,11 @@
 package gomule.d2x;
 
 import gomule.item.D2Item;
+import gomule.model.VersionController;
 import gomule.model.VersionController.Variant;
 import gomule.util.D2BitReader;
 
 import java.io.File;
-
-import static gomule.model.VersionController.CURRENT_FILE_VERSION;
 
 public class D2StashWriter {
     private final Variant variant;
@@ -29,7 +28,7 @@ public class D2StashWriter {
         bitWriter.write('2', 8);
         bitWriter.write('X', 8);
         bitWriter.write(stash.getNrItems(), 16);
-        bitWriter.write(CURRENT_FILE_VERSION, 16);
+        bitWriter.write(VersionController.Version.D2R3.getFileVersionIdentifier(), 16);
         bitWriter.write(variant.getStashIdentifier(), 16);
         bitWriter.skipBytes(4);
     }

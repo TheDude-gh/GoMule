@@ -42,7 +42,7 @@ import java.util.Properties;
  * Preferences - Java - Code Style - Code Templates
  */
 public class D2Project {
-    public static final String PROJECTS_DIR = "projects";
+    public static final String PROJECTS_ROOT_DIR = "projects";
     public static final int TYPE_SC = 1;
     public static final int TYPE_HC = 2;
     public static final int TYPE_BOTH = 3;
@@ -52,7 +52,7 @@ public class D2Project {
     public static final int BACKUP_NONE = 4;
     private D2FileManager iFileManager;
     private String iProjectName;
-    private String iProjectDir;
+    private File iProjectDir;
     private File iFile;
     private JFileChooser iCharDialog;
     private JFileChooser iStashDialog;
@@ -79,17 +79,14 @@ public class D2Project {
     public D2Project(D2FileManager pFileManager, String pProjectName) {
         iFileManager = pFileManager;
         boolean lNew = false;
-
         iProjectName = pProjectName;
-        iProjectDir = PROJECTS_DIR + File.separator + iProjectName;
-        File lProjectDir = new File(iProjectDir);
-        if (!lProjectDir.exists()) {
-            // if it doesn't exist, make it
-            lProjectDir.mkdir();
+        iProjectDir = getProjectDir(iProjectName);
+        if (!iProjectDir.exists()) {
+            iProjectDir.mkdirs();
             lNew = true;
         }
 
-        iFile = new File(iProjectDir + File.separator + "project.properties");
+        iFile = new File(iProjectDir, "project.properties");
         Properties lLoadProperties = new Properties();
         if (iFile.exists() && iFile.canRead()) {
             try {
@@ -243,6 +240,14 @@ public class D2Project {
         } // end else not new
     }
 
+    private File getProjectDir(String projectName) {
+        return new File(getWorkspaceDir(iFileManager), projectName);
+    }
+
+    public static File getWorkspaceDir(D2FileManager iFileManager) {
+        return new File( PROJECTS_ROOT_DIR + File.separator + iFileManager.getVersion().name().toLowerCase() + File.separator + iFileManager.getVariant().name().toLowerCase());
+    }
+
     private boolean delDir(File dir) {
 
         boolean delFail = true;
@@ -261,8 +266,7 @@ public class D2Project {
     }
 
     public boolean delProj() {
-
-        return delDir(new File(iProjectDir));
+        return delDir(iProjectDir);
     }
 
     private boolean getBooleanFromString(String pString, boolean pDefault) {
@@ -374,7 +378,7 @@ public class D2Project {
         return iProjectName;
     }
 
-    public String getProjectDir() {
+    public File getProjectDir() {
         return iProjectDir;
     }
 
@@ -445,6 +449,7 @@ public class D2Project {
 
         try { // iFile.getCanonicalPath()
             if (!iFile.exists()) {
+                System.out.println(iFile.getAbsolutePath() + " does not exist, creating it.");
                 iFile.createNewFile();
             }
             if (iFile.canWrite()) {
