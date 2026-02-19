@@ -1,6 +1,7 @@
 package gomule.d2s;
 
 import com.google.common.io.Resources;
+import gomule.model.VersionController;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -10,10 +11,14 @@ import randall.d2files.D2TxtFile;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Objects.requireNonNull;
+import static java.io.File.separator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings("UnstableApiUsage")
 public class D2CharacterTest {
@@ -40,20 +45,32 @@ public class D2CharacterTest {
         }
     }
 
+    @Test
+    public void testWrongVariant() {
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> new D2Character(VersionController.Variant.EXPANSION, Resources.getResource("charFiles/ROW/bleh.d2s").getFile()));
+        assertEquals("Unrecognized variant, found: ROW (3) expected: EXPANSION (2)", runtimeException.getMessage());
+    }
+
     static Stream<CharacterTestCase> charFileProvider() throws Exception {
-        File charFilesDir = new File(Resources.getResource("charFiles").toURI());
-        return Stream.of(requireNonNull(charFilesDir.listFiles()))
-                .filter(file -> file.getName().endsWith(".d2s"))
-                .map(file -> {
-                    try {
-                        String charName = file.getName().substring(0, file.getName().length() - 4);
-                        D2Character character = new D2Character(file.getAbsolutePath());
-                        File expectedFile = new File(charFilesDir, charName + ".d2s.expected");
-                        return new CharacterTestCase(charName, character, expectedFile);
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error with: " + file.getName(), e);
-                    }
-                });
+        Path charFilesPath = Paths.get(new File("src" + separator + "test" + separator + "resources" + separator + "charFiles").toURI());
+        try (Stream<Path> pathStream = Files.walk(charFilesPath)) {
+            return pathStream
+                    .filter(path -> path.toString().endsWith(".d2s"))
+                    .map(path -> {
+                        try {
+                            String fileName = path.getFileName().toString();
+                            String charName = fileName.substring(0, fileName.length() - 4);
+                            int count = path.getNameCount();
+                            D2Character character = new D2Character(VersionController.Variant.valueOf(path.getName(count - 2).toString()), path.toAbsolutePath().toString());
+                            File expectedFile = path.resolveSibling(fileName + ".expected").toFile();
+                            return new CharacterTestCase(charName, character, expectedFile);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Error with: " + path.getFileName(), e);
+                        }
+                    })
+                    .collect(Collectors.toList())
+                    .stream();
+        }
     }
 
     @ParameterizedTest
@@ -75,9 +92,8 @@ public class D2CharacterTest {
         charFileProvider().forEach(testCase -> {
             try {
                 String output = testCase.character.fullDumpStr().replaceAll("\r", "");
-                File expectedFile = new File(sourceCharFilesDir, testCase.name + ".d2s.expected");
-                Files.write(expectedFile.toPath(), output.getBytes());
-                System.out.println("Generated: " + expectedFile.getAbsolutePath());
+                Files.write(testCase.expectedFile.toPath(), output.getBytes());
+                System.out.println("Generated: " + testCase.expectedFile.getAbsolutePath());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

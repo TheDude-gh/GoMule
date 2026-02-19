@@ -28,10 +28,6 @@ public class VersionController {
             return humanName;
         }
 
-        public static Version tryParse(int stashIdentifier) {
-            return firstOrNull(Version.values(), it -> it.fileVersionIdentifier, stashIdentifier);
-        }
-
         public static Version fromHumanName(String humanName) {
             return getFirst(Version.values(), it -> it.humanName, humanName).orElseThrow(() -> new IllegalArgumentException("Unknown version: " + humanName));
         }
@@ -40,14 +36,16 @@ public class VersionController {
     public enum Variant {
 
 //        CLASSIC(1, "Classic"), //TODO
-        EXPANSION(2, "Expansion"),
-        ROW(3, "Return of the Warlock");
+        EXPANSION(2, 2, "Expansion"),
+        ROW(3, 3, "Return of the Warlock");
 
         private final int stashIdentifier;
+        private final int fileVersionIdentifier;
         private final String humanName;
 
-        Variant(int stashIdentifier, String humanName) {
+        Variant(int stashIdentifier, int fileVersionIdentifier, String humanName) {
             this.stashIdentifier = stashIdentifier;
+            this.fileVersionIdentifier = fileVersionIdentifier;
             this.humanName = humanName;
         }
 
@@ -59,8 +57,16 @@ public class VersionController {
             return humanName;
         }
 
-        public static Variant tryParse(int stashIdentifier) {
+        public int getFileVersionIdentifier() {
+            return fileVersionIdentifier;
+        }
+
+        public static Variant tryParseStashIdentifier(int stashIdentifier) {
             return firstOrNull(Variant.values(), it -> it.stashIdentifier, stashIdentifier);
+        }
+
+        public static Variant tryParseFileVersionIdentifier(int fileVersionIdentifier) {
+            return firstOrNull(Variant.values(), it -> it.fileVersionIdentifier, fileVersionIdentifier);
         }
 
         public static Variant fromHumanName(String humanName) {

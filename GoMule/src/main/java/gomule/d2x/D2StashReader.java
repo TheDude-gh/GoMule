@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import static gomule.d2x.D2Stash.FIXED_STASH_CHAR_LEVEL;
 import static gomule.d2x.D2StashWriter.*;
-import static gomule.model.VersionController.Variant.tryParse;
+import static gomule.model.VersionController.Variant.tryParseStashIdentifier;
 
 public class D2StashReader {
     public D2Stash readStash(Variant variant, String filename) {
@@ -51,7 +51,7 @@ public class D2StashReader {
         if (versionNumber != VersionController.Version.D2R3.getFileVersionIdentifier())
             throw new RuntimeException("Stash Version Incorrect! Expected: " + VersionController.Version.D2R3.getFileVersionIdentifier() + " Found: " + versionNumber);
         int variantAsInt = (int) bitReader.read(16);
-        Variant variantOrNull = tryParse(variantAsInt);
+        Variant variantOrNull = tryParseStashIdentifier(variantAsInt);
         if (variantOrNull != expectedVariant)
             throw new RuntimeException("Unrecognized variant, found: " + variantOrNull + " (" + variantAsInt + ")" + " expected: " + expectedVariant + " (" + expectedVariant.getStashIdentifier() + ")");
     }

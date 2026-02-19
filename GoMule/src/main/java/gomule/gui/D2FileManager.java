@@ -405,7 +405,7 @@ public class D2FileManager extends JFrame {
                 if (lDumpList != null) {
                     for (int x = 0; x < lDumpList.size(); x++) {
                         try {
-                            D2Character d2Char = new D2Character((String) lDumpList.get(x));
+                            D2Character d2Char = new D2Character(variant, (String) lDumpList.get(x));
                             if (!projTxtDump(
                                     (String) lDumpList.get(x),
                                     (D2ItemList) d2Char,
@@ -1804,7 +1804,7 @@ public class D2FileManager extends JFrame {
             lList = new D2ItemListAll(this, iProject);
             //			iViewProject.notifyItemListOpened("all");
         } else if (pFileName.toLowerCase().endsWith(".d2s")) {
-            lList = new D2Character(pFileName);
+            lList = new D2Character(variant, pFileName);
 
             int lType = getProject().getType();
             if (lType == D2Project.TYPE_SC && (!lList.isSC() || lList.isHC())) {

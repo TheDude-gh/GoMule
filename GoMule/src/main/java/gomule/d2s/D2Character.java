@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static gomule.model.VersionController.Variant.tryParseFileVersionIdentifier;
+
 //a character class
 //manages one character file
 //stores a filename, a bitreader
@@ -127,24 +129,32 @@ public class D2Character extends D2ItemListAdapter {
     private byte iBeforeItems[];
     private byte iBetweenItems[];
     private byte iAfterItems[];
+    private VersionController.Variant variant;
 
-    public D2Character(String pFileName) throws Exception {
+    public D2Character(VersionController.Variant expectedVariant, String pFileName) throws Exception {
         super(pFileName);
         if (iFileName == null || !iFileName.toLowerCase().endsWith(".d2s"))
             throw new Exception("Incorrect Character file name");
         iCharItems = new ArrayList();
         iMercItems = new ArrayList();
         iReader = new D2BitReader(iFileName);
-        readChar();
+        readChar(expectedVariant);
         // clear status
         setModified(false);
     }
 
-    private void readChar() throws Exception {
+    private void readChar(VersionController.Variant expectedVariant) throws Exception {
         iReader.set_byte_pos(4);
         long lVersion = iReader.read(32);
 //        System.err.println("Version: " + lVersion);
-        if (lVersion != VersionController.Version.D2R3.getFileVersionIdentifier()) throw new Exception("Incorrect Character version: " + lVersion);
+        if (lVersion != VersionController.Version.D2R3.getFileVersionIdentifier())
+            throw new Exception("Incorrect Character version: " + lVersion);
+        iReader.set_byte_pos(248);
+        int variantAsInt = (int) iReader.read(8);
+        VersionController.Variant variantOrNull = tryParseFileVersionIdentifier(variantAsInt);
+        if (variantOrNull != expectedVariant)
+            throw new RuntimeException("Unrecognized variant, found: " + variantOrNull + " (" + variantAsInt + ")" + " expected: " + expectedVariant + " (" + expectedVariant.getFileVersionIdentifier() + ")");
+        this.variant = variantOrNull;
         iReader.set_byte_pos(8);
         long lSize = iReader.read(32);
         if (iReader.get_length() != lSize) throw new Exception("Incorrect FileSize: " + lSize);
@@ -1963,6 +1973,7 @@ public class D2Character extends D2ItemListAdapter {
                 "Name:       " + getCharName() + "\n" +
                         "Class:      " + getCharClass() + "\n" +
                         "Hardcore:   " + isHC() + "\n" +
+                        "Variant :   " + variant.getHumanName() + "\n" +
                         "Experience: " + getCharExp() + "\n" +
                         "Level:      " + getCharLevel() + "\n" +
                         /*"NOTIMP:     " + getCharDead() + "\n"+*/ "\n" + "            Naked/Gear" + "\n" +

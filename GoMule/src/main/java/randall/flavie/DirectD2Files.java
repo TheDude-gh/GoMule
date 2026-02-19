@@ -98,7 +98,7 @@ public class DirectD2Files {
 
                 if (lD2FileName.endsWith(".d2s")) {
                     try {
-                        D2Character lCharacter = new D2Character(lD2FileName);
+                        D2Character lCharacter = new D2Character(iFlavie.getVariant(), lD2FileName);
                         lItems = lCharacter.getItemList();
                     } catch (Exception e) {
                         errStr = errStr + ("Error with char " + lD2FileName + "\n");
@@ -175,7 +175,7 @@ public class DirectD2Files {
                                                         "skilldesc",
                                                         D2TxtFile.SKILLS
                                                                 .getRow(((D2Prop) (pItem.getPropCollection()
-                                                                                .get(x)))
+                                                                        .get(x)))
                                                                         .getPVals()[1])
                                                                 .get("skilldesc"))
                                                 .get("str name"));
@@ -188,7 +188,7 @@ public class DirectD2Files {
                                                         "skilldesc",
                                                         D2TxtFile.SKILLS
                                                                 .getRow(((D2Prop) (pItem.getPropCollection()
-                                                                                .get(x)))
+                                                                        .get(x)))
                                                                         .getPVals()[1])
                                                                 .get("skilldesc"))
                                                 .get("str name"));

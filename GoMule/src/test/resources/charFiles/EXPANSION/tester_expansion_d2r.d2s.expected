@@ -1,6 +1,7 @@
 Name:       tester
 Class:      Amazon
 Hardcore:   false
+Variant :   Expansion
 Experience: 0
 Level:      1
 
