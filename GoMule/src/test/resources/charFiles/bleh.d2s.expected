@@ -1,0 +1,88 @@
+Name:       bleh
+Class:      Necromancer
+Hardcore:   false
+Experience: 0
+Level:      1
+
+            Naked/Gear
+Strength:   15/15
+Dexterity:  25/29
+Vitality:   15/15
+Energy:     25/25
+HP:         45/45
+Mana:       25/25
+Stamina:    79/79
+Defense:    6/7
+AR:         80/100
+
+Fire:       0/-40/-100
+Cold:       0/-40/-100
+Lightning:  0/-40/-100
+Poison:     0/-40/-100
+
+MF:         0       Block:      140
+GF:         0       FR/W:       0
+FHR:        0       IAS:        0
+FCR:        0
+
+Amplify Damage: 0/0
+Dim Vision: 0/0
+Weaken: 0/0
+Iron Maiden: 0/0
+Terror: 0/0
+Confuse: 0/0
+Life Tap: 0/0
+Attract: 0/0
+Decrepify: 0/0
+Lower Resist: 0/0
+
+Teeth: 0/0
+Bone Armor: 0/0
+Poison Dagger: 0/0
+Corpse Explosion: 0/0
+Bone Wall: 0/0
+Poison Explosion: 0/0
+Bone Spear: 0/0
+Bone Prison: 0/0
+Poison Nova: 0/0
+Bone Spirit: 0/0
+
+Skeleton Mastery: 0/0
+Raise Skeleton: 0/1
+Clay Golem: 0/0
+Golem Mastery: 0/0
+Raise Skeletal Mage: 0/0
+Blood Golem: 0/0
+Summon Resist: 0/0
+Iron Golem: 0/0
+Fire Golem: 0/0
+Revive: 0/0
+
+Khalim's Eye
+Version: Resurrected
+
+Harpoonist's Grand Charm of Dexterity
+Grand Charm
+Required Level: 42
+Fingerprint: 0xf15c64eb
+Item Level: 85
+Version: Resurrected
++1 to Javelin and Spear Skills (Amazon Only)
++4 to Dexterity
+
+The Golden Bird
+Version: Resurrected
+
+Wand
+One Hand Damage: 2 - 4
+Durability: 15 of 15
+Required Level: 1
+Fingerprint: 0xea55f3ee
+Item Level: 1
+Version: Resurrected
++1 to Raise Skeleton (Necromancer Only)
+
+Mercenary:
+
+
+
