@@ -2,6 +2,7 @@ package gomule.d2i;
 
 import gomule.gui.D2ItemListAdapter;
 import gomule.item.D2Item;
+import gomule.model.VersionController.Variant;
 import gomule.util.D2Backup;
 import gomule.util.D2BitReader;
 import gomule.util.D2Project;
@@ -15,11 +16,11 @@ public class D2SharedStash extends D2ItemListAdapter {
     private final byte[] originalContent;
     private final D2SharedStashWriter sharedStashWriter;
 
-    public D2SharedStash(String pFileName, List<D2SharedStashPane> panes, byte[] originalContent) {
+    public D2SharedStash(Variant variant, String pFileName, List<D2SharedStashPane> panes, byte[] originalContent) {
         super(pFileName);
         this.panes = panes;
         this.originalContent = originalContent;
-        this.sharedStashWriter = new D2SharedStashWriter(pFileName, originalContent);
+        this.sharedStashWriter = new D2SharedStashWriter(variant, pFileName, originalContent);
     }
 
     public D2SharedStashPane getPane(int index) {

@@ -4,6 +4,7 @@ import com.google.common.io.BaseEncoding;
 import gomule.d2i.D2SharedStash.D2SharedStashPane;
 import gomule.item.D2Item;
 import gomule.model.VersionController;
+import gomule.model.VersionController.Variant;
 import gomule.util.D2BitReader;
 
 import java.util.ArrayList;
@@ -13,19 +14,25 @@ public class D2SharedStashReader {
 
     static final byte[] STASH_HEADER_START = BaseEncoding.base16().decode("55AA55AA");
 
-    public D2SharedStash readStash(String filename) throws Exception {
-        return readStash(filename, new D2BitReader(filename));
+    public D2SharedStash readStash(Variant expectedVariant, String filename) throws Exception {
+        return readStash(expectedVariant, filename, new D2BitReader(filename));
     }
 
-    public D2SharedStash readStash(String filename, D2BitReader bitReader) throws Exception {
-        int[] stashHeaderOffsets = bitReader.findBytes(STASH_HEADER_START);
-        if (stashHeaderOffsets.length != 3) throw new RuntimeException("Stash unsupported");
+    public D2SharedStash readStash(Variant expectedVariant, String filename, D2BitReader bitReader) throws Exception {
         List<D2SharedStashPane> result = new ArrayList<>();
-        for (int stashHeaderOffset : stashHeaderOffsets) {
+        for (int stashHeaderOffset : getStashHeaderOffsets(expectedVariant, bitReader)) {
             bitReader.set_byte_pos(stashHeaderOffset);
             result.add(readSharedStashPane(bitReader, filename));
         }
-        return new D2SharedStash(filename, result, bitReader.getFileContent());
+        return new D2SharedStash(expectedVariant, filename, result, bitReader.getFileContent());
+    }
+
+    public static int[] getStashHeaderOffsets(Variant expectedVariant, D2BitReader bitReader) {
+        int[] stashHeaderOffsets = bitReader.findBytes(STASH_HEADER_START);
+        Variant variantOrNull = Variant.tryParseSharedStashPaneCount(stashHeaderOffsets.length);
+        if (variantOrNull != expectedVariant)
+            throw new RuntimeException("Unrecognized variant, found: " + variantOrNull + " (" + stashHeaderOffsets.length + " stash panes)" + " expected: " + expectedVariant + " (" + expectedVariant.getSharedStashPaneCount() + " stash panes)");
+        return stashHeaderOffsets;
     }
 
     private D2SharedStashPane readSharedStashPane(D2BitReader bitReader, String filename) throws Exception {

@@ -2,6 +2,7 @@ package gomule.d2i;
 
 import gomule.item.D2Item;
 import gomule.model.VersionController;
+import gomule.model.VersionController.Variant;
 import gomule.util.D2BitReader;
 
 import java.io.ByteArrayOutputStream;
@@ -10,28 +11,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gomule.d2i.D2SharedStashReader.STASH_HEADER_START;
+import static gomule.d2i.D2SharedStashReader.getStashHeaderOffsets;
 
 public class D2SharedStashWriter {
+    private final Variant variant;
     private final File file;
     private final byte[] originalContent;
 
-    public D2SharedStashWriter(File file, byte[] originalContent) {
+    public D2SharedStashWriter(Variant variant, File file, byte[] originalContent) {
+        this.variant = variant;
         this.file = file;
         this.originalContent = originalContent;
     }
 
-    public D2SharedStashWriter(String filename, byte[] originalContent) {
-        this(new File(filename), originalContent);
+    public D2SharedStashWriter(Variant variant, String filename, byte[] originalContent) {
+        this(variant, new File(filename), originalContent);
     }
 
 
     public void write(D2SharedStash stash) {
         D2BitReader bitReader = new D2BitReader(originalContent.clone());
-        int[] stashHeaderOffsets = bitReader.findBytes(STASH_HEADER_START);
-        if (stashHeaderOffsets.length != 3) throw new RuntimeException("Stash unsupported");
+        int[] stashHeaderOffsets = getStashHeaderOffsets(variant, bitReader);
         List<byte[]> stashPanes = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < variant.getSharedStashPaneCount(); i++) {
             stashPanes.add(writeStashPane(stash.getPane(i), bitReader, stashHeaderOffsets[i], bitReader.findNextFlag("JM", stashHeaderOffsets[i])));
         }
         writeToFile(stashPanes);
@@ -59,7 +61,8 @@ public class D2SharedStashWriter {
     public void writeHeader(D2SharedStash.D2SharedStashPane pane, D2BitReader bitWriter, long length) {
         bitWriter.skipBytes(8);
         long version = bitWriter.read(8);
-        if (version != VersionController.Version.D2R3.getFileVersionIdentifier()) throw new RuntimeException("Overwriting wrong version stash");
+        if (version != VersionController.Version.D2R3.getFileVersionIdentifier())
+            throw new RuntimeException("Overwriting wrong version stash");
         bitWriter.skipBytes(3);
         bitWriter.write(pane.getGold(), 24);
         bitWriter.skipBytes(1);

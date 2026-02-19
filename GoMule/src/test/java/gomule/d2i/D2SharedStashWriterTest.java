@@ -12,16 +12,16 @@ import java.nio.file.Files;
 import static gomule.d2i.D2SharedStash.D2SharedStashPane;
 import static gomule.item.D2ItemTest.HEALTH_POT;
 import static gomule.item.D2ItemTest.SMALL_CHARM;
+import static gomule.model.VersionController.Variant.EXPANSION;
 import static gomule.util.TestHelpers.loadItem;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class D2SharedStashWriterTest {
 
-    private static final String EMPTY_STASH =
+    public static final String EMPTY_STASH =
             "55AA55AA0000000069000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D0000";
     private static final String STASH_WITH_POTION =
             "55AA55AA0000000069000000000000004E00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D01001004A0080588144FB400";
@@ -40,7 +40,7 @@ public class D2SharedStashWriterTest {
     @Test
     public void writeReplacingSingleItem() throws Exception {
         byte[] simpleStash = BaseEncoding.base16().decode(EMPTY_STASH + EMPTY_STASH + EMPTY_STASH);
-        D2SharedStash stash = new D2SharedStash(
+        D2SharedStash stash = new D2SharedStash(EXPANSION,
                 "",
                 asList(
                         D2SharedStashPane.fromItems(emptyList(), 0),
@@ -54,7 +54,7 @@ public class D2SharedStashWriterTest {
     @Test
     public void writeItemsOfDifferentSizes() throws Exception {
         byte[] simpleStash = BaseEncoding.base16().decode(EMPTY_STASH + EMPTY_STASH + EMPTY_STASH);
-        D2SharedStash stash = new D2SharedStash(
+        D2SharedStash stash = new D2SharedStash(EXPANSION,
                 "",
                 asList(
                         D2SharedStashPane.fromItems(emptyList(), 0),
@@ -68,7 +68,7 @@ public class D2SharedStashWriterTest {
     @Test
     public void writeReplacingMultipleItems() throws Exception {
         byte[] simpleStash = BaseEncoding.base16().decode(EMPTY_STASH + EMPTY_STASH + EMPTY_STASH);
-        D2SharedStash stash = new D2SharedStash(
+        D2SharedStash stash = new D2SharedStash(EXPANSION,
                 "",
                 asList(
                         D2SharedStashPane.fromItems(emptyList(), 0),
@@ -87,7 +87,7 @@ public class D2SharedStashWriterTest {
     @Test
     public void writeReplacingAllItems() throws Exception {
         byte[] simpleStash = BaseEncoding.base16().decode(EMPTY_STASH + EMPTY_STASH + EMPTY_STASH);
-        D2SharedStash stash = new D2SharedStash(
+        D2SharedStash stash = new D2SharedStash(EXPANSION,
                 "",
                 asList(
                         D2SharedStashPane.fromItems(singletonList(loadItem(HEALTH_POT)), 0),
@@ -102,17 +102,26 @@ public class D2SharedStashWriterTest {
     public void roundTripWithExtraJms() throws Exception {
         byte[] stashBytes = BaseEncoding.base16().decode(EMPTY_STASH + EMPTY_STASH + STASH_WITH_EXTRA_JM_IN_ITEM);
         D2SharedStash stash =
-                new D2SharedStashReader().readStash("JMExampleStash.d2i", new D2BitReader(stashBytes.clone()));
+                new D2SharedStashReader().readStash(EXPANSION, "JMExampleStash.d2i", new D2BitReader(stashBytes.clone()));
         runTest(stashBytes, stash, stashBytes.clone());
+    }
+
+    @Test
+    public void writeWrongVariant() throws Exception {
+        File tempFile = File.createTempFile("d2SharedStashWriterTest", null);
+        byte[] originalContent = BaseEncoding.base16().decode(EMPTY_STASH);
+        D2SharedStash sharedStash = new D2SharedStash(EXPANSION, "filename", singletonList(D2SharedStashPane.fromItems(emptyList(), 0)), originalContent);
+        D2SharedStashWriter writer = new D2SharedStashWriter(EXPANSION, tempFile, originalContent);
+        assertEquals("Unrecognized variant, found: null (1 stash panes) expected: EXPANSION (3 stash panes)", assertThrows(RuntimeException.class, () -> writer.write(sharedStash)).getMessage());
     }
 
     private void runTest(byte[] originalStashBytes, D2SharedStash stash, byte[] expected) throws Exception {
         File tempFile = File.createTempFile("d2SharedStashWriterTest", null);
-        D2SharedStashWriter writer = new D2SharedStashWriter(tempFile, originalStashBytes);
+        D2SharedStashWriter writer = new D2SharedStashWriter(EXPANSION, tempFile, originalStashBytes);
         writer.write(stash);
         byte[] actual = Files.readAllBytes(tempFile.toPath());
         assertArrayEquals(expected, actual);
-        D2SharedStash readBackStash = new D2SharedStashReader().readStash("foo", new D2BitReader(actual));
+        D2SharedStash readBackStash = new D2SharedStashReader().readStash(EXPANSION, "foo", new D2BitReader(actual));
         assertEquals(stash.getPanes().size(), readBackStash.getPanes().size());
         for (int i = 0; i < stash.getPanes().size(); i++) {
             D2SharedStashPane pane = stash.getPane(i);

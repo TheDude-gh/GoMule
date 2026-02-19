@@ -36,16 +36,18 @@ public class VersionController {
     public enum Variant {
 
 //        CLASSIC(1, "Classic"), //TODO
-        EXPANSION(2, 2, "Expansion"),
-        ROW(3, 3, "Return of the Warlock");
+        EXPANSION(2, 2, 3, "Expansion"),
+        ROW(3, 3, 5, "Return of the Warlock");
 
         private final int stashIdentifier;
         private final int fileVersionIdentifier;
+        private final int sharedStashPaneCount;
         private final String humanName;
 
-        Variant(int stashIdentifier, int fileVersionIdentifier, String humanName) {
+        Variant(int stashIdentifier, int fileVersionIdentifier, int sharedStashPaneCount, String humanName) {
             this.stashIdentifier = stashIdentifier;
             this.fileVersionIdentifier = fileVersionIdentifier;
+            this.sharedStashPaneCount = sharedStashPaneCount;
             this.humanName = humanName;
         }
 
@@ -61,8 +63,16 @@ public class VersionController {
             return fileVersionIdentifier;
         }
 
+        public int getSharedStashPaneCount() {
+            return sharedStashPaneCount;
+        }
+
         public static Variant tryParseStashIdentifier(int stashIdentifier) {
             return firstOrNull(Variant.values(), it -> it.stashIdentifier, stashIdentifier);
+        }
+
+        public static Variant tryParseSharedStashPaneCount(int sharedStashPaneCount) {
+            return firstOrNull(Variant.values(), it -> it.sharedStashPaneCount, sharedStashPaneCount);
         }
 
         public static Variant tryParseFileVersionIdentifier(int fileVersionIdentifier) {

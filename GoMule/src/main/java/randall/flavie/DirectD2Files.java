@@ -105,7 +105,7 @@ public class DirectD2Files {
                     }
                 } else if (lD2FileName.endsWith(".d2i")) {
                     try {
-                        D2SharedStash sharedStash = new D2SharedStashReader().readStash(lD2FileName);
+                        D2SharedStash sharedStash = new D2SharedStashReader().readStash(iFlavie.getVariant(), lD2FileName);
                         lItems = sharedStash.getItemList();
                     } catch (Exception e) {
                         errStr = errStr + ("Error with shared stash " + lD2FileName + "\n");

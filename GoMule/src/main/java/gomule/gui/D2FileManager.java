@@ -441,7 +441,7 @@ public class D2FileManager extends JFrame {
                     for (int x = 0; x < lDumpList.size(); x++) {
                         try {
                             D2SharedStash d2SharedStash =
-                                    new D2SharedStashReader().readStash((String) lDumpList.get(x));
+                                    new D2SharedStashReader().readStash(variant, (String) lDumpList.get(x));
                             if (!projTxtDump(
                                     (String) lDumpList.get(x),
                                     (D2ItemList) d2SharedStash,
@@ -1831,7 +1831,7 @@ public class D2FileManager extends JFrame {
             iItemLists.put(pFileName, lList);
             iViewProject.notifyItemListRead(pFileName);
         } else if (pFileName.toLowerCase().endsWith(".d2i")) {
-            lList = sharedStashReader.readStash(pFileName);
+            lList = sharedStashReader.readStash(variant, pFileName);
 
             int lType = getProject().getType();
             if (lType == D2Project.TYPE_SC && (!lList.isSC() || lList.isHC())) {
