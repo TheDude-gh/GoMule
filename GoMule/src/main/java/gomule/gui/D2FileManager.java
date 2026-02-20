@@ -72,7 +72,7 @@ public class D2FileManager extends JFrame {
      */
     private static final long serialVersionUID = 4010435064410504579L;
 
-    private static final String CURRENT_VERSION = "R0.45";
+    private static final String CURRENT_VERSION = "R5.0";
     private static final D2FileManager iCurrent = new D2FileManager();
     private final D2SharedStashReader sharedStashReader;
     private final D2StashReader stashReader;
@@ -132,7 +132,7 @@ public class D2FileManager extends JFrame {
 
         iContentPane.setLayout(new BorderLayout());
         iProperties = FileManagerProperties.loadFileManagerProperties();
-        variant = VersionController.Variant.valueOf(iProperties.getProperty("variant", "EXPANSION"));
+        variant = VersionController.Variant.valueOf(iProperties.getProperty("variant", VersionController.Variant.ROW.name()));
         version = VersionController.Version.valueOf(iProperties.getProperty("version", "D2R3"));
 
         createToolbar();
