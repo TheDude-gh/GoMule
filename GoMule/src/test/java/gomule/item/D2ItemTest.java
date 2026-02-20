@@ -516,6 +516,25 @@ public class D2ItemTest {
         assertEquals(11, d2Item.getItemLength());
     }
 
+    @Test
+    public void blueRowTome() throws Exception {
+        String expected = "Dark Tome of Regeneration\n" +
+                "Dark Tome\n" +
+                "Defense: 48\n" +
+                "Durability: 11 of 20\n" +
+                "Required Level: 30\n" +
+                "Required Strength: 41\n" +
+                "Fingerprint: 0xc412e035\n" +
+                "Item Level: 70\n" +
+                "Version: Resurrected\n" +
+                "Unidentified\n" +
+                "Adds 6 - 10 Magic Damage\n" +
+                "+2 to Psychic Ward (Warlock Only)\n" +
+                "Replenish Life +3\n";
+        byte[] bytes = decode("00 00 80 00 05 A0 04 3C 1F 6A C0 25 88 8D A4 09 00 E0 10 3A A0 58 80 86 81 02 25 E1 9A C1 FA 0F");
+        runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
     public static byte[] decode(String s) {
         return BaseEncoding.base16().decode(s.replaceAll(" ", ""));
     }

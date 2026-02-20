@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gomule.skills.SkillsHelpers.getSkillsRowForId;
+
 //an item class
 //manages one item
 //keeps the a copy of the bytes representing
@@ -1020,11 +1022,7 @@ public class D2Item implements Comparable, D2ItemInterface {
             if (((D2Prop) iProps.get(x)).getPNum() == 97
                     || ((D2Prop) iProps.get(x)).getPNum() == 107) {
 
-                D2TxtFileItemProperties skillsRow = D2TxtFile.SKILLS.searchColumns(
-                        "skilldesc",
-                        D2TxtFile.SKILL_DESC.getRow(
-                                ((D2Prop) iProps.get(x)).getPVals()[0]).get(
-                                "skilldesc"));
+                D2TxtFileItemProperties skillsRow = getSkillsRowForId(((D2Prop) iProps.get(x)).getPVals()[0]);
                 String reqlevel = skillsRow.get("reqlevel");
                 try {
                     if (iReqLvl < Integer.parseInt(reqlevel)) {

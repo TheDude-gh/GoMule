@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import static gomule.model.VersionController.Variant.tryParseFileVersionIdentifier;
+import static gomule.skills.SkillsHelpers.*;
 
 //a character class
 //manages one character file
@@ -489,7 +490,7 @@ public class D2Character extends D2ItemListAdapter {
         skillReader.getCounterInt(8);
         int tree = 0;
         for (int x = 0; x < 30; x = x + 1) {
-            tree = Integer.parseInt((D2TxtFile.SKILL_DESC.searchColumns("skilldesc", D2TxtFile.SKILLS.getRow(initRow.getRowNum() + x).get("skilldesc"))).get("SkillPage"));
+            tree = Integer.parseInt((getSkillDescRow(D2TxtFile.SKILLS.getRow(initRow.getRowNum() + x).get("skilldesc"))).get("SkillPage"));
             initSkills[tree - 1][skillC[tree - 1]] = skillReader.getCounterInt(8);
             skillC[tree - 1]++;
         }
@@ -645,12 +646,13 @@ public class D2Character extends D2ItemListAdapter {
                     break;
                 case (97):
                     if (!D2TxtFile.SKILLS.getRow(pVals[0]).get("charclass").equals(cClass)) continue;
-                    String page = D2TxtFile.SKILL_DESC.getRow(pVals[0]).get("SkillPage");
+                    String page = getSkillDescRowForId(pVals[0]).get("SkillPage");
                     if (page.equals("") || Integer.parseInt(page) <= 0) continue; //TODO: Fix skills issues for assasins
                     int counter = 0;
                     for (int z = pVals[0]; z > -1; z = z - 1) {
-                        if (D2TxtFile.SKILLS.getRow(z).get("charclass").equals(cClass)) {
-                            if (D2TxtFile.SKILL_DESC.getRow(z).get("SkillPage").equals(page)) {
+                        D2TxtFileItemProperties skillsRowForId = getSkillsRowForId(z);
+                        if (skillsRowForId.get("charclass").equals(cClass)) {
+                            if (getSkillDescRow(skillsRowForId.get("skilldesc")).get("SkillPage").equals(page)) {
                                 counter++;
                             }
                         }
@@ -659,14 +661,16 @@ public class D2Character extends D2ItemListAdapter {
                     break;
 
                 case (107):
-                    if (!D2TxtFile.SKILLS.getRow(pVals[0]).get("charclass").equals(cClass)) continue;
-                    page = D2TxtFile.SKILL_DESC.getRow(pVals[0]).get("SkillPage");
+                    D2TxtFileItemProperties skillsRowForId = getSkillsRowForId(pVals[0]);
+                    if (!skillsRowForId.get("charclass").equals(cClass)) continue;
+                    page = getSkillDescRow(skillsRowForId.get("skilldesc")).get("SkillPage");
                     if (page.equals("") || Integer.parseInt(page) <= 0) continue;
                     counter = 0;
                     for (int z = pVals[0]; z > -1; z = z - 1) {
-                        if (D2TxtFile.SKILLS.getRow(z).get("charclass").equals(cClass)) {
-                            String skillDesc = D2TxtFile.SKILLS.getRow(z).get("skilldesc");
-                            if (D2TxtFile.SKILL_DESC.searchColumns("skilldesc", skillDesc).get("SkillPage").equals(page)) {
+                        D2TxtFileItemProperties skillsRowForIdz = getSkillsRowForId(z);
+                        if (skillsRowForIdz.get("charclass").equals(cClass)) {
+                            String skillDesc = skillsRowForIdz.get("skilldesc");
+                            if (getSkillDescRow(skillDesc).get("SkillPage").equals(page)) {
                                 counter++;
                             }
                         }
@@ -1412,18 +1416,14 @@ public class D2Character extends D2ItemListAdapter {
         int[] skillCounter = new int[3];
 
         for (int x = 0; x < skillArr.size(); x = x + 1) {
-
             try {
-                int page = Integer.parseInt((D2TxtFile.SKILL_DESC.getRow(Integer.parseInt(((D2TxtFileItemProperties) skillArr.get(x)).get("*Id")))).get("SkillPage"));
+                D2TxtFileItemProperties skillDescRow = getSkillDescRow(((D2TxtFileItemProperties) skillArr.get(x)).get("skilldesc"));
+                int page = Integer.parseInt(skillDescRow.get("SkillPage"));
                 if (page == 0) continue;
                 skillTrees[page - 1] = skillTrees[page - 1]
                         + D2Files.getInstance()
                         .getTranslations()
-                        .getTranslation(D2TxtFile.SKILL_DESC
-                                .searchColumns(
-                                        "skilldesc",
-                                        ((D2TxtFileItemProperties) skillArr.get(x)).get("skilldesc"))
-                                .get("str name"))
+                        .getTranslation(skillDescRow.get("str name"))
                         + ": " + initSkills[page - 1][skillCounter[page - 1]] + "/"
                         + cSkills[page - 1][skillCounter[page - 1]] + "\n";
                 skillCounter[page - 1]++;
