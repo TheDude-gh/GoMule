@@ -8,8 +8,7 @@ import gomule.item.D2ItemRenderer;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-import static gomule.gui.sharedStash.SharedStashPanel.getColForXCoord;
-import static gomule.gui.sharedStash.SharedStashPanel.getRowForYCoord;
+import static gomule.gui.sharedStash.SharedStashPanel.*;
 
 class SharedStashMouseMotionListener extends MouseMotionAdapter {
     private final SharedStashPanel sharedStashPanel;
@@ -23,7 +22,11 @@ class SharedStashMouseMotionListener extends MouseMotionAdapter {
         int col = getColForXCoord(e.getX());
         int row = getRowForYCoord(e.getY());
         if (col < 0 || row < 0 || col > 9 || row > 9) {
-            sharedStashPanel.setCursorNormal();
+            if (isInGoldArea(e.getX(), e.getY()) || isInLeftStashSelectArea(e.getX(), e.getY()) || isInRightStashSelectArea(e.getX(), e.getY())) {
+                sharedStashPanel.setCursorPickupItem();
+            } else {
+                sharedStashPanel.setCursorNormal();
+            }
             return;
         }
         D2SharedStash.D2SharedStashPane stashPane = sharedStashPanel.getSelectedStashPane();

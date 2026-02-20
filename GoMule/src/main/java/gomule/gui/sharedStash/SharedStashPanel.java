@@ -36,7 +36,7 @@ public class SharedStashPanel extends JPanel {
     }
 
     public void build() {
-        Image lEmptyBackground = D2ImageCache.getImage("stash" + (selectedStashPaneIndex + 1) + ".jpg");
+        Image lEmptyBackground = D2ImageCache.getImage("sharedStash.jpg");
         background = fileManager.getGraphicsConfiguration().createCompatibleImage(BG_WIDTH, BG_HEIGHT, Transparency.BITMASK);
         Graphics2D lGraphics = (Graphics2D) background.getGraphics();
         lGraphics.drawImage(lEmptyBackground, 0, 0, this);
@@ -55,7 +55,8 @@ public class SharedStashPanel extends JPanel {
             int y = getYCoordForRow(row);
             background.getGraphics().drawImage(image, x, y, this);
         });
-        background.getGraphics().drawString(Long.toString(pane.getGold()), 155, 417);
+        background.getGraphics().drawString(Long.toString(pane.getGold()), 155, 439);
+        background.getGraphics().drawString("Page " + (selectedStashPaneIndex + 1) + " / " + fileManager.getVariant().getSharedStashConfig().getItemStashPaneCount(), 152, 405);
     }
 
     public static int getXCoordForCol(int col) {
@@ -135,6 +136,19 @@ public class SharedStashPanel extends JPanel {
         this.selectedStashPaneIndex = selectedStashPaneIndex;
     }
 
+    public void moveToNextStashPane() {
+        if (selectedStashPaneIndex == fileManager.getVariant().getSharedStashConfig().getItemStashPaneCount() - 1)
+            return;
+        setSelectedStashPaneIndex(selectedStashPaneIndex + 1);
+        build();
+    }
+
+    public void moveToPriorStashPane() {
+        if (selectedStashPaneIndex == 0) return;
+        setSelectedStashPaneIndex(selectedStashPaneIndex - 1);
+        build();
+    }
+
     private D2SharedStash.D2SharedStashPane getD2SharedStashPane(D2SharedStash.D2SharedStashPane stashPane, java.util.List<D2Item> successfullyAddedItems, D2Item item) {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -146,5 +160,17 @@ public class SharedStashPanel extends JPanel {
             }
         }
         return stashPane;
+    }
+
+    public static boolean isInGoldArea(int x, int y) {
+        return x >= 120 && x <= 240 && y >= 418 && y <= 455;
+    }
+
+    public static boolean isInLeftStashSelectArea(int x, int y) {
+        return x >= 113 && x <= 136 && y >= 389 && y <= 412;
+    }
+
+    public static boolean isInRightStashSelectArea(int x, int y) {
+        return x >= 227 && x <= 250 && y >= 389 && y <= 412;
     }
 }

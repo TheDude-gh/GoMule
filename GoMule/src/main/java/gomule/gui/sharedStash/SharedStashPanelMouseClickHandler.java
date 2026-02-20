@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static gomule.gui.sharedStash.SharedStashPanel.*;
+
 class SharedStashPanelMouseClickHandler extends MouseAdapter {
 
     private final SharedStashPanel sharedStashPanel;
@@ -43,9 +45,8 @@ class SharedStashPanelMouseClickHandler extends MouseAdapter {
     private void handleLeftClick(MouseEvent e) {
         D2SharedStash sharedStash = sharedStashPanel.getSharedStash();
         if (sharedStash == null) return;
-        Integer possibleStashTabClick = getPossibleStashTabClick(e.getX(), e.getY());
-        setStashTab(possibleStashTabClick);
-        if (isClickOnGoldButton(e.getX(), e.getY())) showGoldDialog();
+        handleStashNavigationClicks(e.getX(), e.getY());
+        if (isInGoldArea(e.getX(), e.getY())) showGoldDialog();
 
         int col = SharedStashPanel.getColForXCoord(e.getX());
         int row = SharedStashPanel.getRowForYCoord(e.getY());
@@ -57,10 +58,6 @@ class SharedStashPanelMouseClickHandler extends MouseAdapter {
         } else if (D2ViewClipboard.getItem() != null) {
             tryMoveItemFromClipboard(stashPane, col, row);
         }
-    }
-
-    private boolean isClickOnGoldButton(int x, int y) {
-        return x >= 120 && x <= 240 && y >= 394 && y <= 431;
     }
 
     private void showGoldDialog() {
@@ -92,19 +89,8 @@ class SharedStashPanelMouseClickHandler extends MouseAdapter {
         sharedStashPanel.setCursorDropItem();
     }
 
-    private void setStashTab(Integer possibleStashTabClick) {
-        if (possibleStashTabClick == null) return;
-        if (sharedStashPanel.getSelectedStashPaneIndex() == possibleStashTabClick) return;
-        sharedStashPanel.setSelectedStashPaneIndex(possibleStashTabClick);
-        sharedStashPanel.build();
-    }
-
-    private Integer getPossibleStashTabClick(int x, int y) {
-        if (x >= 26 && x <= 258 && y >= 50 && y <= 72) {
-            if (x <= 103) return 0;
-            if (x <= 181) return 1;
-            return 2;
-        }
-        return null;
+    private void handleStashNavigationClicks(int x, int y) {
+        if (isInRightStashSelectArea(x, y)) sharedStashPanel.moveToNextStashPane();
+        if (isInLeftStashSelectArea(x, y)) sharedStashPanel.moveToPriorStashPane();
     }
 }
