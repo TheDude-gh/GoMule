@@ -42,6 +42,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import static gomule.model.VersionController.Variant.tryParseFileVersionIdentifier;
 import static gomule.skills.SkillsHelpers.*;
@@ -112,7 +113,7 @@ public class D2Character extends D2ItemListAdapter {
 //	private boolean fullChanged = false;
 //	private ArrayList partialSetProps = new ArrayList();
 //	private ArrayList fullSetProps = new ArrayList();
-    private int[][] setTracker = new int[33][2];
+    private final Map<Integer, int[]> setTracker = new HashMap<>();
     private ArrayList plSkill;
     private long[] iReadStats = new long[16];
     private int[] cStats = new int[31];
@@ -196,6 +197,9 @@ public class D2Character extends D2ItemListAdapter {
                 break;
             case 6:
                 cClass = "ass";
+                break;
+            case 7:
+                cClass = "war";
                 break;
         }
         iReader.set_byte_pos(27);
@@ -763,7 +767,7 @@ public class D2Character extends D2ItemListAdapter {
             return 20;
         } else if (getCharClass().equals("Assasin")) {
             return 15;
-        } else if (getCharClass().equals("Amazon") || getCharClass().equals("Druid")) {
+        } else if (getCharClass().equals("Amazon") || getCharClass().equals("Druid") || getCharClass().equals("Warlock")) {
             return 5;
         } else if (getCharClass().equals("Necromancer")) {
             return -10;
@@ -1483,11 +1487,11 @@ public class D2Character extends D2ItemListAdapter {
 
     private void addSetItem(D2Item item) {
         int setNo = D2TxtFile.FULLSET.searchColumns("index", D2TxtFile.SETITEMS.searchColumns("*ID", String.valueOf(item.getSetID())).get("set")).getRowNum();
-        setTracker[setNo][0]++;
+        setTracker.computeIfAbsent(setNo, k -> new int[1])[0]++;
         for (int x = 0; x < iCharItems.size(); x++) {
             if (!((D2Item) iCharItems.get(x)).isEquipped(curWep)) continue;
             if (D2TxtFile.FULLSET.searchColumns("index", D2TxtFile.SETITEMS.searchColumns("*ID", String.valueOf(((D2Item) (iCharItems.get(x))).getSetID())).get("set")).getRowNum() == setNo) {
-                modSetProps(((D2Item) iCharItems.get(x)), setTracker[setNo], 1);
+                modSetProps(((D2Item) iCharItems.get(x)), setTracker.get(setNo), 1);
             }
         }
     }
@@ -1534,10 +1538,10 @@ public class D2Character extends D2ItemListAdapter {
         for (int x = 0; x < iCharItems.size(); x++) {
             if (!((D2Item) iCharItems.get(x)).isEquipped(curWep)) continue;
             if (D2TxtFile.FULLSET.searchColumns("index", D2TxtFile.SETITEMS.searchColumns("*ID", String.valueOf(((D2Item) (iCharItems.get(x))).getSetID())).get("set")).getRowNum() == setNo) {
-                modSetProps(((D2Item) iCharItems.get(x)), setTracker[setNo], -1);
+                modSetProps(((D2Item) iCharItems.get(x)), setTracker.get(setNo), -1);
             }
         }
-        setTracker[setNo][0]--;
+        setTracker.computeIfAbsent(setNo, k -> new int[1])[0]--;
     }
 
     public void updateMercStats(String string, D2Item dropItem) {

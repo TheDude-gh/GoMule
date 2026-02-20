@@ -1851,12 +1851,22 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                      */) {
                         int lX = pEvent.getX();
                         int lY = pEvent.getY();
-                        if ((lX >= 208 && lX <= 283) && (lY >= 300 && lY <= 388)) {
-                            setSkillSlot(0);
-                        } else if ((lX >= 208 && lX <= 283) && (lY >= 201 && lY <= 291)) {
-                            setSkillSlot(1);
-                        } else if ((lX >= 208 && lX <= 283) && (lY >= 100 && lY <= 192)) {
-                            setSkillSlot(2);
+                        if (iCharacter.getCharCode() == 7) {
+                            if ((lX >= 6 && lX <= 96) && (lY >= 6 && lY <= 31)) {
+                                setSkillSlot(0);
+                            } else if ((lX >= 97 && lX <= 187) && (lY >= 6 && lY <= 31)) {
+                                setSkillSlot(1);
+                            } else if ((lX >= 188 && lX <= 278) && (lY >= 6 && lY <= 31)) {
+                                setSkillSlot(2);
+                            }
+                        } else {
+                            if ((lX >= 208 && lX <= 283) && (lY >= 300 && lY <= 388)) {
+                                setSkillSlot(0);
+                            } else if ((lX >= 208 && lX <= 283) && (lY >= 201 && lY <= 291)) {
+                                setSkillSlot(1);
+                            } else if ((lX >= 208 && lX <= 283) && (lY >= 100 && lY <= 192)) {
+                                setSkillSlot(2);
+                            }
                         }
                         // determine where the mouse click is
                     }
@@ -2000,7 +2010,21 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                     }
 //				cClass = "ass";
                     break;
+                case 7:
+                    switch (iSkillSlot) {
+                        case 0:
+                            lEmptyBackground = D2ImageCache.getImage("wartab1sm2.png");
+                            break;
+                        case 1:
+                            lEmptyBackground = D2ImageCache.getImage("wartab2sm2.png");
+                            break;
+                        case 2:
+                            lEmptyBackground = D2ImageCache.getImage("wartab3sm2.png");
+                            break;
 
+                    }
+//				cClass = "war";
+                    break;
 
             }
 
@@ -2085,10 +2109,13 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
         }
 
         private void drawText(Graphics2D lGraphics, int skillSlot) {
-
+            if (iCharacter.getCharCode() == 7) {
+                lGraphics.drawString(iCharacter.getCharSkillRem() + "", 54, 395);
+            } else {
+                lGraphics.drawString(iCharacter.getCharSkillRem() + "", 238, 69);
+            }
             switch (iSkillSlot) {
                 case 0:
-                    lGraphics.drawString(iCharacter.getCharSkillRem() + "", 238, 69);
                     for (int x = 0; x < 10; x = x + 1) {
                         lGraphics.setColor(Color.white);
                         lGraphics.drawString(iCharacter.getInitSkillListA()[x] + "/", iCharacter.getSkillLocs()[x].x - 10, iCharacter.getSkillLocs()[x].y + 2);
@@ -2100,7 +2127,6 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                     }
                     break;
                 case 1:
-                    lGraphics.drawString(iCharacter.getCharSkillRem() + "", 238, 69);
                     for (int x = 0; x < 10; x = x + 1) {
                         lGraphics.setColor(Color.white);
                         lGraphics.drawString(iCharacter.getInitSkillListB()[x] + "/", iCharacter.getSkillLocs()[x + 10].x - 10, iCharacter.getSkillLocs()[x + 10].y + 2);
@@ -2115,7 +2141,6 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                     }
                     break;
                 case 2:
-                    lGraphics.drawString(iCharacter.getCharSkillRem() + "", 238, 69);
                     for (int x = 0; x < 10; x = x + 1) {
                         lGraphics.setColor(Color.white);
                         lGraphics.drawString(iCharacter.getInitSkillListC()[x] + "/", iCharacter.getSkillLocs()[x + 20].x - 10, iCharacter.getSkillLocs()[x + 20].y + 2);
@@ -2129,10 +2154,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                         lGraphics.drawString(iCharacter.getSkillListC()[x] + "", iCharacter.getSkillLocs()[x + 20].x + 11, iCharacter.getSkillLocs()[x + 20].y + 2);
                     }
                     break;
-
             }
-
-
         }
 
         public void paint(Graphics pGraphics) {

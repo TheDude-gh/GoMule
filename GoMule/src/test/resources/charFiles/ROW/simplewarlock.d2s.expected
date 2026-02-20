@@ -1,0 +1,96 @@
+Name:       simplewarlock
+Class:      Warlock
+Hardcore:   false
+Variant :   Return of the Warlock
+Experience: 0
+Level:      1
+
+            Naked/Gear
+Strength:   15/15
+Dexterity:  20/20
+Vitality:   25/25
+Energy:     20/20
+HP:         55/55
+Mana:       20/20
+Stamina:    86/86
+Defense:    5/5
+AR:         70/70
+
+Fire:       0/-40/-100
+Cold:       0/-40/-100
+Lightning:  0/-40/-100
+Poison:     0/-40/-100
+
+MF:         0       Block:      62
+GF:         0       FR/W:       0
+FHR:        0       IAS:        0
+FCR:        0
+
+Summon Goatman: 0/0
+Demonic Mastery: 0/0
+Death Mark: 0/0
+Summon Tainted: 0/0
+Summon Defiler: 0/0
+Blood Oath: 0/0
+Engorge: 0/0
+Blood Boil: 0/0
+Consume: 0/0
+Bind Demon: 0/0
+
+Levitation Mastery: 0/0
+Eldritch Blast: 0/0
+Hex: Bane: 0/0
+Hex: Siphon: 0/0
+Psychic Ward: 0/0
+Echoing Strike: 0/0
+Hex: Purge: 0/0
+Blade Warp: 0/0
+Cleave: 0/0
+Mirrored Blades: 0/0
+
+Sigil: Lethargy: 0/0
+Ring of Fire: 0/0
+Miasma Bolt: 0/1
+Sigil: Rancor: 0/0
+Enhanced Entropy: 0/0
+Flame Wave: 0/0
+Miasma Chain: 0/0
+Sigil: Death: 0/0
+Apocalypse: 0/0
+Abyss: 0/0
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Scroll of Town Portal
+Version: Resurrected
+
+Scroll of Identify
+Version: Resurrected
+
+Dagger
+One Hand Damage: 1 - 4
+Durability: 16 of 16
+Required Level: 1
+Fingerprint: 0xedd6d840
+Item Level: 1
+Version: Resurrected
++1 to Miasma Bolt (Warlock Only)
+
+Mercenary:
+
+
+

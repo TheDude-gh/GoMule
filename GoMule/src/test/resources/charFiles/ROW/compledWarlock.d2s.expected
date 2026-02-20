@@ -1,0 +1,776 @@
+Name:       ItemsSC
+Class:      Warlock
+Hardcore:   false
+Variant :   Return of the Warlock
+Experience: 1618470619
+Level:      90
+
+            Naked/Gear
+Strength:   85/140
+Dexterity:  20/70
+Vitality:   25/75
+Energy:     20/40
+HP:         233/348
+Mana:       153/253
+Stamina:    175/175
+Defense:    5/913
+AR:         70/37130
+
+Fire:       53/13/-47
+Cold:       53/13/-47
+Lightning:  113/73/13
+Poison:     28/-12/-72
+
+MF:         0       Block:      13
+GF:         0       FR/W:       30
+FHR:        30       IAS:        33
+FCR:        20
+
+Summon Goatman: 1/7
+Demonic Mastery: 1/7
+Death Mark: 1/7
+Summon Tainted: 1/7
+Summon Defiler: 1/7
+Blood Oath: 1/7
+Engorge: 1/7
+Blood Boil: 1/7
+Consume: 0/0
+Bind Demon: 2/8
+
+Levitation Mastery: 1/7
+Eldritch Blast: 2/8
+Hex: Bane: 0/0
+Hex: Siphon: 0/0
+Psychic Ward: 1/7
+Echoing Strike: 1/7
+Hex: Purge: 0/0
+Blade Warp: 1/7
+Cleave: 1/7
+Mirrored Blades: 0/5
+
+Sigil: Lethargy: 1/5
+Ring of Fire: 1/5
+Miasma Bolt: 1/5
+Sigil: Rancor: 1/5
+Enhanced Entropy: 1/5
+Flame Wave: 1/5
+Miasma Chain: 1/5
+Sigil: Death: 1/5
+Apocalypse: 0/0
+Abyss: 2/6
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Minor Healing Potion
+Version: Resurrected
+Replenish Life +30
+
+Southern Worldstone Shard
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Deep Worldstone Shard
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Ars Dul'Mephistos
+Occult Tome
+Defense: 141
+Durability: 20 of 20
+Required Level: 78
+Required Strength: 82
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+15% Chance to cast level 28 Blizzard when struck
++2 to Warlock Skill Levels
++30% Faster Cast Rate
++30% Faster Hit Recovery
+115% Enhanced Damage
+72% Bonus to Attack Rating
+-20% to Enemy Fire Resistance
+25% Better Chance of Getting Magic Items
+
+Ars Tor'Baalos
+Blasphemous Compendium
+Defense: 365
+Durability: 20 of 20
+Required Level: 73
+Required Strength: 95
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+15% Chance to cast level 1 Decrepify when struck
++2 to Unknown Tree (P 188)
++3 to Consume (Warlock Only)
++4 to Blood Boil (Warlock Only)
++3 to Engorge (Warlock Only)
++3 to Demonic Mastery (Warlock Only)
++150% Enhanced Defense
++360 to Life (Based on Character Level)
+Damage Reduced by 10%
+
+Measured Wrath
+Burnt Text
+Defense: 134
+Durability: 20 of 20
+Required Level: 52
+Required Strength: 38
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+5% Chance to cast level 25 Ring of Fire when struck
++1 to Warlock Skill Levels
++25% Faster Cast Rate
++3 to Flame Wave (Warlock Only)
++3 to Ring of Fire (Warlock Only)
++3 to Summon Tainted (Warlock Only)
++180% Enhanced Defense
++20 to Vitality
+All Resistances +30
++5 Life after each Kill
+
+Wraithstep
+Mirrored Boots
+Defense: 128
+Durability: 18 of 18
+Required Level: 67
+Required Strength: 163
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++1 to Unknown Tree (P 188)
++30% Faster Run/Walk
++20% Faster Hit Recovery
++60 Defense
++15 to Dexterity
++15 to Energy
+
+Entropy Locket
+Amulet
+Required Level: 54
+Fingerprint: 0xa8a6015a
+Item Level: 90
+Version: Resurrected
+4% Chance to cast level 19 Miasma Chain on striking
++10% Faster Cast Rate
++10% to Magic Skill Damage
+Increase Maximum Mana 15%
+Lightning Resist +40%
+Magic Damage Reduced by 12
+
+Opalvein
+Ring
+Required Level: 50
+Fingerprint: 0xc65ec120
+Item Level: 99
+Version: Resurrected
+2% Chance to cast level 15 Flame Wave on attack
++10% Faster Cast Rate
+All Resistances +8
++3 to Mana after each Kill
++3 Life after each Kill
+
+Gheed's Wager
+Troll Belt
+Defense: 165
+Durability: 18 of 18
+Required Level: 71
+Required Strength: 151
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++20% Faster Run/Walk
++20% Faster Cast Rate
++20% Faster Hit Recovery
+-7% to Enemy Fire Resistance
++150% Enhanced Defense
+All Resistances +15
+75% Extra Gold from Monsters
+
+Hellwarden's Will
+Death Mask
+Defense: 270
+Durability: 20 of 20
+Required Level: 50
+Required Strength: 55
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++1 to All Skills
++20% Increased Attack Speed
++20% Faster Cast Rate
+-8% to Enemy Fire Resistance
+-8% to Enemy Fire Resistance
++215% Enhanced Defense
++6 to Mana after each Kill
+
+Ars Al'Diabolos
+Blasphemous Grimoire
+Defense: 444
+Durability: 20 of 20
+Required Level: 80
+Required Strength: 106
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+15% Chance to cast level 1 Terror when struck
++2 to Unknown Tree (P 188)
++25% Faster Cast Rate
++25% to Fire Skill Damage
++5 to Apocalypse (Warlock Only)
++200% Enhanced Defense
+Fire Resist +30%
++10 to Mana after each Kill
++10 to Light Radius
+
+Warlord's Authority
+Plated Belt
+Defense: 11
+Durability: 24 of 24
+Required Level: 1
+Required Strength: 60
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++25 to Life
+Lightning Resist +20%
+
+
+Horazon's Dominion
+Russet Armor
+Defense: 486
+Durability: 30 of 30
+Required Level: 55
+Required Strength: 97
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++2 to Unknown Tree (P 188)
++100% Enhanced Defense
++100 to Mana
+Cold Resist +25%
+Lightning Resist +25%
+Fire Resist +25%
+
+(2 items): +20 to Dexterity
+(3 items): +30 to Energy
+(4 items): +300 Defense
++3 to Warlock Skill Levels
++350% Enhanced Damage
+Cold Resist +50%
+Lightning Resist +50%
+Fire Resist +50%
+Poison Resist +50%
+100% Better Chance of Getting Magic Items
+
+Horazon's Hold
+Demonhide Gloves
+Defense: 35
+Durability: 12 of 12
+Required Level: 48
+Required Strength: 20
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++150 to Attack Rating
+Adds 140 - 270 Fire Damage
+10% Chance of Crushing Blow
++15 to Dexterity
++40 to Life
+
+(2 items): +20 to Dexterity
+(3 items): +30 to Energy
+(4 items): +300 Defense
++3 to Warlock Skill Levels
++350% Enhanced Damage
+Cold Resist +50%
+Lightning Resist +50%
+Fire Resist +50%
+Poison Resist +50%
+100% Better Chance of Getting Magic Items
+
+Horazon's Countenance
+Demonhead
+Defense: 154
+Durability: 20 of 20
+Required Level: 62
+Required Strength: 102
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++1 to Warlock Skill Levels
+45% Bonus to Attack Rating (Based on Character Level)
++20 to Strength
+Magic Damage Reduced by 10
+
+(2 items): +20 to Dexterity
+(3 items): +30 to Energy
+(4 items): +300 Defense
++3 to Warlock Skill Levels
++350% Enhanced Damage
+Cold Resist +50%
+Lightning Resist +50%
+Fire Resist +50%
+Poison Resist +50%
+100% Better Chance of Getting Magic Items
+
+Horazon's Legacy
+Mirrored Boots
+Defense: 68
+Durability: 18 of 18
+Required Level: 67
+Required Strength: 20
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++30% Faster Run/Walk
++15 to Strength
++15 to Dexterity
+Magic Resist +30%
+Requirements --30%
+
+(2 items): +20 to Dexterity
+(3 items): +30 to Energy
+(4 items): +300 Defense
++3 to Warlock Skill Levels
++350% Enhanced Damage
+Cold Resist +50%
+Lightning Resist +50%
+Fire Resist +50%
+Poison Resist +50%
+100% Better Chance of Getting Magic Items
+
+Warlord's Lust
+Great Helm
+Defense: 50
+Durability: 40 of 40
+Required Level: 1
+Required Strength: 63
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++15 Defense
++30 to Life
+
+
+Warlord's Crushers
+Greaves
+Defense: 15
+Durability: 24 of 24
+Required Level: 1
+Required Strength: 70
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++20% Faster Run/Walk
+Fire Resist +20%
+
+
+Warlord's Conquest
+Gauntlets
+Defense: 15
+Durability: 24 of 24
+Required Level: 1
+Required Strength: 60
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++45 to Attack Rating
++15 to Strength
+
+
+Protector's Frost
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Protector's Stone
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Guardian's Light
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Warlord's Mantle
+Full Plate Mail
+Defense: 201
+Durability: 70 of 70
+Required Level: 1
+Required Strength: 80
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++25% Enhanced Defense
+Cold Resist +30%
+
+
+Vigilance
+Bone Shield
+DolGul
+Defense: 56
+Chance to Block: 0
+Durability: 40 of 40
+Required Level: 53
+Required Strength: 25
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+5% Chance to cast level 10 Ring of Fire when struck
++10% Faster Run/Walk
++30% Faster Block Rate
++89% Enhanced Defense
++23 to Life
+Replenish Life +7
++24 to Mana
++5% to Maximum Poison Resist
+All Resistances +28
+2 Sockets (2 used)
+Socketed: Dol Rune
+Socketed: Gul Rune
+
+Dol Rune
+Required Level: 31
+Version: Resurrected
+Weapons: Hit Causes Monster to Flee +25%
+Armor: Replenish Life +7
+Shields: Replenish Life +7
+
+Gul Rune
+Required Level: 53
+Version: Resurrected
+Weapons: 20% Bonus to Attack Rating
+Armor: +5% to Maximum Poison Resist
+Shields: +5% to Maximum Poison Resist
+
+Coven
+Demonhead
+IstRalIo
+Defense: 214
+Durability: 20 of 20
+Required Level: 55
+Required Strength: 102
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+5% Chance to cast level 10 Sigil: Lethargy when struck
++1 to All Skills
++20% Faster Cast Rate
++39% Enhanced Defense
++10 to Vitality
+Fire Resist +30%
++1 Life after each Kill
+39% Better Chance of Getting Magic Items
+3 Sockets (3 used)
+Socketed: Ist Rune
+Socketed: Ral Rune
+Socketed: Io Rune
+
+Ist Rune
+Required Level: 51
+Version: Resurrected
+Weapons: 30% Better Chance of Getting Magic Items
+Armor: 25% Better Chance of Getting Magic Items
+Shields: 25% Better Chance of Getting Magic Items
+
+Ral Rune
+Required Level: 19
+Version: Resurrected
+Weapons: Adds 5 - 30 Fire Damage
+Armor: Fire Resist +30%
+Shields: Fire Resist +35%
+
+Io Rune
+Required Level: 35
+Version: Resurrected
+Weapons: +10 to Vitality
+Armor: +10 to Vitality
+Shields: +10 to Vitality
+
+Void
+Fanged Knife
+ThulZodIst
+One Hand Damage: 15 - 57
+Durability: 36 of 36
+Required Level: 69
+Required Strength: 42
+Required Dexterity: 86
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++2 to All Skills
++40% Faster Cast Rate
+Adds 3 - 14 Cold Damage Over 3 Secs (75 Frames)
++14% to Magic Skill Damage
++1 to Abyss
+All Stats +8
+30% Better Chance of Getting Magic Items
+Level 4 Decrepify Level 17 %s (35/35 Charges)
+3 Sockets (3 used)
+Socketed: Thul Rune
+Socketed: Zod Rune
+Socketed: Ist Rune
+
+Thul Rune
+Required Level: 23
+Version: Resurrected
+Weapons: Adds 3 - 14 Cold Damage Over 3 Secs (75 Frames)
+Armor: Cold Resist +30%
+Shields: Cold Resist +35%
+
+Zod Rune
+Required Level: 69
+Version: Resurrected
+Weapons: Armor: Shields: 
+Ist Rune
+Required Level: 51
+Version: Resurrected
+Weapons: 30% Better Chance of Getting Magic Items
+Armor: 25% Better Chance of Getting Magic Items
+Shields: 25% Better Chance of Getting Magic Items
+
+Ritual
+Fanged Knife
+AmnShaelOhm
+One Hand Damage: 61 - 233
+Durability: 36 of 36
+Required Level: 62
+Required Strength: 42
+Required Dexterity: 86
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+13% Chance to cast level 1 Sigil: Death when struck
++40% Increased Attack Speed
+309% Enhanced Damage
+226% Bonus to Attack Rating
++210% Damage to Demons
+7% Life stolen per hit
+Slain Monsters Rest in Peace
++3 Life after each Kill
+3 Sockets (3 used)
+Socketed: Amn Rune
+Socketed: Shael Rune
+Socketed: Ohm Rune
+
+Amn Rune
+Required Level: 25
+Version: Resurrected
+Weapons: 7% Life stolen per hit
+Armor: Attacker Takes Damage of 14
+Shields: Attacker Takes Damage of 14
+
+Shael Rune
+Required Level: 29
+Version: Resurrected
+Weapons: +20% Increased Attack Speed
+Armor: +20% Faster Hit Recovery
+Shields: +20% Faster Block Rate
+
+Ohm Rune
+Required Level: 57
+Version: Resurrected
+Weapons: +50% Enhanced Damage
+Armor: +5% to Maximum Cold Resist
+Shields: +5% to Maximum Cold Resist
+
+Authority
+Mage Plate
+HelShaelRal
+Defense: 300
+Durability: 60 of 60
+Required Level: 29
+Required Strength: 47
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+2% Chance to cast level 10 Psychic Ward when struck
+10% Chance to cast level 15 Miasma Chain on striking
++2 to Warlock Skill Levels
++20% Faster Hit Recovery
+47% Enhanced Damage
++15% Enhanced Defense
+Fire Resist +30%
+Requirements --15%
+3 Sockets (3 used)
+Socketed: Hel Rune
+Socketed: Shael Rune
+Socketed: Ral Rune
+
+Hel Rune
+Version: Resurrected
+Weapons: Requirements --20%
+Armor: Requirements --15%
+Shields: Requirements --15%
+
+Shael Rune
+Required Level: 29
+Version: Resurrected
+Weapons: +20% Increased Attack Speed
+Armor: +20% Faster Hit Recovery
+Shields: +20% Faster Block Rate
+
+Ral Rune
+Required Level: 19
+Version: Resurrected
+Weapons: Adds 5 - 30 Fire Damage
+Armor: Fire Resist +30%
+Shields: Fire Resist +35%
+
+Guardian's Thunder
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Eastern Worldstone Shard
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Western Worldstone Shard
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Northern Worldstone Shard
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Defender's Bile
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Defender's Fire
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Madawc's Ire
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Worusk's End
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Bul-Kathos' Nightmare
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Korlic's Pain
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Talic's Anguish
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+
+Hellfire Torch
+Large Charm
+Required Level: 75
+Fingerprint: 0x2e037b2b
+Item Level: 92
+Version: Resurrected
+25% Chance to cast level 10 Firestorm on striking
++3 to Warlock Skill Levels
+All Stats +20
+All Resistances +20
++8 to Light Radius
+Level 30 Hydra Level 10 %s (10/10 Charges)
+
+Bloodpact Shard
+Mithril Point
+One Hand Damage: 37 - 53
+Durability: 55 of 55
+Required Level: 67
+Required Strength: 55
+Required Dexterity: 98
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++1 to All Skills
++30% Faster Cast Rate
++3 to Bind Demon (Warlock Only)
++3 to Blood Boil (Warlock Only)
++3 to Blood Oath (Warlock Only)
+Slows Target by 25%
+Increase Maximum Life 15%
+35% Better Chance of Getting Magic Items
+
+Horadric Cube
+Fingerprint: 0xa1cc5fb8
+Item Level: 13
+Version: Resurrected
+
+Dreadfang
+Legend Sword
+One Hand Damage: 58 - 148
+Two Hand Damage: 133 - 250
+Durability: 44 of 44
+Required Level: 61
+Required Strength: 118
+Required Dexterity: 67
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
+33% Chance to cast level 3 Amplify Damage on striking
++33% Increased Attack Speed
+166% Enhanced Damage
+33% Bonus to Attack Rating
+6% Mana stolen per hit
+33% Deadly Strike
++3 to Mirrored Blades (Warlock Only)
+Requirements --33%
+
+Horazon's Secrets
+Occult Codex
+Defense: 142
+Durability: 20 of 20
+Required Level: 57
+Required Strength: 91
+Fingerprint: 0x0
+Item Level: 41
+Version: Resurrected
++2 to Unknown Tree (P 188)
++30% Faster Hit Recovery
+20% Increased Chance of Blocking
++30 to Vitality
++50 to Life
+
+(2 items): +20 to Dexterity
+(3 items): +30 to Energy
+(4 items): +300 Defense
++3 to Warlock Skill Levels
++350% Enhanced Damage
+Cold Resist +50%
+Lightning Resist +50%
+Fire Resist +50%
+Poison Resist +50%
+100% Better Chance of Getting Magic Items
+
+Mercenary:
+
+
+
