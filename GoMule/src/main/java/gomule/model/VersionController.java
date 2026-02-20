@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static gomule.model.VersionController.Variant.SharedStashConfig.MODERN;
+import static gomule.model.VersionController.Variant.SharedStashConfig.SIMPLE;
+
 public class VersionController {
 
     public enum Version {
@@ -35,19 +38,19 @@ public class VersionController {
 
     public enum Variant {
 
-//        CLASSIC(1, "Classic"), //TODO
-        EXPANSION(2, 2, 3, "Expansion"),
-        ROW(3, 3, 5, "Return of the Warlock");
+        //        CLASSIC(1, "Classic"), //TODO
+        EXPANSION(2, 2, SIMPLE, "Expansion"),
+        ROW(3, 3, MODERN, "Return of the Warlock");
 
         private final int stashIdentifier;
         private final int fileVersionIdentifier;
-        private final int sharedStashPaneCount;
+        private final SharedStashConfig sharedStashConfig;
         private final String humanName;
 
-        Variant(int stashIdentifier, int fileVersionIdentifier, int sharedStashPaneCount, String humanName) {
+        Variant(int stashIdentifier, int fileVersionIdentifier, SharedStashConfig sharedStashConfig, String humanName) {
             this.stashIdentifier = stashIdentifier;
             this.fileVersionIdentifier = fileVersionIdentifier;
-            this.sharedStashPaneCount = sharedStashPaneCount;
+            this.sharedStashConfig = sharedStashConfig;
             this.humanName = humanName;
         }
 
@@ -63,8 +66,8 @@ public class VersionController {
             return fileVersionIdentifier;
         }
 
-        public int getSharedStashPaneCount() {
-            return sharedStashPaneCount;
+        public SharedStashConfig getSharedStashConfig() {
+            return sharedStashConfig;
         }
 
         public static Variant tryParseStashIdentifier(int stashIdentifier) {
@@ -72,7 +75,7 @@ public class VersionController {
         }
 
         public static Variant tryParseSharedStashPaneCount(int sharedStashPaneCount) {
-            return firstOrNull(Variant.values(), it -> it.sharedStashPaneCount, sharedStashPaneCount);
+            return firstOrNull(Variant.values(), it -> it.getSharedStashConfig().totalStashPaneCount, sharedStashPaneCount);
         }
 
         public static Variant tryParseFileVersionIdentifier(int fileVersionIdentifier) {
@@ -81,6 +84,28 @@ public class VersionController {
 
         public static Variant fromHumanName(String humanName) {
             return getFirst(Variant.values(), it -> it.humanName, humanName).orElseThrow(() -> new IllegalArgumentException("Unknown variant: " + humanName));
+        }
+
+        public enum SharedStashConfig {
+            NONE(0, 0),
+            SIMPLE(3, 3),
+            MODERN(5, 7);
+
+            private final int itemStashPaneCount;
+            private final int totalStashPaneCount;
+
+            SharedStashConfig(int itemStashPaneCount, int totalStashPaneCount) {
+                this.itemStashPaneCount = itemStashPaneCount;
+                this.totalStashPaneCount = totalStashPaneCount;
+            }
+
+            public int getItemStashPaneCount() {
+                return itemStashPaneCount;
+            }
+
+            public int getTotalStashPaneCount() {
+                return totalStashPaneCount;
+            }
         }
     }
 

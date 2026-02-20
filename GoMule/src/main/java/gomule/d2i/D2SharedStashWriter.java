@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static gomule.d2i.D2SharedStashReader.getStashHeaderOffsets;
@@ -33,8 +34,14 @@ public class D2SharedStashWriter {
         D2BitReader bitReader = new D2BitReader(originalContent.clone());
         int[] stashHeaderOffsets = getStashHeaderOffsets(variant, bitReader);
         List<byte[]> stashPanes = new ArrayList<>();
-        for (int i = 0; i < variant.getSharedStashPaneCount(); i++) {
-            stashPanes.add(writeStashPane(stash.getPane(i), bitReader, stashHeaderOffsets[i], bitReader.findNextFlag("JM", stashHeaderOffsets[i])));
+        for (int i = 0; i < stashHeaderOffsets.length; i++) {
+            if (i < variant.getSharedStashConfig().getItemStashPaneCount()) {
+                stashPanes.add(writeStashPane(stash.getPane(i), bitReader, stashHeaderOffsets[i], bitReader.findNextFlag("JM", stashHeaderOffsets[i])));
+            } else {
+                int remainingStart = stashHeaderOffsets[i];
+                stashPanes.add(Arrays.copyOfRange(originalContent, remainingStart, originalContent.length));
+                break;
+            }
         }
         writeToFile(stashPanes);
     }

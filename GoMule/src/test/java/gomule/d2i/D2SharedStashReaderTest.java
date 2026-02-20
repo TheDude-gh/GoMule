@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 import static gomule.d2i.D2SharedStashWriterTest.EMPTY_STASH;
 import static gomule.item.D2ItemTest.decode;
 import static gomule.model.VersionController.Variant.EXPANSION;
+import static gomule.model.VersionController.Variant.ROW;
+import static gomule.util.TestHelpers.loadTestResources;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +29,7 @@ public class D2SharedStashReaderTest {
     }
 
     @Test
-    public void simpleStash() throws Exception {
+    public void simpleExpansionStash() throws Exception {
         byte[] simpleStash = BaseEncoding.base16()
                 .decode(
                         "55AA55AA0200000069000000F2A416004D00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D01001000A2000564D6900855AA55AA0200000069000000000000004E00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D01001000A2000564F647220055AA55AA0200000069000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D0000");
@@ -53,6 +55,68 @@ public class D2SharedStashReaderTest {
                         + "Scroll of Identify\n"
                         + "Version: Resurrected\n"
                         + "Finished: somethingSoftCore.d2i\n\n",
+                out.toString().replaceAll("\r", ""));
+    }
+
+    @Test
+    public void simpleRowStash() throws Exception {
+        D2BitReader bitReader = new D2BitReader(loadTestResources("sharedStashFiles", "modern.d2i").getAbsolutePath());
+        D2SharedStash stash =
+                new D2SharedStashReader().readStash(ROW, "somethingSoftCore.d2i", bitReader);
+        assertEquals(1, stash.getPane(0).getGold());
+        assertEquals(0, stash.getPane(1).getGold());
+        assertEquals(0, stash.getPane(2).getGold());
+        assertEquals(0, stash.getPane(3).getGold());
+        assertEquals(0, stash.getPane(4).getGold());
+        assertTrue(stash.isSC());
+        assertFalse(stash.isHC());
+        assertEquals(
+                singletonList("Super Mana Potion\n" +
+                        "Version: Resurrected\n" +
+                        "Replenishes Mana 250%\n"), getItemDumps(stash.getPane(0)));
+        assertEquals(singletonList("Super Healing Potion\n" +
+                "Version: Resurrected\n" +
+                "Replenish Life +320\n"), getItemDumps(stash.getPane(1)));
+        assertEquals(singletonList("Stamina Potion\n" +
+                "Version: Resurrected\n" +
+                "Heal Stamina Plus 5000%\n"), getItemDumps(stash.getPane(2)));
+        assertEquals(singletonList("Thawing Potion\n" +
+                "Version: Resurrected\n" +
+                "+10% to Maximum Cold Resist\n" +
+                "Cold Resist +50%\n"), getItemDumps(stash.getPane(3)));
+        assertEquals(singletonList("Antidote Potion\n" +
+                "Version: Resurrected\n" +
+                "+10% to Maximum Poison Resist\n" +
+                "Poison Resist +50%\n"), getItemDumps(stash.getPane(4)));
+        StringWriter out = new StringWriter();
+        stash.fullDump(new PrintWriter(out));
+        assertEquals(
+                "somethingSoftCore.d2i\n" +
+                        "\n" +
+                        "\n" +
+                        "Super Mana Potion\n" +
+                        "Version: Resurrected\n" +
+                        "Replenishes Mana 250%\n" +
+                        "\n" +
+                        "Super Healing Potion\n" +
+                        "Version: Resurrected\n" +
+                        "Replenish Life +320\n" +
+                        "\n" +
+                        "Stamina Potion\n" +
+                        "Version: Resurrected\n" +
+                        "Heal Stamina Plus 5000%\n" +
+                        "\n" +
+                        "Thawing Potion\n" +
+                        "Version: Resurrected\n" +
+                        "+10% to Maximum Cold Resist\n" +
+                        "Cold Resist +50%\n" +
+                        "\n" +
+                        "Antidote Potion\n" +
+                        "Version: Resurrected\n" +
+                        "+10% to Maximum Poison Resist\n" +
+                        "Poison Resist +50%\n" +
+                        "Finished: somethingSoftCore.d2i\n" +
+                        "\n",
                 out.toString().replaceAll("\r", ""));
     }
 

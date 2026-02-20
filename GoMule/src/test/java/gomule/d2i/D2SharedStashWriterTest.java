@@ -1,6 +1,7 @@
 package gomule.d2i;
 
 import com.google.common.io.BaseEncoding;
+import gomule.model.VersionController;
 import gomule.util.D2BitReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,9 @@ import static gomule.d2i.D2SharedStash.D2SharedStashPane;
 import static gomule.item.D2ItemTest.HEALTH_POT;
 import static gomule.item.D2ItemTest.SMALL_CHARM;
 import static gomule.model.VersionController.Variant.EXPANSION;
+import static gomule.model.VersionController.Variant.ROW;
 import static gomule.util.TestHelpers.loadItem;
+import static gomule.util.TestHelpers.loadTestResources;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -115,13 +118,25 @@ public class D2SharedStashWriterTest {
         assertEquals("Unrecognized variant, found: null (1 stash panes) expected: EXPANSION (3 stash panes)", assertThrows(RuntimeException.class, () -> writer.write(sharedStash)).getMessage());
     }
 
+    @Test
+    public void simpleRowStash_roundTrip_preservesTailPanes() throws Exception {
+        D2BitReader bitReader = new D2BitReader(loadTestResources("sharedStashFiles", "modern.d2i").getAbsolutePath());
+        D2SharedStash stash =
+                new D2SharedStashReader().readStash(ROW, "somethingSoftCore.d2i", bitReader);
+        runTest(bitReader.getFileContent().clone(), stash, bitReader.getFileContent().clone(), ROW);
+    }
+
     private void runTest(byte[] originalStashBytes, D2SharedStash stash, byte[] expected) throws Exception {
+        runTest(originalStashBytes, stash, expected, EXPANSION);
+    }
+
+    private void runTest(byte[] originalStashBytes, D2SharedStash stash, byte[] expected, VersionController.Variant variant) throws Exception {
         File tempFile = File.createTempFile("d2SharedStashWriterTest", null);
-        D2SharedStashWriter writer = new D2SharedStashWriter(EXPANSION, tempFile, originalStashBytes);
+        D2SharedStashWriter writer = new D2SharedStashWriter(variant, tempFile, originalStashBytes);
         writer.write(stash);
         byte[] actual = Files.readAllBytes(tempFile.toPath());
         assertArrayEquals(expected, actual);
-        D2SharedStash readBackStash = new D2SharedStashReader().readStash(EXPANSION, "foo", new D2BitReader(actual));
+        D2SharedStash readBackStash = new D2SharedStashReader().readStash(variant, "foo", new D2BitReader(actual));
         assertEquals(stash.getPanes().size(), readBackStash.getPanes().size());
         for (int i = 0; i < stash.getPanes().size(); i++) {
             D2SharedStashPane pane = stash.getPane(i);

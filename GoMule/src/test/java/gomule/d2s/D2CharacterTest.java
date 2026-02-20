@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.io.File.separator;
+import static gomule.util.TestHelpers.loadTestResources;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -52,7 +52,7 @@ public class D2CharacterTest {
     }
 
     static Stream<CharacterTestCase> charFileProvider() throws Exception {
-        Path charFilesPath = Paths.get(new File("src" + separator + "test" + separator + "resources" + separator + "charFiles").toURI());
+        Path charFilesPath = Paths.get(loadTestResources("charFiles").toURI());
         try (Stream<Path> pathStream = Files.walk(charFilesPath)) {
             return pathStream
                     .filter(path -> path.toString().endsWith(".d2s"))
@@ -84,11 +84,6 @@ public class D2CharacterTest {
     @Test
     @Disabled
     public void regenerateExpectedFiles() throws Exception {
-        File sourceCharFilesDir = new File("src/test/resources/charFiles");
-        if (!sourceCharFilesDir.exists()) {
-            throw new IllegalStateException("Could not find source directory: " + sourceCharFilesDir.getAbsolutePath());
-        }
-
         charFileProvider().forEach(testCase -> {
             try {
                 String output = testCase.character.fullDumpStr().replaceAll("\r", "");

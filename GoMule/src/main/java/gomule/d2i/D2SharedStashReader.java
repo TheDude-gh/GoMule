@@ -20,8 +20,9 @@ public class D2SharedStashReader {
 
     public D2SharedStash readStash(Variant expectedVariant, String filename, D2BitReader bitReader) throws Exception {
         List<D2SharedStashPane> result = new ArrayList<>();
-        for (int stashHeaderOffset : getStashHeaderOffsets(expectedVariant, bitReader)) {
-            bitReader.set_byte_pos(stashHeaderOffset);
+        int[] stashHeaderOffsets = getStashHeaderOffsets(expectedVariant, bitReader);
+        for (int i = 0; i < expectedVariant.getSharedStashConfig().getItemStashPaneCount(); i++) {
+            bitReader.set_byte_pos(stashHeaderOffsets[i]);
             result.add(readSharedStashPane(bitReader, filename));
         }
         return new D2SharedStash(expectedVariant, filename, result, bitReader.getFileContent());
@@ -31,7 +32,7 @@ public class D2SharedStashReader {
         int[] stashHeaderOffsets = bitReader.findBytes(STASH_HEADER_START);
         Variant variantOrNull = Variant.tryParseSharedStashPaneCount(stashHeaderOffsets.length);
         if (variantOrNull != expectedVariant)
-            throw new RuntimeException("Unrecognized variant, found: " + variantOrNull + " (" + stashHeaderOffsets.length + " stash panes)" + " expected: " + expectedVariant + " (" + expectedVariant.getSharedStashPaneCount() + " stash panes)");
+            throw new RuntimeException("Unrecognized variant, found: " + variantOrNull + " (" + stashHeaderOffsets.length + " stash panes)" + " expected: " + expectedVariant + " (" + expectedVariant.getSharedStashConfig().getTotalStashPaneCount() + " stash panes)");
         return stashHeaderOffsets;
     }
 
