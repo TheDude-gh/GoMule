@@ -35,7 +35,7 @@ class SharedStashGoldTransferPanel extends JPanel {
         transferGold(
                 goldAmount,
                 Integer.MAX_VALUE,
-                this::getSelectedStashGoldValue,
+                this::getSharedStashGoldValue,
                 this::getBankGoldValue,
                 this::updateSelectedStashGoldValue,
                 this::updateBankGoldValue
@@ -47,7 +47,7 @@ class SharedStashGoldTransferPanel extends JPanel {
                 goldAmount,
                 2_500_000,
                 this::getBankGoldValue,
-                this::getSelectedStashGoldValue,
+                this::getSharedStashGoldValue,
                 this::updateBankGoldValue,
                 this::updateSelectedStashGoldValue
         );
@@ -59,7 +59,7 @@ class SharedStashGoldTransferPanel extends JPanel {
 
     private void updateSelectedStashGoldValue(int gold) {
         D2SharedStash sharedStash = sharedStashPanel.getSharedStash();
-        sharedStash.replacePane(sharedStashPanel.getSelectedStashPaneIndex(), D2SharedStash.D2SharedStashPane.fromItems(sharedStashPanel.getSelectedStashPane().getItems(), gold));
+        sharedStash.replacePane(0, D2SharedStash.D2SharedStashPane.fromItems(sharedStash.getPane(0).getItems(), gold));
         sharedStash.setModified(true);
     }
 
@@ -67,8 +67,8 @@ class SharedStashGoldTransferPanel extends JPanel {
         return D2FileManager.getInstance().getProject().getBankValue();
     }
 
-    private int getSelectedStashGoldValue() {
-        return sharedStashPanel.getSelectedStashPane().getGold();
+    private int getSharedStashGoldValue() {
+        return sharedStashPanel.getSharedStash().getPane(0).getGold();
     }
 
     private void transferGold(int goldAmount, int maxGold, Supplier<Integer> sourceGold, Supplier<Integer> destinationGold, Consumer<Integer> updateSource, Consumer<Integer> updateDestination) {

@@ -55,7 +55,7 @@ public class SharedStashPanel extends JPanel {
             int y = getYCoordForRow(row);
             background.getGraphics().drawImage(image, x, y, this);
         });
-        background.getGraphics().drawString(Long.toString(pane.getGold()), 155, 439);
+        background.getGraphics().drawString(Long.toString(getSharedStash().getPane(0).getGold()), 155, 439);
         background.getGraphics().drawString("Page " + (selectedStashPaneIndex + 1) + " / " + fileManager.getVariant().getSharedStashConfig().getItemStashPaneCount(), 152, 405);
     }
 
