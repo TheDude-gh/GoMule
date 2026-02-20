@@ -5,6 +5,7 @@ import gomule.gui.D2FileManager;
 import gomule.gui.D2ItemContainer;
 import gomule.gui.D2ItemList;
 import gomule.gui.D2ItemListListener;
+import gomule.model.VersionController;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -88,6 +89,8 @@ public class D2ViewSharedStash extends JInternalFrame implements D2ItemContainer
 
     @Override
     public void disconnect(Exception pEx) {
+        if (pEx instanceof VersionController.VersionException)
+            D2FileManager.displayVersionErrorMessage((VersionController.VersionException) pEx);
         if (sharedStash != null) {
             fileManager.removeItemList(sharedStashFilename, this);
         }

@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static gomule.model.VersionController.Variant.tryParseFileVersionIdentifier;
+import static gomule.model.VersionController.Version.D2R3;
 import static gomule.skills.SkillsHelpers.*;
 
 //a character class
@@ -149,13 +150,13 @@ public class D2Character extends D2ItemListAdapter {
         iReader.set_byte_pos(4);
         long lVersion = iReader.read(32);
 //        System.err.println("Version: " + lVersion);
-        if (lVersion != VersionController.Version.D2R3.getFileVersionIdentifier())
-            throw new Exception("Incorrect Character version: " + lVersion);
+        if (lVersion != D2R3.getFileVersionIdentifier())
+            throw VersionController.VersionException.forVersion(D2R3, VersionController.Version.tryParseFileVersionIdentifier((int) lVersion));
         iReader.set_byte_pos(248);
         int variantAsInt = (int) iReader.read(8);
         VersionController.Variant variantOrNull = tryParseFileVersionIdentifier(variantAsInt);
         if (variantOrNull != expectedVariant)
-            throw new RuntimeException("Unrecognized variant, found: " + variantOrNull + " (" + variantAsInt + ")" + " expected: " + expectedVariant + " (" + expectedVariant.getFileVersionIdentifier() + ")");
+            throw VersionController.VersionException.forVariant(expectedVariant, variantOrNull);
         this.variant = variantOrNull;
         iReader.set_byte_pos(8);
         long lSize = iReader.read(32);

@@ -2,6 +2,7 @@ package gomule.d2s;
 
 import com.google.common.io.Resources;
 import gomule.model.VersionController;
+import gomule.model.VersionController.VersionException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -47,8 +48,10 @@ public class D2CharacterTest {
 
     @Test
     public void testWrongVariant() {
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> new D2Character(VersionController.Variant.EXPANSION, Resources.getResource("charFiles/ROW/bleh.d2s").getFile()));
-        assertEquals("Unrecognized variant, found: ROW (3) expected: EXPANSION (2)", runtimeException.getMessage());
+        VersionException exception = assertThrows(VersionException.class, () -> new D2Character(VersionController.Variant.EXPANSION, Resources.getResource("charFiles/ROW/bleh.d2s").getFile()));
+        assertEquals("Please change the workspace variant before loading this file.\n" +
+                "Current Workspace: Expansion\n" +
+                "File Needs: Return of the Warlock", exception.getMessage());
     }
 
     static Stream<CharacterTestCase> charFileProvider() throws Exception {

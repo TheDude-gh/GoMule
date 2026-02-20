@@ -26,6 +26,7 @@ import gomule.item.D2BodyLocations;
 import gomule.item.D2Item;
 import gomule.item.D2ItemRenderer;
 import gomule.item.D2WeaponTypes;
+import gomule.model.VersionController;
 import gomule.util.D2CellStringRenderer;
 import gomule.util.D2CellValue;
 import randall.util.RandallPanel;
@@ -38,8 +39,8 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 import static gomule.gui.D2FileManager.displayErrorDialog;
 
@@ -318,7 +319,7 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                         if (!isStash()) {
                             iItemText.setText("<html><font size=3 face=Dialog><font color = white>Item From: "
                                     + (((D2ItemListAll) iStash)
-                                            .getFilename(iItemModel.getItem(iTable.getSelectedRow())))
+                                    .getFilename(iItemModel.getItem(iTable.getSelectedRow())))
                                     + "</font><br><br>" + dispStr + "</font></html>");
                         } else {
                             iItemText.setText("<html><font size=3 face=Dialog>" + dispStr + "</font></html>");
@@ -370,13 +371,17 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
             }
             iTable.setModel(iItemModel);
         } catch (Exception pEx) {
-            displayErrorDialog(pEx);
+            pEx.printStackTrace();
             disconnect(pEx);
         }
-
     }
 
     public void disconnect(Exception pEx) {
+        if (pEx instanceof VersionController.VersionException) {
+            D2FileManager.displayVersionErrorMessage((VersionController.VersionException) pEx);
+        } else if (pEx != null) {
+            displayErrorDialog(pEx);
+        }
         if (iStash != null) {
             if (isStash()) {
                 iFileManager.removeItemList(iFileName, this);

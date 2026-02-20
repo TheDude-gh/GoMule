@@ -2,6 +2,7 @@ package gomule.d2i;
 
 import com.google.common.io.BaseEncoding;
 import gomule.item.D2ItemRenderer;
+import gomule.model.VersionController.VersionException;
 import gomule.util.D2BitReader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -123,7 +124,9 @@ public class D2SharedStashReaderTest {
     @Test
     public void testWrongVersionStash() {
         String stashBytes = "55AA55AA0200000063000000F2A416004D00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D01001000A2000564D6900855AA55AA0200000069000000000000004E00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D01001000A2000564F647220055AA55AA0200000069000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D0000";
-        assertEquals("Incorrect shared stash version: 99", assertThrows(RuntimeException.class, () -> new D2SharedStashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+        assertEquals("Please change the workspace version before loading this file.\n" +
+                "Current Workspace: Resurrected: 3+\n" +
+                "File Needs: Resurrected: 2.5+", assertThrows(VersionException.class, () -> new D2SharedStashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
     }
 
     @Test
@@ -141,7 +144,9 @@ public class D2SharedStashReaderTest {
     @Test
     public void testWrongVariantStash() {
         byte[] stashBytes = BaseEncoding.base16().decode(EMPTY_STASH + EMPTY_STASH + EMPTY_STASH + EMPTY_STASH);
-        assertEquals("Unrecognized variant, found: null (4 stash panes) expected: EXPANSION (3 stash panes)", assertThrows(RuntimeException.class, () -> new D2SharedStashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(stashBytes))).getMessage());
+        assertEquals("Please change the workspace variant before loading this file.\n" +
+                "Current Workspace: Expansion\n" +
+                "File Needs: Unknown", assertThrows(VersionException.class, () -> new D2SharedStashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(stashBytes))).getMessage());
     }
 
     private List<String> getItemDumps(D2SharedStash.D2SharedStashPane pane) {

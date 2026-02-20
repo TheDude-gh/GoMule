@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import static gomule.d2x.D2Stash.FIXED_STASH_CHAR_LEVEL;
 import static gomule.d2x.D2StashWriter.*;
 import static gomule.model.VersionController.Variant.tryParseStashIdentifier;
+import static gomule.model.VersionController.Version.D2R3;
 
 public class D2StashReader {
     public D2Stash readStash(Variant variant, String filename) {
@@ -48,12 +49,12 @@ public class D2StashReader {
     private void checkVersionAndVariant(Variant expectedVariant, D2BitReader bitReader) {
         bitReader.set_byte_pos(5);
         long versionNumber = bitReader.read(16);
-        if (versionNumber != VersionController.Version.D2R3.getFileVersionIdentifier())
-            throw new RuntimeException("Stash Version Incorrect! Expected: " + VersionController.Version.D2R3.getFileVersionIdentifier() + " Found: " + versionNumber);
+        if (versionNumber != D2R3.getFileVersionIdentifier())
+            throw VersionController.VersionException.forVersion(D2R3, VersionController.Version.tryParseFileVersionIdentifier((int) versionNumber));
         int variantAsInt = (int) bitReader.read(16);
         Variant variantOrNull = tryParseStashIdentifier(variantAsInt);
         if (variantOrNull != expectedVariant)
-            throw new RuntimeException("Unrecognized variant, found: " + variantOrNull + " (" + variantAsInt + ")" + " expected: " + expectedVariant + " (" + expectedVariant.getStashIdentifier() + ")");
+            throw VersionController.VersionException.forVariant(expectedVariant, variantOrNull);
     }
 
     private void checkChecksum(D2BitReader bitReader) {

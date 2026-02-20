@@ -1,5 +1,6 @@
 package gomule.d2x;
 
+import gomule.model.VersionController.VersionException;
 import gomule.util.D2BitReader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,19 +36,25 @@ public class D2StashReaderTest {
     @Test
     public void testWrongVersionStash() {
         String stashBytes = "44325801006300020064828F1D1004A0080588144FB400";
-        assertEquals("Stash Version Incorrect! Expected: 105 Found: 99", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+        assertEquals("Please change the workspace version before loading this file.\n" +
+                "Current Workspace: Resurrected: 3+\n" +
+                "File Needs: Resurrected: 2.5+", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
     }
 
     @Test
     public void testWrongVariantStash() {
         String stashBytes = "44 32 58 01 00 69 00 01 00 64 02 9B 1D 10 04 A0 08 05 88 14 4F B4 00";
-        assertEquals("Unrecognized variant, found: null (1) expected: EXPANSION (2)", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+        assertEquals("Please change the workspace variant before loading this file.\n" +
+                "Current Workspace: Expansion\n" +
+                "File Needs: Classic", assertThrows(VersionException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
     }
 
     @Test
     public void testGarbledVariantStash() {
         String stashBytes = "44 32 58 01 00 69 00 63 00 64 02 CC 1D 10 04 A0 08 05 88 14 4F B4 00";
-        assertEquals("Unrecognized variant, found: null (99) expected: EXPANSION (2)", assertThrows(RuntimeException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
+        assertEquals("Please change the workspace variant before loading this file.\n" +
+                "Current Workspace: Expansion\n" +
+                "File Needs: Unknown", assertThrows(VersionException.class, () -> new D2StashReader().readStash(EXPANSION, "foo.d2x", new D2BitReader(decode(stashBytes)))).getMessage());
     }
 
     @Test

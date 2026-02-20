@@ -23,6 +23,7 @@ package gomule.gui;
 import gomule.d2s.D2Character;
 import gomule.item.D2Item;
 import gomule.item.D2ItemRenderer;
+import gomule.model.VersionController;
 import randall.util.RandallPanel;
 
 import javax.swing.*;
@@ -471,6 +472,8 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
     }
 
     public void disconnect(Exception pEx) {
+        if (pEx instanceof VersionController.VersionException)
+            D2FileManager.displayVersionErrorMessage((VersionController.VersionException) pEx);
         if (iCharacter != null) {
             iFileManager.removeItemList(iFileName, this);
         }
@@ -2414,8 +2417,8 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
 ////			lGraphics.drawImage(tick, questLoc[x].x, questLoc[x].y, D2WayPainterPanel.this);
 ////			lGraphics.drawImage(tick, questLoc[x].x+10, questLoc[x].y, D2WayPainterPanel.this);
 ////			lGraphics.drawImage(tick, questLoc[x].x+20, questLoc[x].y, D2WayPainterPanel.this);
-////			}
-////			}
+////            }
+////            }
 //			break;
 //			case 2:
 //			for(int f = 0;f<3;f=f+1){

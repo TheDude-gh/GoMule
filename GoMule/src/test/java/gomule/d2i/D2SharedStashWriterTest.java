@@ -2,6 +2,7 @@ package gomule.d2i;
 
 import com.google.common.io.BaseEncoding;
 import gomule.model.VersionController;
+import gomule.model.VersionController.VersionException;
 import gomule.util.D2BitReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,7 +116,9 @@ public class D2SharedStashWriterTest {
         byte[] originalContent = BaseEncoding.base16().decode(EMPTY_STASH);
         D2SharedStash sharedStash = new D2SharedStash(EXPANSION, "filename", singletonList(D2SharedStashPane.fromItems(emptyList(), 0)), originalContent);
         D2SharedStashWriter writer = new D2SharedStashWriter(EXPANSION, tempFile, originalContent);
-        assertEquals("Unrecognized variant, found: null (1 stash panes) expected: EXPANSION (3 stash panes)", assertThrows(RuntimeException.class, () -> writer.write(sharedStash)).getMessage());
+        assertEquals("Please change the workspace variant before loading this file.\n" +
+                "Current Workspace: Expansion\n" +
+                "File Needs: Unknown", assertThrows(VersionException.class, () -> writer.write(sharedStash)).getMessage());
     }
 
     @Test

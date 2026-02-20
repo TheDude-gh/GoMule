@@ -191,6 +191,10 @@ public class D2FileManager extends JFrame {
         displayErrorDialog(iCurrent, pException);
     }
 
+    public static void displayVersionErrorMessage(VersionController.VersionException versionException) {
+        JOptionPane.showMessageDialog(iCurrent, versionException.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+    }
+
     public static void displayErrorDialog(Window pParent, Exception pException) {
         pException.printStackTrace();
 
@@ -1061,7 +1065,7 @@ public class D2FileManager extends JFrame {
 
     private <T extends Enum<T>> JComboBox<String> createSwitcher(
             String label,
-            T[] values,
+            List<T> values,
             Supplier<T> getCurrentValue,
             String tooltip,
             Function<T, String> nameExtractor,
@@ -1070,7 +1074,7 @@ public class D2FileManager extends JFrame {
     ) {
         iToolbar.add(new JLabel(label + ": "));
 
-        String[] names = Arrays.stream(values).map(nameExtractor).toArray(String[]::new);
+        String[] names = values.stream().map(nameExtractor).toArray(String[]::new);
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(names);
 
         JComboBox<String> switcher = new JComboBox<>(model);
@@ -1095,7 +1099,7 @@ public class D2FileManager extends JFrame {
     private JComboBox<String> createVersionSwitcher() {
         JComboBox<String> switcher = createSwitcher(
                 "Version",
-                VersionController.Version.values(),
+                Arrays.stream(VersionController.Version.values()).filter(VersionController.Version::isEnabled).collect(Collectors.toList()),
                 () -> this.version,
                 "Switch between game versions",
                 VersionController.Version::getHumanName,
@@ -1109,7 +1113,7 @@ public class D2FileManager extends JFrame {
     private JComboBox<String> createVariantSwitcher() {
         return createSwitcher(
                 "Variant",
-                VersionController.Variant.values(),
+                Arrays.stream(VersionController.Variant.values()).filter(VersionController.Variant::isEnabled).collect(Collectors.toList()),
                 () -> this.variant,
                 "Switch between game variants",
                 VersionController.Variant::getHumanName,
