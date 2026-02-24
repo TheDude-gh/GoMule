@@ -47,6 +47,11 @@ public class D2Stash extends D2ItemListAdapter {
     private int iCharLvl = 75; // default char lvl for properties
 
     private int STASH_REVISION = 105;
+    
+    private int STASH_VER_EX = 2;
+    private int STASH_VER_ROW = 3;
+
+    private int stash_version_int = 3;
 
     private File lFile;
 
@@ -139,7 +144,7 @@ public class D2Stash extends D2ItemListAdapter {
 
     private void readAtmaItems() throws Exception {
 
-        iBR.set_byte_pos(7);
+        iBR.set_byte_pos(9);
         long lOriginal = iBR.read(32);
 
         long lCalculated = calculateAtmaCheckSum();
@@ -153,6 +158,8 @@ public class D2Stash extends D2ItemListAdapter {
             long lNumItems = iBR.read(16);
 
             long lVersionNr = iBR.read(16);
+
+            this.stash_version_int = (int)iBR.read(16);
 
             //System.err.println("Rev " + lVersionNr + "(" + STASH_REVISION + ") num=" + lNumItems);
 
@@ -173,7 +180,7 @@ public class D2Stash extends D2ItemListAdapter {
         // calculate a new checksum
         for (int i = 0; i < iBR.get_length(); i++) {
             long lByte = iBR.read(8);
-            if (i >= 7 && i <= 10) {
+            if (i >= 9 && i <= 12) {
                 lByte = 0;
             }
 
@@ -187,7 +194,7 @@ public class D2Stash extends D2ItemListAdapter {
     }
 
     private void readItems(long pNumItems) throws Exception {
-        iBR.set_byte_pos(11);
+        iBR.set_byte_pos(13);
         for (int i = 0; i < pNumItems; i++) {
             D2Item lItem = new D2Item(iFileName, iBR, iCharLvl);
             iItems.add(lItem);
@@ -199,13 +206,14 @@ public class D2Stash extends D2ItemListAdapter {
         D2Backup.backup(pProject, iFileName, iBR);
 
         int size = 0;
-        for (int i = 0; i < iItems.size(); i++)
+        for (int i = 0; i < iItems.size(); i++) {
             size += ((D2Item) iItems.get(i)).get_bytes().length;
-        byte[] newbytes = new byte[size + 11];
+        }
+        byte[] newbytes = new byte[size + 13];
         newbytes[0] = 'D';
         newbytes[1] = '2';
         newbytes[2] = 'X';
-        int pos = 11;
+        int pos = 13;
         for (int i = 0; i < iItems.size(); i++) {
             byte[] item_bytes = ((D2Item) iItems.get(i)).get_bytes();
             for (int j = 0; j < item_bytes.length; j++)
@@ -216,16 +224,17 @@ public class D2Stash extends D2ItemListAdapter {
 
         iBR.set_byte_pos(3);
         iBR.write(iItems.size(), 16);
-        iBR.write(STASH_REVISION, 16); // version 99
+        iBR.write(STASH_REVISION, 16); 
+        iBR.write(this.stash_version_int, 16);
 //        iBR.replace_bytes(11, iBR.get_length(), newbytes);
 
         long lCheckSum1 = calculateAtmaCheckSum();
 //        System.err.println("CheckSum at saving: " + lCheckSum1 );
 
-        iBR.set_byte_pos(7);
+        iBR.set_byte_pos(9);
         iBR.write(lCheckSum1, 32);
 
-        iBR.set_byte_pos(7);
+        iBR.set_byte_pos(9);
         long lCheckSum2 = iBR.read(32);
 
 //        long lCheckSum3 = calculateGoMuleCheckSum();

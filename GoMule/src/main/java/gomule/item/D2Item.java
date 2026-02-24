@@ -34,6 +34,8 @@ import randall.d2files.D2TxtFile;
 import randall.d2files.D2TxtFileItemProperties;
 import randall.flavie.D2ItemInterface;
 
+import static gomule.skills.SkillsHelpers.getSkillsRowForId;
+
 //an item class
 //manages one item
 //keeps the a copy of the bytes representing
@@ -45,6 +47,8 @@ import randall.flavie.D2ItemInterface;
 //to be written only exist to facillitate
 //moving items. writing other item fields
 //is not supported by this class
+
+
 public class D2Item implements Comparable, D2ItemInterface {
 
     protected String iItemName;
@@ -75,6 +79,7 @@ public class D2Item implements Comparable, D2ItemInterface {
     private D2TxtFileItemProperties iItemType;
     private String iType;
     private String iType2;
+    private boolean iCompact;
     private boolean iEthereal;
     private boolean iSocketed;
     private boolean iThrow;
@@ -153,6 +158,16 @@ public class D2Item implements Comparable, D2ItemInterface {
 
     private short set_id;
 
+    //flag bit positions
+    private int FLAG_IDENTIFIED   = 5;
+    private int FLAG_SOCKETED     = 12;
+    private int FLAG_EAR          = 17;
+    private int FLAG_COMPACT      = 22;
+    private int FLAG_ETHEREAL     = 23;
+    private int FLAG_PERSONALIZED = 25;
+    private int FLAG_RUNEWORD     = 27;
+
+
     private final HuffmanLookupTable huffmanLookupTable = HuffmanLookupTable.withStandardDictionary();
 
     public D2Item(String pFileName, D2BitReader pFile, long pCharLvl)
@@ -176,7 +191,7 @@ public class D2Item implements Comparable, D2ItemInterface {
             throw pEx;
         } catch (Exception pEx) {
             pEx.printStackTrace();
-            throw new D2ItemException("Error: " + pEx.getMessage() + getExStr());
+            throw new D2ItemException("Error: " + pEx.getMessage() + getExStr() + " :: " + item_type);
         }
     }
 
@@ -186,10 +201,11 @@ public class D2Item implements Comparable, D2ItemInterface {
     private void read_item(D2BitReader pFile) throws Exception {
         flags = (int) pFile.unflip(pFile.read(32), 32); // 4 bytes
 
-        iSocketed = check_flag(12);
-        iEthereal = check_flag(23);
-        iRuneWord = check_flag(27);
-        iIdentified = check_flag(5);
+        iSocketed = check_flag(this.FLAG_SOCKETED);
+        iEthereal = check_flag(this.FLAG_ETHEREAL);
+        iRuneWord = check_flag(this.FLAG_RUNEWORD);
+        iIdentified = check_flag(this.FLAG_IDENTIFIED);
+        iCompact = check_flag(this.FLAG_COMPACT);
         version = 9999;
 
         pFile.skipBits(3);
@@ -201,11 +217,10 @@ public class D2Item implements Comparable, D2ItemInterface {
         panel = (short) pFile.read(3);
 
         // flag 17 is an ear
-        if (!check_flag(17)) {
-
-            readExtend(pFile);
-        } else {
+        if (check_flag(this.FLAG_EAR)) {
             read_ear(pFile);
+        } else {
+            readExtend(pFile);
         }
 
         //Need to tidy up the properties before the item mods are calculated.
@@ -284,16 +299,13 @@ public class D2Item implements Comparable, D2ItemInterface {
             iReqLvl = getReq(iItemType.get("levelreq"));
             iReqStr = getReq(iItemType.get("reqstr"));
 
-            D2TxtFileItemProperties qualSearch = D2TxtFile.ARMOR.searchColumns(
-                    "normcode", item_type);
+            D2TxtFileItemProperties qualSearch = D2TxtFile.ARMOR.searchColumns("normcode", item_type);
             iItemQuality = "normal";
             if (qualSearch == null) {
-                qualSearch = D2TxtFile.ARMOR.searchColumns("ubercode",
-                        item_type);
+                qualSearch = D2TxtFile.ARMOR.searchColumns("ubercode", item_type);
                 iItemQuality = "exceptional";
                 if (qualSearch == null) {
-                    qualSearch = D2TxtFile.ARMOR.searchColumns("ultracode",
-                            item_type);
+                    qualSearch = D2TxtFile.ARMOR.searchColumns("ultracode", item_type);
                     iItemQuality = "elite";
                 }
             }
@@ -303,16 +315,13 @@ public class D2Item implements Comparable, D2ItemInterface {
             iReqStr = getReq(iItemType.get("reqstr"));
             iReqDex = getReq(iItemType.get("reqdex"));
 
-            D2TxtFileItemProperties qualSearch = D2TxtFile.WEAPONS
-                    .searchColumns("normcode", item_type);
+            D2TxtFileItemProperties qualSearch = D2TxtFile.WEAPONS.searchColumns("normcode", item_type);
             iItemQuality = "normal";
             if (qualSearch == null) {
-                qualSearch = D2TxtFile.WEAPONS.searchColumns("ubercode",
-                        item_type);
+                qualSearch = D2TxtFile.WEAPONS.searchColumns("ubercode", item_type);
                 iItemQuality = "exceptional";
                 if (qualSearch == null) {
-                    qualSearch = D2TxtFile.WEAPONS.searchColumns("ultracode",
-                            item_type);
+                    qualSearch = D2TxtFile.WEAPONS.searchColumns("ultracode", item_type);
                     iItemQuality = "elite";
                 }
             }
@@ -325,7 +334,7 @@ public class D2Item implements Comparable, D2ItemInterface {
         }
 
         // flag 22 is a simple item (extend1)
-        if (!check_flag(22)) {
+        if (!iCompact) {
             readExtend1(pFile);
         }
 
@@ -340,15 +349,15 @@ public class D2Item implements Comparable, D2ItemInterface {
 
         //System.err.println("dbg " + (iTypeMisc ? "misc " : "") + iType + (check_flag(22) ? " simple" : ""));
         //compact misc quest items
-        if (iTypeMisc && iType.startsWith("ques") && check_flag(22)) {
-            long questdif = pFile.read(3);
+        if (iTypeMisc && iType.startsWith("ques") && iCompact) {
+            long questdif = pFile.read(2);
 
             if (questdif == 0) {
                 iDiff = "Normal";
-            } 
+            }
             else if (questdif == 1) {
                 iDiff = "Nightmare";
-            } 
+            }
             else if (questdif == 2) {
                 iDiff = "Hell";
             }
@@ -366,15 +375,15 @@ public class D2Item implements Comparable, D2ItemInterface {
                             + " 0x" + Integer.toHexString((int) pFile.read(32))
                             + " 0x" + Integer.toHexString((int) pFile.read(32))
                             + " 0x" + Integer.toHexString((int) pFile.read(32));
-                } 
+                }
                 else {
                     pFile.read(3); //skip empty
                 }
-            }        
+            }
         }
 
         // flag 22 is a simple item (extend2)
-        if (!check_flag(22)) {
+        if (!iCompact) {
             readExtend2(pFile);
         }
 
@@ -393,7 +402,7 @@ public class D2Item implements Comparable, D2ItemInterface {
         }
 
         //simple item end
-        if (check_flag(22)) {
+        if (iCompact) {
             //new in D2R ROW, flag if item is in material stash, and if yes, count follows
             long hasCount = pFile.read(1);
             if(hasCount > 0) {
@@ -401,8 +410,7 @@ public class D2Item implements Comparable, D2ItemInterface {
             }
         }
 
-        D2TxtFileItemProperties lItemType = D2TxtFile.ITEM_TYPES.searchColumns(
-                "Code", iType);
+        D2TxtFileItemProperties lItemType = D2TxtFile.ITEM_TYPES.searchColumns("Code", iType);
 
         if (lItemType == null) {
             lItemType = D2TxtFile.ITEM_TYPES.searchColumns("Equiv1", iType);
@@ -457,8 +465,7 @@ public class D2Item implements Comparable, D2ItemInterface {
                 lList.add(iSocketedItems.get(i).getRuneCode());
             }
 
-            D2TxtFileItemProperties lRuneWord = D2TxtFile.RUNES
-                    .searchRuneWord(lList);
+            D2TxtFileItemProperties lRuneWord = D2TxtFile.RUNES.searchRuneWord(lList);
             if (lRuneWord != null) {
                 String lookedUpName = D2Files.getInstance().getTranslations().getTranslation(lRuneWord.get("Name"));
                 iItemName = lookedUpName == null ? lRuneWord.get("*Rune Name") : lookedUpName;
@@ -582,8 +589,7 @@ public class D2Item implements Comparable, D2ItemInterface {
                     magic_suffix = 10000;
                 }
 
-                D2TxtFileItemProperties lPrefix = D2TxtFile.PREFIX
-                        .getRow(magic_prefix);
+                D2TxtFileItemProperties lPrefix = D2TxtFile.PREFIX.getRow(magic_prefix);
                 String lPreName = lPrefix.get("Name");
                 if (lPreName != null && !lPreName.equals("")) {
                     iItemName = D2Files.getInstance().getTranslations().getTranslation(lPreName) + " " + iItemName;
@@ -593,12 +599,10 @@ public class D2Item implements Comparable, D2ItemInterface {
                     }
                 }
 
-                D2TxtFileItemProperties lSuffix = D2TxtFile.SUFFIX
-                        .getRow(magic_suffix);
+                D2TxtFileItemProperties lSuffix = D2TxtFile.SUFFIX.getRow(magic_suffix);
                 String lSufName = lSuffix.get("Name");
                 if (lSufName != null && !lSufName.equals("")) {
-                    iItemName = iItemName + " "
-                            + D2Files.getInstance().getTranslations().getTranslation(lSufName);
+                    iItemName = iItemName + " " + D2Files.getInstance().getTranslations().getTranslation(lSufName);
                     int lSufReq = getReq(lSuffix.get("levelreq"));
                     if (lSufReq > iReqLvl) {
                         iReqLvl = lSufReq;
@@ -623,8 +627,7 @@ public class D2Item implements Comparable, D2ItemInterface {
                 iItemName = translatedName == null ? nameFromSetFile : translatedName;
                 iSetName = lSet.get("set");
 
-                setSize = (D2TxtFile.SETITEMS.searchColumnsMultipleHits("set",
-                        iSetName)).size();
+                setSize = (D2TxtFile.SETITEMS.searchColumnsMultipleHits("set", iSetName)).size();
 
                 int lSetReq = getReq(lSet.get("lvl req"));
                 if (lSetReq != -1 && lSetReq > iReqLvl) {
@@ -635,7 +638,7 @@ public class D2Item implements Comparable, D2ItemInterface {
                 addSetProperties(D2TxtFile.FULLSET.searchColumns("index", lSet.get("set")));
                 break;
             }
-            case 7: {
+            case 7: { //unique
                 iUnique = true;
                 short unique_id = (short) pFile.read(12);
                 String s = iItemType.get("uniqueinvfile");
@@ -643,8 +646,7 @@ public class D2Item implements Comparable, D2ItemInterface {
                     image_file = s;
                 }
 
-                D2TxtFileItemProperties lUnique = D2TxtFile.UNIQUES
-                        .searchColumns("*ID", String.valueOf(unique_id));
+                D2TxtFileItemProperties lUnique = D2TxtFile.UNIQUES.searchColumns("*ID", String.valueOf(unique_id));
                 if (lUnique == null) break;
                 String lNewName = D2Files.getInstance().getTranslations().getTranslation(lUnique.get("index"));
                 if (lNewName != null) {
@@ -678,11 +680,9 @@ public class D2Item implements Comparable, D2ItemInterface {
             applyAutomodLvl();
             short rare_name_1 = (short) pFile.read(8);
             short rare_name_2 = (short) pFile.read(8);
-            D2TxtFileItemProperties lRareName1 = D2TxtFile.RAREPREFIX
-                    .getRow(rare_name_1 - 156);
-            D2TxtFileItemProperties lRareName2 = D2TxtFile.RARESUFFIX
-                    .getRow(rare_name_2 - 1);
-                iItemName = D2Files.getInstance().getTranslations().getTranslation(lRareName1.get("name")) + " "
+            D2TxtFileItemProperties lRareName1 = D2TxtFile.RAREPREFIX.getRow(rare_name_1 - 156);
+            D2TxtFileItemProperties lRareName2 = D2TxtFile.RARESUFFIX.getRow(rare_name_2 - 1);
+            iItemName = D2Files.getInstance().getTranslations().getTranslation(lRareName1.get("name")) + " "
                         + D2Files.getInstance().getTranslations().getTranslation(lRareName2.get("name"));
 
             rare_prefixes = new short[3];
@@ -692,8 +692,7 @@ public class D2Item implements Comparable, D2ItemInterface {
             for (int i = 0; i < 3; i++) {
                 if (pFile.read(1) == 1) {
                     rare_prefixes[pre_count] = (short) pFile.read(11);
-                    D2TxtFileItemProperties lPrefix = D2TxtFile.PREFIX
-                            .getRow(rare_prefixes[pre_count]);
+                    D2TxtFileItemProperties lPrefix = D2TxtFile.PREFIX.getRow(rare_prefixes[pre_count]);
                     pre_count++;
                     String lPreName = lPrefix.get("Name");
                     if (lPreName != null && !lPreName.equals("")) {
@@ -706,8 +705,7 @@ public class D2Item implements Comparable, D2ItemInterface {
                 }
                 if (pFile.read(1) == 1) {
                     rare_suffixes[suf_count] = (short) pFile.read(11);
-                    D2TxtFileItemProperties lSuffix = D2TxtFile.SUFFIX
-                            .getRow(rare_suffixes[suf_count]);
+                    D2TxtFileItemProperties lSuffix = D2TxtFile.SUFFIX.getRow(rare_suffixes[suf_count]);
                     suf_count++;
                     String lSufName = lSuffix.get("Name");
                     if (lSufName != null && !lSufName.equals("")) {
@@ -732,12 +730,12 @@ public class D2Item implements Comparable, D2ItemInterface {
         }
 
         // rune word
-        if (check_flag(27)) {
+        if (iRuneWord) {
             pFile.skipBits(12);
             pFile.skipBits(4);
         }
         // personalized
-        if (check_flag(25)) {
+        if (check_flag(this.FLAG_PERSONALIZED)) {
             personalization = "";
             boolean lNotEnded = true;
             for (int i = 0; i < 15 && lNotEnded; i++) {
@@ -768,7 +766,7 @@ public class D2Item implements Comparable, D2ItemInterface {
 
     private void readExtend2(D2BitReader pFile) throws Exception {
         if (isTypeArmor()) {
-            iDef = (short) (pFile.read(11) - 10); // -10 ???
+            iDef = (short) (pFile.read(11) - 10); // save bits - save add
             iInitDef = iDef;
             iMaxDur = (short) pFile.read(8);
 
@@ -795,60 +793,37 @@ public class D2Item implements Comparable, D2ItemInterface {
                         "2handed").equals("1")) {
                     iWhichHand = 2;
                     i1Dmg = new short[4];
-                    i1Dmg[0] = i1Dmg[1] = Short.parseShort((D2TxtFile.WEAPONS
-                            .searchColumns("code", item_type))
-                            .get("2handmindam"));
-                    i1Dmg[2] = i1Dmg[3] = Short.parseShort((D2TxtFile.WEAPONS
-                            .searchColumns("code", item_type))
-                            .get("2handmaxdam"));
+                    i1Dmg[0] = i1Dmg[1] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("2handmindam"));
+                    i1Dmg[2] = i1Dmg[3] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("2handmaxdam"));
                 } else {
                     iWhichHand = 1;
                     i1Dmg = new short[4];
-                    i1Dmg[0] = i1Dmg[1] = Short.parseShort((D2TxtFile.WEAPONS
-                            .searchColumns("code", item_type)).get("mindam"));
-                    i1Dmg[2] = i1Dmg[3] = Short.parseShort((D2TxtFile.WEAPONS
-                            .searchColumns("code", item_type)).get("maxdam"));
+                    i1Dmg[0] = i1Dmg[1] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("mindam"));
+                    i1Dmg[2] = i1Dmg[3] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("maxdam"));
                 }
 
             } else {
                 iWhichHand = 0;
                 if (iThrow) {
                     i2Dmg = new short[4];
-                    i2Dmg[0] = i2Dmg[1] = Short
-                            .parseShort((D2TxtFile.WEAPONS.searchColumns(
-                                    "code", item_type)).get("minmisdam"));
-                    i2Dmg[2] = i2Dmg[3] = Short
-                            .parseShort((D2TxtFile.WEAPONS.searchColumns(
-                                    "code", item_type)).get("maxmisdam"));
+                    i2Dmg[0] = i2Dmg[1] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("minmisdam"));
+                    i2Dmg[2] = i2Dmg[3] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("maxmisdam"));
                 } else {
                     i2Dmg = new short[4];
-                    i2Dmg[0] = i2Dmg[1] = Short
-                            .parseShort((D2TxtFile.WEAPONS.searchColumns(
-                                    "code", item_type)).get("2handmindam"));
-                    i2Dmg[2] = i2Dmg[3] = Short
-                            .parseShort((D2TxtFile.WEAPONS.searchColumns(
-                                    "code", item_type)).get("2handmaxdam"));
+                    i2Dmg[0] = i2Dmg[1] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("2handmindam"));
+                    i2Dmg[2] = i2Dmg[3] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("2handmaxdam"));
                 }
                 i1Dmg = new short[4];
-                i1Dmg[0] = i1Dmg[1] = Short.parseShort((D2TxtFile.WEAPONS
-                        .searchColumns("code", item_type)).get("mindam"));
-                i1Dmg[2] = i1Dmg[3] = Short.parseShort((D2TxtFile.WEAPONS
-                        .searchColumns("code", item_type)).get("maxdam"));
+                i1Dmg[0] = i1Dmg[1] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("mindam"));
+                i1Dmg[2] = i1Dmg[3] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("maxdam"));
             }
-
-            if ("1".equals(iItemType.get("stackable"))) {
-                iStackable = true;
-                iCurDur = (short) pFile.read(9);
-            }
-        } else if (isTypeMisc()) {
-            if ("1".equals(iItemType.get("stackable"))) {
-                iStackable = true;
-                iCurDur = (short) pFile.read(9);
-            }
-
         }
 
-        pFile.read(1); //D2RW?? unknown. Seens in some arrow/bolt stacks, its just 1 bit, no more data follows when =1. Meaning unclear
+        int isStackableFlag = (int)pFile.read(1); ////flag if item is stackable
+        if ("1".equals(iItemType.get("stackable")) || isStackableFlag == 1) {
+            iStackable = true;
+            iCurDur = (short) pFile.read(9);
+        }
 
         if (iSocketed) {
             iSocketNrTotal = (short) pFile.read(4);
@@ -867,6 +842,7 @@ public class D2Item implements Comparable, D2ItemInterface {
         } else {
             readProperties(pFile, 0);
         }
+
         if (quality == 5) {
             for (int x = 0; x < 5; x++) {
                 if (lSet[x] == 1) {
@@ -874,15 +850,21 @@ public class D2Item implements Comparable, D2ItemInterface {
                 }
             }
         }
+
         if (iRuneWord) {
             readProperties(pFile, 0);
+        }
+
+        //D2R ROW if item is unidentified AND (set OR unique), there will be chronicle info
+        if(!iIdentified && (quality == 5 || quality == 7)) {
+            pFile.skipBits(16 + 32 + 4); //16 monster id + 32 time found + 4 unknown
         }
 
         //new in D2R ROW, flag if item is in material stash, and if yes, count follows
         long hasCount = pFile.read(1);
         if (hasCount > 0) {
             iStashCount = (int) pFile.read(8);
-        }            
+        }
     }
 
     private void applyAutomodLvl() {
@@ -1041,18 +1023,14 @@ public class D2Item implements Comparable, D2ItemInterface {
             if (((D2Prop) iProps.get(x)).getPNum() == 97
                     || ((D2Prop) iProps.get(x)).getPNum() == 107) {
 
-                D2TxtFileItemProperties skillsRow = D2TxtFile.SKILLS.searchColumns(
-                        "skilldesc",
-                        D2TxtFile.SKILL_DESC.getRow(
-                                ((D2Prop) iProps.get(x)).getPVals()[0]).get(
-                                "skilldesc"));
+                D2TxtFileItemProperties skillsRow = getSkillsRowForId(((D2Prop) iProps.get(x)).getPVals()[0]);
                 String reqlevel = skillsRow.get("reqlevel");
                 try {
                     if (iReqLvl < Integer.parseInt(reqlevel)) {
                         iReqLvl = (Integer.parseInt(reqlevel));
                     }
                 } catch (NumberFormatException e) {
-                    System.err.println("Failed to parse level req number for " + skillsRow.get("skill"));
+                    System.err.println("Failed to parse level req number for " + skillsRow.get("skill") + "(item )" + item_type + ", " + iItemName);
                 }
             }
 

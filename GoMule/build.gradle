@@ -26,7 +26,8 @@ test {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'gomule.GoMule'
+                'Main-Class': 'gomule.GoMule',
+                'Enable-Native-Access': 'ALL-UNNAMED'
         )
     }
     from {
@@ -67,7 +68,7 @@ task distribution(type: Zip) {
 }
 
 tasks.withType(JavaCompile) {
-;		options.compilerArgs << '-Xlint:unchecked'
+//		options.compilerArgs << '-Xlint:unchecked'
     options.deprecation = true
 }
 

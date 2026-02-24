@@ -114,9 +114,9 @@ public class D2SharedStashWriter {
         //int num_items = items.size();
         int counter = 0;
 
-        for (D2Item item : items) {            
+        for (D2Item item : items) {
             byte[] bytesToWrite = item.get_bytes();
-            writer.setBytes(writer.get_byte_pos(), bytesToWrite);            
+            writer.setBytes(writer.get_byte_pos(), bytesToWrite);
             counter++;
             System.err.println("Write in=" + counter + ", size=" + bytesToWrite.length);
             writer.set_byte_pos(writer.get_byte_pos() + bytesToWrite.length);

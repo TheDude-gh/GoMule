@@ -123,7 +123,7 @@ public class D2SharedStash extends D2ItemListAdapter {
             //D2Item[][] grid = new D2Item[10][10];
             D2Item[][] grid;
             
-            if(stash_num >= 6) {                
+            if(stash_num >= 6) {
                 grid = new D2Item[11][9];
                 for (D2Item item : items) {
                     int[] point = getGridPointForItemCode(item.getItemCode());

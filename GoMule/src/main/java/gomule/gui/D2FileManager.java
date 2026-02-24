@@ -67,7 +67,7 @@ public class D2FileManager extends JFrame {
      */
     private static final long serialVersionUID = 4010435064410504579L;
 
-    private static final String CURRENT_VERSION = "R0.44: Resurrected";
+    private static final String CURRENT_VERSION = "R3.1.91735 Resurrected RoW";
     private static final D2FileManager iCurrent = new D2FileManager();
     private final D2SharedStashReader sharedStashReader;
     private final JSplitPane lSplit;
@@ -113,7 +113,7 @@ public class D2FileManager extends JFrame {
     private JButton flavieSingle;
 
     private D2FileManager() {
-        D2TxtFile.constructTxtFiles("d2111");
+        D2TxtFile.constructTxtFiles("d3191");
         sharedStashReader = new D2SharedStashReader();
         iOpenWindows = new ArrayList();
         iContentPane = new JPanel();

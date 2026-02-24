@@ -43,7 +43,7 @@ class SharedStashPanelMouseClickHandler extends MouseAdapter {
 
     private void handleLeftClick(MouseEvent e) {
         D2SharedStash sharedStash = sharedStashPanel.getSharedStash();
-        if (sharedStash == null) return;        
+        if (sharedStash == null) return;
         Integer possibleStashTabClick = getPossibleStashTabClick(e.getX(), e.getY(), sharedStash.GetPanesCount());
         System.err.println("psSTabClick " + possibleStashTabClick + " x=" + e.getX() + " y=" + e.getY());
         setStashTab(possibleStashTabClick);

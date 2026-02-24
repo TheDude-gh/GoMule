@@ -48,12 +48,12 @@ public class SharedStashPanel extends JPanel {
         build();
     }
 
-    public void build() {    
+    public void build() {
         D2SharedStash sharedStash = getSharedStash();
         int panesCount = 0;
         if(sharedStash != null) {
             panesCount = sharedStash.GetPanesCount();
-        }        
+        }
 
         //select image according to stash version (D2R or D2R ROW)
         String image = (panesCount == 3) ? "stash" + (selectedStashPaneIndex + 1) + ".jpg" : "stashw" + (selectedStashPaneIndex + 1) + ".jpg";
@@ -74,18 +74,18 @@ public class SharedStashPanel extends JPanel {
             if (item.get_location() != 0 && item.get_body_position() != 0 && item.get_panel() != 5) return;
             Image image = D2ImageCache.getDC6Image(item);
             int col = item.get_col();
-            int row = item.get_row();            
+            int row = item.get_row();
             //grid stash panel
-            if(pane.getStashNum() < 6) {                
+            if(pane.getStashNum() < 6) {
                 x = getXCoordForCol(col);
-                y = getYCoordForRow(row);                
+                y = getYCoordForRow(row);
             }
             //materials stash panel
-            else {    
-                stack_count = item.GetStashCount();                            
+            else {
+                stack_count = item.GetStashCount();
                 PointXY point = this.getCoordForItemCode(item.getItemCode());
                 x = point.x;
-                y = point.y;                
+                y = point.y;
                 //System.err.println(item.getItemCode() + " w=" + image.getWidth(this) + " h=" + image.getHeight(this));
             }
             background.getGraphics().drawImage(image, x, y, this);
@@ -136,7 +136,7 @@ public class SharedStashPanel extends JPanel {
         return "";
     }
 
-    public static void InitMaterialGridMap() {        
+    public static void InitMaterialGridMap() {
         material_grid = new LinkedHashMap<>();
         
         material_grid.put("gcv", new PointXY(186, 81)); //Chipped Amethyst

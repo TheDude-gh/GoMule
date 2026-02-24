@@ -35,11 +35,11 @@ class SharedStashMouseMotionListener extends MouseMotionAdapter {
             if (col < 0 || row < 0 || col > 9 || row > 9) {
                 sharedStashPanel.setCursorNormal();
                 return;
-            }                   
+            }
         }
         //material stash
         else {
-            String item_code = getAreaForXYCoord(e.getX(), e.getY());            
+            String item_code = getAreaForXYCoord(e.getX(), e.getY());
             int[] point = getGridPointForItemCode(item_code);
             col = point[0];
             row = point[1];

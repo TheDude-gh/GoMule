@@ -21,16 +21,17 @@
 
 package gomule.item;
 
-import gomule.D2Files;
-import randall.d2files.D2TxtFile;
-import randall.d2files.D2TxtFileItemProperties;
-
 import java.util.ArrayList;
+import static java.util.Collections.singletonList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Collections.singletonList;
+
+import gomule.D2Files;
+import static gomule.skills.SkillsHelpers.getSkillsRowForId;
+import randall.d2files.D2TxtFile;
+import randall.d2files.D2TxtFileItemProperties;
 
 public class D2Prop {
 
@@ -434,8 +435,7 @@ public class D2Prop {
                 return pVals[1] + "% " + oString + " "
                         + D2Files.getInstance()
                                 .getTranslations()
-                                .getTranslation(
-                                        D2TxtFile.MONSTATS.getRow(pVals[0]).get("NameStr"));
+                                .getTranslation(D2TxtFile.MONSTATS.getRow(pVals[0]).get("NameStr"));
 
             case (24):
 
@@ -444,56 +444,26 @@ public class D2Prop {
                 return "Level " + pVals[0] + " "
                         + D2Files.getInstance()
                                 .getTranslations()
-                                .getTranslation(D2TxtFile.SKILL_DESC
-                                        .searchColumns(
-                                                "skilldesc",
-                                                D2TxtFile.SKILLS
-                                                        .getRow(pVals[1])
-                                                        .get("skilldesc"))
-                                        .get("str name"))
+                                .getTranslation(D2TxtFile.SKILL_DESC.searchColumns("skilldesc", D2TxtFile.SKILLS .getRow(pVals[1]) .get("skilldesc")) .get("str name"))
                         + " " + oString;
 
             case (27):
                 return "+" + pVals[1] + " to "
                         + D2Files.getInstance()
                                 .getTranslations()
-                                .getTranslation(D2TxtFile.SKILL_DESC
-                                        .searchColumns(
-                                                "skilldesc",
-                                                D2TxtFile.SKILLS
-                                                        .getRow(pVals[0])
-                                                        .get("skilldesc"))
-                                        .get("str name"))
+                                .getTranslation(D2TxtFile.SKILL_DESC.searchColumns("skilldesc", D2TxtFile.SKILLS.getRow(pVals[0]).get("skilldesc")).get("str name"))
                         + " "
                         + D2Files.getInstance()
                                 .getTranslations()
-                                .getTranslation((D2TxtFile.SKILLS
-                                                                .getRow(D2TxtFile.SKILL_DESC
-                                                                        .getRow(pVals[0])
-                                                                        .getRowNum())
-                                                                .get("charclass")
-                                                                .charAt(0)
-                                                        + "")
-                                                .toUpperCase()
-                                        + D2TxtFile.SKILLS
-                                                .getRow(D2TxtFile.SKILL_DESC
-                                                        .getRow(pVals[0])
-                                                        .getRowNum())
-                                                .get("charclass")
-                                                .substring(1)
+                                .getTranslation((getSkillsRowForId(pVals[0]).get("charclass").charAt(0) + "").toUpperCase()
+                                        + getSkillsRowForId(pVals[0]).get("charclass").substring(1)
                                         + "Only");
 
             case (28):
                 return "+" + pVals[1] + " to "
                         + D2Files.getInstance()
                                 .getTranslations()
-                                .getTranslation(D2TxtFile.SKILL_DESC
-                                        .searchColumns(
-                                                "skilldesc",
-                                                D2TxtFile.SKILLS
-                                                        .getRow(pVals[0])
-                                                        .get("skilldesc"))
-                                        .get("str name"));
+                                .getTranslation(D2TxtFile.SKILL_DESC.searchColumns("skilldesc", D2TxtFile.SKILLS.getRow(pVals[0]).get("skilldesc")).get("str name"));
 
             //UNOFFICIAL PROPERTIES
 
@@ -659,8 +629,17 @@ public class D2Prop {
             case 50:
                 return "Martial Art Skills (Assassin Only)";
 
+            case 56:
+                return "Demon Skills (Warlock Only)";
+
+            case 57:
+                return "Eldritch Skills (Warlock Only)";
+
+            case 58:
+                return "Chaos Skills (Warlock Only)";
+
         }
-        return "Unknown Tree (P 188)";
+        return "Unknown Tree (P 188) num " + lSkillNr;
 
     }
 
