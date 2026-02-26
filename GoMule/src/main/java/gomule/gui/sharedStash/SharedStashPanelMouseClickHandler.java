@@ -45,7 +45,7 @@ class SharedStashPanelMouseClickHandler extends MouseAdapter {
         D2SharedStash sharedStash = sharedStashPanel.getSharedStash();
         if (sharedStash == null) return;
         Integer possibleStashTabClick = getPossibleStashTabClick(e.getX(), e.getY(), sharedStash.GetPanesCount());
-        System.err.println("psSTabClick " + possibleStashTabClick + " x=" + e.getX() + " y=" + e.getY());
+        //System.err.println("psSTabClick " + possibleStashTabClick + " x=" + e.getX() + " y=" + e.getY());
         setStashTab(possibleStashTabClick);
         if (isClickOnGoldButton(e.getX(), e.getY())) showGoldDialog();
 
@@ -139,7 +139,7 @@ class SharedStashPanelMouseClickHandler extends MouseAdapter {
             if (x <= 103) return 0;
             if (x <= 181) return 1;
             return 2;
-        }*/        
+        }*/
         return null;
     }
 }

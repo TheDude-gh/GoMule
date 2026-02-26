@@ -28,13 +28,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import gomule.D2Files;
+import static gomule.skills.SkillsHelpers.getSkillsRowForId;
 import gomule.util.D2BitReader;
 import gomule.util.D2ItemException;
 import randall.d2files.D2TxtFile;
 import randall.d2files.D2TxtFileItemProperties;
 import randall.flavie.D2ItemInterface;
-
-import static gomule.skills.SkillsHelpers.getSkillsRowForId;
 
 //an item class
 //manages one item
@@ -82,6 +81,7 @@ public class D2Item implements Comparable, D2ItemInterface {
     private boolean iCompact;
     private boolean iEthereal;
     private boolean iSocketed;
+    private boolean iChronicle;
     private boolean iThrow;
     private boolean iMagical;
     private boolean iRare;
@@ -166,6 +166,7 @@ public class D2Item implements Comparable, D2ItemInterface {
     private int FLAG_ETHEREAL     = 23;
     private int FLAG_PERSONALIZED = 25;
     private int FLAG_RUNEWORD     = 27;
+    private int FLAG_CHRONICLE    = 29;
 
 
     private final HuffmanLookupTable huffmanLookupTable = HuffmanLookupTable.withStandardDictionary();
@@ -201,11 +202,12 @@ public class D2Item implements Comparable, D2ItemInterface {
     private void read_item(D2BitReader pFile) throws Exception {
         flags = (int) pFile.unflip(pFile.read(32), 32); // 4 bytes
 
-        iSocketed = check_flag(this.FLAG_SOCKETED);
-        iEthereal = check_flag(this.FLAG_ETHEREAL);
-        iRuneWord = check_flag(this.FLAG_RUNEWORD);
+        iSocketed   = check_flag(this.FLAG_SOCKETED);
+        iEthereal   = check_flag(this.FLAG_ETHEREAL);
+        iRuneWord   = check_flag(this.FLAG_RUNEWORD);
         iIdentified = check_flag(this.FLAG_IDENTIFIED);
-        iCompact = check_flag(this.FLAG_COMPACT);
+        iCompact    = check_flag(this.FLAG_COMPACT);
+        iChronicle  = check_flag((this.FLAG_CHRONICLE));
         version = 9999;
 
         pFile.skipBits(3);
@@ -347,25 +349,28 @@ public class D2Item implements Comparable, D2ItemInterface {
             }
         }
 
+
+        //System.err.println("Item :" + iItemName + " : " + item_type);
+
         //System.err.println("dbg " + (iTypeMisc ? "misc " : "") + iType + (check_flag(22) ? " simple" : ""));
         //compact misc quest items
-        if (iTypeMisc && iType.startsWith("ques") && iCompact) {
-            long questdif = pFile.read(2);
+        if (iCompact) {
+            if (iTypeMisc && iType.startsWith("ques")) {
+                long questdif = pFile.read(2);
 
-            if (questdif == 0) {
-                iDiff = "Normal";
+                if (questdif == 0) {
+                    iDiff = "Normal";
+                } else if (questdif == 1) {
+                    iDiff = "Nightmare";
+                } else if (questdif == 2) {
+                    iDiff = "Hell";
+                }
             }
-            else if (questdif == 1) {
-                iDiff = "Nightmare";
-            }
-            else if (questdif == 2) {
-                iDiff = "Hell";
-            }
+            pFile.skipBits(1);
         }
-        //items with GUID flag
         else {
+            //items with GUID flag, probably only on realm
             long lHasGUID = pFile.read(1);
-
             if (lHasGUID == 1) { // GUID ???
                 if (iType.startsWith("rune") || iType.startsWith("gem")
                         || iType.startsWith("amu") || iType.startsWith("rin")
@@ -381,6 +386,7 @@ public class D2Item implements Comparable, D2ItemInterface {
                 }
             }
         }
+
 
         // flag 22 is a simple item (extend2)
         if (!iCompact) {
@@ -856,7 +862,7 @@ public class D2Item implements Comparable, D2ItemInterface {
         }
 
         //D2R ROW if item is unidentified AND (set OR unique), there will be chronicle info
-        if(!iIdentified && (quality == 5 || quality == 7)) {
+        if(iChronicle && !iIdentified && (quality == 5 || quality == 7)) {
             pFile.skipBits(16 + 32 + 4); //16 monster id + 32 time found + 4 unknown
         }
 

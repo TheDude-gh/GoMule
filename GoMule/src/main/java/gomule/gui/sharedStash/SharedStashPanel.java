@@ -59,7 +59,7 @@ public class SharedStashPanel extends JPanel {
         String image = (panesCount == 3) ? "stash" + (selectedStashPaneIndex + 1) + ".jpg" : "stashw" + (selectedStashPaneIndex + 1) + ".jpg";
 
         Image lEmptyBackground = D2ImageCache.getImage(image);
-        System.err.println("Pane Sel " + selectedStashPaneIndex);
+        //System.err.println("Pane Sel " + selectedStashPaneIndex);
         background = fileManager.getGraphicsConfiguration().createCompatibleImage(BG_WIDTH, BG_HEIGHT, Transparency.BITMASK);
         Graphics2D lGraphics = (Graphics2D) background.getGraphics();
         lGraphics.drawImage(lEmptyBackground, 0, 0, this);
@@ -67,7 +67,7 @@ public class SharedStashPanel extends JPanel {
         repaint();
     }
 
-    private void placeItemsInView() {  
+    private void placeItemsInView() {
         D2SharedStash.D2SharedStashPane pane = getSelectedStashPane();
         pane.getItems().forEach(item -> {
             int x, y, stack_count = 0;
@@ -131,14 +131,14 @@ public class SharedStashPanel extends JPanel {
             if(x >= point.x && x <= point.x + 28 && y >= point.y && y < point.y + 28) {
                 return en.getKey();
             }
-            
+
         }
         return "";
     }
 
     public static void InitMaterialGridMap() {
         material_grid = new LinkedHashMap<>();
-        
+
         material_grid.put("gcv", new PointXY(186, 81)); //Chipped Amethyst
         material_grid.put("gfv", new PointXY(186, 112)); //Flawed Amethyst
         material_grid.put("gsv", new PointXY(186, 141)); //Amethyst
@@ -234,15 +234,15 @@ public class SharedStashPanel extends JPanel {
         material_grid.put("xa2", new PointXY(195, 429)); //Eastern Worldstone Shard
         material_grid.put("xa3", new PointXY(228, 429)); //Southern Worldstone Shard
         material_grid.put("xa4", new PointXY(261, 429)); //Deep Worldstone Shard
-        material_grid.put("xa5", new PointXY(294, 429)); //Northern Worldstone Shard         
+        material_grid.put("xa5", new PointXY(294, 429)); //Northern Worldstone Shard
     }
 
-    public PointXY getCoordForItemCode(String item_code) {        
+    public PointXY getCoordForItemCode(String item_code) {
 
         for (Map.Entry<String, PointXY> en : material_grid.entrySet()) {
             String key = en.getKey();
             if(key.equals(item_code)) {
-                return en.getValue();                        
+                return en.getValue();
             }
         }
         return new PointXY(0, 0);
@@ -320,7 +320,7 @@ public class SharedStashPanel extends JPanel {
             case "r31": return new PointXY(133, 332); //Jah Rune
             case "r32": return new PointXY(165, 332); //Cham Rune
             case "r33": return new PointXY(197, 332); //Zod Rune
-            
+
             case "pk1": return new PointXY(37, 368); //Key of Terror
             case "pk2": return new PointXY(70, 368); //Key of Hate
             case "pk3": return new PointXY(102, 368); //Key of Destruction
@@ -333,7 +333,7 @@ public class SharedStashPanel extends JPanel {
             case "bet": return new PointXY(302, 144); //Burning Essence of Terror
             case "fed": return new PointXY(302, 177); //Festering Essence of Destruction
             case "toa": return new PointXY(302, 204); //Token of Absolution
-            
+
             case "ua1": return new PointXY(162, 365); //Uber Ancient Summon Material Act 1
             case "ua2": return new PointXY(195, 365); //Uber Ancient Summon Material Act 2
             case "ua3": return new PointXY(228, 365); //Uber Ancient Summon Material Act 3
@@ -446,7 +446,7 @@ public class SharedStashPanel extends JPanel {
             case "xa2": return new int[] {10, 5}; //Eastern Worldstone Shard
             case "xa3": return new int[] {10, 6}; //Southern Worldstone Shard
             case "xa4": return new int[] {10, 7}; //Deep Worldstone Shard
-            case "xa5": return new int[] {10, 8}; //Northern Worldstone Shard             
+            case "xa5": return new int[] {10, 8}; //Northern Worldstone Shard
         }
         return new int[] {-1, -1};
     }
@@ -530,7 +530,7 @@ public class SharedStashPanel extends JPanel {
             this.y = y;
         }
     }
-    
+
 }
 
 

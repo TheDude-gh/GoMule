@@ -29,13 +29,13 @@ public class D2SharedStashWriter {
         int[] stashHeaderOffsets = bitReader.findBytes(STASH_HEADER_START);
         if (stashHeaderOffsets.length != 3 && stashHeaderOffsets.length != 7) throw new RuntimeException("Stash unsupported");
         List<byte[]> stashPanes = new ArrayList<>();
-        
-        System.err.println("write pane size " + stashHeaderOffsets.length);
+
+        //System.err.println("write pane size " + stashHeaderOffsets.length);
 
         for (int i = 0; i < stashHeaderOffsets.length; i++) {
-            
+
             int panesize = i < 6 ? (stashHeaderOffsets[i + 1] - stashHeaderOffsets[i]) : bitReader.get_length() - stashHeaderOffsets[i];
-            System.err.println("pane num " + i + ", offset=" + stashHeaderOffsets[i] + ", len=" + panesize);
+            //System.err.println("pane num " + i + ", offset=" + stashHeaderOffsets[i] + ", len=" + panesize);
 
             //part 1-5 is 10x10 grid stash
             if(i < 6) {
@@ -95,8 +95,8 @@ public class D2SharedStashWriter {
     }
 /*
     private byte[] writeStashPaneMaterial(D2SharedStash.D2SharedStashPane pane, D2BitReader bitReader, int stashHeaderOffset, int itemListStartOffset) {
-        bitReader.set_byte_pos(stashHeaderOffset);        
-        int itemByteLength = pane.getItems().stream().map(it -> it.get_bytes().length).reduce(4, Integer::sum); 
+        bitReader.set_byte_pos(stashHeaderOffset);
+        int itemByteLength = pane.getItems().stream().map(it -> it.get_bytes().length).reduce(4, Integer::sum);
         byte[] oldHeaderBytes = bitReader.get_bytes(itemListStartOffset - stashHeaderOffset);
         D2BitReader writer = new D2BitReader(new byte[oldHeaderBytes.length + itemByteLength]);
         writer.setBytes(0, oldHeaderBytes);
@@ -125,7 +125,7 @@ public class D2SharedStashWriter {
 
     private byte[] writeStashPaneFull(D2SharedStash.D2SharedStashPane pane, D2BitReader bitReader, int stashHeaderOffset) {
         bitReader.set_byte_pos(stashHeaderOffset);
-        
+
         byte[] oldPaneBytes = bitReader.get_bytes(bitReader.get_length() - stashHeaderOffset);
         D2BitReader writer = new D2BitReader(new byte[oldPaneBytes.length]);
         writer.setBytes(0, oldPaneBytes);

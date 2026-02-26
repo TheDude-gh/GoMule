@@ -35,6 +35,9 @@ import gomule.item.D2BodyLocations;
 import gomule.item.D2Item;
 import gomule.item.D2ItemRenderer;
 import gomule.item.D2Prop;
+import static gomule.skills.SkillsHelpers.getSkillDescRow;
+import static gomule.skills.SkillsHelpers.getSkillDescRowForId;
+import static gomule.skills.SkillsHelpers.getSkillsRowForId;
 import gomule.util.D2Backup;
 import gomule.util.D2BitReader;
 import gomule.util.D2Project;
@@ -42,8 +45,6 @@ import randall.d2files.D2FileReader;
 import randall.d2files.D2FileWriter;
 import randall.d2files.D2TxtFile;
 import randall.d2files.D2TxtFileItemProperties;
-
-import static gomule.skills.SkillsHelpers.*;
 
 //a character class
 //manages one character file
@@ -111,7 +112,7 @@ public class D2Character extends D2ItemListAdapter {
 //	private boolean fullChanged = false;
 //	private ArrayList partialSetProps = new ArrayList();
 //	private ArrayList fullSetProps = new ArrayList();
-    private int[][] setTracker = new int[33][2];
+    private int[][] setTracker = new int[36][2];
     private ArrayList plSkill;
     private long[] iReadStats = new long[16];
     private int[] cStats = new int[31];
