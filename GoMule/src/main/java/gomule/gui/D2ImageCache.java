@@ -20,16 +20,19 @@
  ******************************************************************************/
 package gomule.gui;
 
-import gomule.item.D2Item;
-import gomule.item.D2dc6;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import gomule.item.D2Item;
+import gomule.item.D2dc6;
 
 /**
  * @author Marco
@@ -90,21 +93,73 @@ public class D2ImageCache {
     }
 
     public static Image getDC6Image(D2Item pItem) {
-        return getDC6Image(pItem.get_image() + ".dc6");
+        return getDC6Image(pItem.get_image(), pItem.InvTransformBase, pItem.InvTransform);
     }
 
-    public static Image getDC6Image(String pFileName) {
-        String lFileName = "resources" + File.separator + "gfx" + File.separator + pFileName;
+    public static Image getDC6Image(String pImageName, String InvTransformBase, String InvTransform) {
+        String gfxPath = "resources" + File.separator + "gfx" + File.separator;
+        String lFileName = gfxPath + pImageName + ".dc6";
+        String outFileName = gfxPath + pImageName;
+        String pngFileName = pImageName;
 
-        if (sDC6Images.containsKey(lFileName)) {
-            return (Image) sDC6Images.get(lFileName);
+        if(InvTransform.equals("")) {
+            outFileName += ".dc6";
+            pngFileName += ".png";
+        }
+        else {
+            outFileName += "_" + InvTransformBase + InvTransform + ".dc6";
+            pngFileName += "_" + InvTransformBase + InvTransform + ".png";
         }
 
-        D2dc6 lD2S = new D2dc6(lFileName);
-        lD2S.load_file();
-        Image lImage = lD2S.getSingleImage();
+        String pngFilePath = "images" + File.separator + pngFileName;
 
-        sDC6Images.put(lFileName, lImage);
+        if (sDC6Images.containsKey(outFileName)) {
+            return (Image) sDC6Images.get(outFileName);
+        }
+
+        //try to get png file
+        File pngfile = new File(pngFilePath);
+        if(pngfile.exists()) {
+            try {
+                Image pngImage = ImageIO.read(pngfile);
+                sDC6Images.put(outFileName, pngImage);
+                return pngImage;
+            }
+            catch(IOException e) {}
+        }
+
+        //check if we get DC6 file. If not, try  base PNG image
+        File dc6file = new File(lFileName);
+        if(!dc6file.exists()) {
+            System.err.println("Falling to ?. No PNG or DC6 for " + pngFileName);
+            File pngfileF = new File("images" + File.separator + pImageName + ".png");
+            if (!pngfileF.exists()) {
+                pngfile = new File("images" + File.separator + "_fallback.png");
+            }
+            if (pngfileF.exists()) {
+                try {
+                    Image pngImage = ImageIO.read(pngfileF);
+                    sDC6Images.put(outFileName, pngImage);
+                    return pngImage;
+                } catch (IOException e) {}
+            }
+        }
+
+        //get DC6 image
+        D2dc6 lD2S = new D2dc6(lFileName);
+        Image lImage = lD2S.getSingleImage(InvTransformBase, InvTransform);
+        sDC6Images.put(outFileName, lImage);
+
+        //save DC6 iamge to PNG for future use
+        if (!pngfile.exists()) {
+            File out = new File(pngFilePath);
+            try {
+                ImageIO.write((BufferedImage)lImage, "png", out);
+            }
+            catch(IOException e) {
+
+            }
+        }
 
         return lImage;
     }

@@ -1,11 +1,13 @@
 package gomule.files;
 
-import com.google.common.collect.Streams;
-import com.google.common.io.Closeables;
-
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Arrays.asList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +16,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Arrays.asList;
+import com.google.common.collect.Streams;
+import com.google.common.io.Closeables;
 
 public class FileReaderUtils {
 
@@ -38,6 +40,22 @@ public class FileReaderUtils {
     public static InputStream getResource(String name) {
         InputStream resourceAsStream = FileReaderUtils.class.getResourceAsStream("/" + name);
         if (resourceAsStream == null) throw new IllegalStateException("Failed to load " + name);
+        return resourceAsStream;
+    }
+
+    public static InputStream getResourceJSON(String name) {
+        FileInputStream inputStream;
+        try {
+            inputStream = new FileInputStream("Resources" + File.separator + name);
+        }
+        catch(IOException e) {
+            throw new IllegalStateException("Failed to load " + name);
+        }
+
+        InputStream resourceAsStream = inputStream;
+        if (resourceAsStream == null) {
+            throw new IllegalStateException("Failed to load " + name);
+        }
         return resourceAsStream;
     }
 

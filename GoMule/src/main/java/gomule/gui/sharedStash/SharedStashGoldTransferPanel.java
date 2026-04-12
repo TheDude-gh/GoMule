@@ -2,6 +2,7 @@ package gomule.gui.sharedStash;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.text.DecimalFormat;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -19,9 +20,13 @@ class SharedStashGoldTransferPanel extends JPanel {
     public SharedStashGoldTransferPanel(SharedStashPanel sharedStashPanel) {
         super(new GridLayout(0, 1));
         this.sharedStashPanel = sharedStashPanel;
+
+        Integer gold_current = this.sharedStashPanel.getSelectedStashPane().getGold();
+        DecimalFormat df = new DecimalFormat("###,###,###");
+
         setSize(300, 100);
         setPreferredSize(new Dimension(300, 100));
-        JTextField transferGoldAmount = new JTextField("10000");
+        JTextField transferGoldAmount = new JTextField(df.format(gold_current));
         JButton transferGoldOut = new JButton("From Stash");
         transferGoldOut.addActionListener(pEvent -> transferGoldOut(getGoldAmount(transferGoldAmount)));
         JButton transferGoldIn = new JButton("To Stash");
@@ -64,7 +69,7 @@ class SharedStashGoldTransferPanel extends JPanel {
     private void updateSelectedStashGoldValue(int gold) {
         D2SharedStash sharedStash = sharedStashPanel.getSharedStash();
         sharedStash.replacePane(
-            sharedStashPanel.getSelectedStashPaneIndex(), 
+            sharedStashPanel.getSelectedStashPaneIndex(),
             D2SharedStash.D2SharedStashPane.fromItems(sharedStashPanel.getSelectedStashPane().getItems(), gold, sharedStashPanel.getSelectedStashPane().getStashNum()));
         sharedStash.setModified(true);
     }
@@ -78,8 +83,13 @@ class SharedStashGoldTransferPanel extends JPanel {
     }
 
     private void transferGold(int goldAmount, int maxGold, Supplier<Integer> sourceGold, Supplier<Integer> destinationGold, Consumer<Integer> updateSource, Consumer<Integer> updateDestination) {
-        if (goldAmount > sourceGold.get()) goldAmount = sourceGold.get();
-        if (goldAmount > maxGold) goldAmount = maxGold;
+        //System.err.println("g=" + goldAmount + "  mg=" + maxGold + " sg=" + destinationGold.get());
+        if (goldAmount > sourceGold.get()) {
+            goldAmount = sourceGold.get();
+        }
+        if (goldAmount + destinationGold.get() > maxGold) {
+            goldAmount = maxGold - destinationGold.get();
+        }
 
         int newSourceGoldValue = sourceGold.get() - goldAmount;
         int newDestinationGoldValue = destinationGold.get() + goldAmount;
@@ -89,7 +99,16 @@ class SharedStashGoldTransferPanel extends JPanel {
 
     public int getGoldAmount(JTextField transferGoldAmount) {
         try {
-            return Integer.parseInt(transferGoldAmount.getText());
+            String goldtext = transferGoldAmount.getText();
+            String gold = "";
+            for (int i = 0; i < goldtext.length(); i++) {
+                char c = goldtext.charAt(i);
+                if(c >= '0' && c <= '9') {
+                    gold += c;
+                }
+            }
+
+            return Integer.parseInt(gold);
         } catch (NumberFormatException e) {
             return 0;
         }

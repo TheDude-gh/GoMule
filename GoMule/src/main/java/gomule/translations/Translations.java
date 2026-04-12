@@ -8,7 +8,7 @@ public interface Translations {
 
     default String getTranslation(String key) {
         String translationOrNull = getTranslationOrNull(key);
-        if (translationOrNull == null) throw new IllegalArgumentException("No translation for " + key);
+        //if (translationOrNull == null) throw new IllegalArgumentException("No translation for " + key);
         return translationOrNull;
     }
 }

@@ -336,26 +336,26 @@ public class D2PropCollection extends ArrayList {
     }
 
     public StringBuilder generateDisplay(int qFlag, int cLvl) {
-
+        boolean notEmpty = false;
         StringBuilder arrOut = new StringBuilder();
         if (qFlag < 7) {
-            arrOut.append("<font color=\"#4850b8\">");
+            arrOut.append("<font size=4 color=\"#84B7FF\">");
         } else if (qFlag < 17) {
-            arrOut.append("<font color=\"#4850b8\">");
+            arrOut.append("<font size=4 color=\"#84B7FF\">"); //4850b8
         } else if (qFlag < 36) {
-            arrOut.append("<font color=\"#ffdead\">");
+            arrOut.append("<font size=4 color=\"#ffdead\">");
         } else if (qFlag < 37) {
-            arrOut.append("<br><font color=\"#ffdead\">");
+            arrOut.append("<br><font size=4 color=\"#ffdead\">");
         }
         for (int x = 0; x < size(); x++) {
             String val = ((D2Prop) get(x)).generateDisplay(qFlag, cLvl);
             if (val != null && !val.equals("")) {
                 arrOut.append(val).append("<br>&#10;");
+                notEmpty = true;
             }
         }
 
-
-        return arrOut.append("</font>");
+        return notEmpty ? arrOut.append("</font>") : new StringBuilder();
     }
 
 

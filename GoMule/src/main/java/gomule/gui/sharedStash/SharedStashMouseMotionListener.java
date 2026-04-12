@@ -27,7 +27,7 @@ class SharedStashMouseMotionListener extends MouseMotionAdapter {
 
         D2SharedStash.D2SharedStashPane stashPane = sharedStashPanel.getSelectedStashPane();
         int col, row;
-        
+
         //grid stash
         if(stashPane.getStashNum() < 6) {
             col = getColForXCoord(e.getX());
@@ -41,14 +41,15 @@ class SharedStashMouseMotionListener extends MouseMotionAdapter {
         else {
             String item_code = getAreaForXYCoord(e.getX(), e.getY());
             int[] point = getGridPointForItemCode(item_code);
-            col = point[0];
-            row = point[1];
+            row = point[0];
+            col = point[1];
             if(row == -1) {
                 sharedStashPanel.setCursorNormal();
                 return;
             }
+            //else System.err.println("col=" + col + " row=" + row);
         }
-        
+
         //D2SharedStash.D2SharedStashPane stashPane = sharedStashPanel.getSelectedStashPane();
         D2Item item = stashPane.getItemCovering(col, row);
         if (item != null) {

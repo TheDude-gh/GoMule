@@ -20,14 +20,14 @@
  ******************************************************************************/
 package randall.d2files;
 
-import gomule.gui.D2FileManager;
-import gomule.item.D2Prop;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+
+import gomule.gui.D2FileManager;
+import gomule.item.D2Prop;
 
 /**
  * @author Marco
@@ -46,7 +46,7 @@ public final class D2TxtFile {
     public static D2TxtFile RAREPREFIX;
     public static D2TxtFile RARESUFFIX;
     public static D2TxtFile RUNES;
-    public static D2TxtFile ITEM_TYPES;
+    public static D2TxtFile ITEM_TYPES; //n
     public static D2TxtFile ITEM_STAT_COST;
     public static D2TxtFile SKILL_DESC;
     public static D2TxtFile SKILLS;
@@ -54,16 +54,16 @@ public final class D2TxtFile {
     public static D2TxtFile PROPS;
     public static D2TxtFile HIRE;
     public static D2TxtFile FULLSET;
-    public static D2TxtFile CHARSTATS;
+    public static D2TxtFile CHARSTATS; //n
     public static D2TxtFile AUTOMAGIC;
     //	/**
 //	* DROP CALC
 //	*/
     public static D2TxtFile MONSTATS;
-    public static D2TxtFile TCS;
-    public static D2TxtFile LEVELS;
-    public static D2TxtFile SUPUNIQ;
-    public static D2TxtFile ITEMRATIO;
+    //public static D2TxtFile TCS;
+    //public static D2TxtFile LEVELS;
+    //public static D2TxtFile SUPUNIQ;
+    //public static D2TxtFile ITEMRATIO;
     private static String sMod;
     private static boolean read = false;
     private String iFileName;
@@ -73,7 +73,6 @@ public final class D2TxtFile {
 
     private D2TxtFile(String pFileName) {
         iFileName = pFileName;
-
     }
 
     public static void constructTxtFiles(String pMod) {
@@ -97,14 +96,14 @@ public final class D2TxtFile {
         GEMS = new D2TxtFile("gems");
         PROPS = new D2TxtFile("properties");
         MONSTATS = new D2TxtFile("monstats");
-        TCS = new D2TxtFile("treasureclassex");
-        LEVELS = new D2TxtFile("levels");
-        SUPUNIQ = new D2TxtFile("superuniques");
         HIRE = new D2TxtFile("hireling");
         FULLSET = new D2TxtFile("sets");
         CHARSTATS = new D2TxtFile("charstats");
         AUTOMAGIC = new D2TxtFile("automagic");
-        ITEMRATIO = new D2TxtFile("itemRatio");
+        //TCS = new D2TxtFile("treasureclassex");
+        //LEVELS = new D2TxtFile("levels");
+        //SUPUNIQ = new D2TxtFile("superuniques");
+        //ITEMRATIO = new D2TxtFile("itemRatio");
 
         read = true;
     }
@@ -293,6 +292,7 @@ public final class D2TxtFile {
             }
         }
 
+        System.err.println("TXT COL not Found in " + this.iFileName + " [" + pCol + "] with value=" + pText);
         return null;
     }
 

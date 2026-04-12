@@ -74,12 +74,16 @@ public class D2BitReader {
                     int num = in.read(data);
                     if (num == -1)
                         break;
-                    for (int i = 0; i < num; i++)
-                        v.add(new Byte(data[i]));
+                    for (int i = 0; i < num; i++) {
+                        //v.add(new Byte(data[i   ]));
+                        v.add(data[i]);
+                    }
                 } while (true);
                 filedata = new byte[v.size()];
-                for (int i = 0; i < v.size(); i++)
-                    filedata[i] = ((Byte) v.elementAt(i)).byteValue();
+                for (int i = 0; i < v.size(); i++) {
+                    //filedata[i] = ((Byte)v.elementAt(i)).byteValue();
+                    filedata[i] = (Byte) v.elementAt(i);
+                }
                 in.close();
                 return true;
             } else {
@@ -257,8 +261,9 @@ public class D2BitReader {
             writeable_data = writeable_data << 8;
             if (byte_num + i < filedata.length) {
                 writeable_data += flip(filedata[byte_num + i]);
-            } else
+            } else {
                 writeable_data += 0;
+            }
         }
 
         // generate a mask to clear the bits
@@ -304,7 +309,15 @@ public class D2BitReader {
     }
 
     public byte getByte() {
-        return filedata[position++];
+        int bytepos = position / 8;
+        position += 8;
+        return filedata[bytepos];
+    }
+
+    public int getInt() {
+        int bytepos = position / 8;
+        position += 32;
+        return filedata[bytepos++] + (filedata[bytepos++] << 8) + (filedata[bytepos++] << 16) + (filedata[bytepos] << 24);
     }
 
     // fetch 'num' bytes, starting at the current position
@@ -329,6 +342,28 @@ public class D2BitReader {
 
     public void setBytes(int pPos, byte pReplaceBytes[]) {
         System.arraycopy(pReplaceBytes, 0, filedata, pPos, pReplaceBytes.length);
+    }
+
+    //crop data at the end of filedata
+    public void CropData(int bitposend) {
+        int newsize = (int)(bitposend / 8); //get new size
+        int bitpad = bitposend % 8; //get byte padding
+        int bitmask = (1 << bitpad) - 1;
+        if(bitpad != 0) {
+            newsize += 1;  //if bit position not aligned to byte, add 1
+        }
+
+        System.err.println("FS=" + this.get_length() + " NS=" + newsize + " bpe=" + bitposend + " bm=" + bitmask);
+
+        byte[] newfiledata = new byte[newsize];
+        System.arraycopy(this.filedata, 0, newfiledata, 0, newsize);
+        this.filedata = new byte[newsize];
+        System.arraycopy(newfiledata, 0, this.filedata, 0, newsize);
+        this.position = bitposend;
+
+        if (bitpad != 0) {
+            this.filedata[newsize - 1] = (byte)(this.filedata[newsize - 1] & bitmask); //when masking is needed, e.g. makes bbbbbbbb -> 00000bbb
+        }
     }
 
 //    // replace bytes between 'start' and 'end' (inclusive) with

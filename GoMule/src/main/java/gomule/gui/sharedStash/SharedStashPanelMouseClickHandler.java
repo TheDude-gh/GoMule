@@ -9,6 +9,7 @@ import gomule.d2i.D2SharedStash;
 import gomule.gui.D2ViewClipboard;
 import gomule.gui.ItemRightClickMenu;
 import gomule.item.D2Item;
+import gomule.util.D2BitReader;
 
 class SharedStashPanelMouseClickHandler extends MouseAdapter {
 
@@ -49,9 +50,23 @@ class SharedStashPanelMouseClickHandler extends MouseAdapter {
         setStashTab(possibleStashTabClick);
         if (isClickOnGoldButton(e.getX(), e.getY())) showGoldDialog();
 
+        boolean isMaterialStash = sharedStashPanel.getSelectedStashPane().getStashNum() == 6;
+        if(isMaterialStash) {
+            /*String item_code = getAreaForXYCoord(e.getX(), e.getY());
+            if(item_code.equals("")) {
+                return;
+            }
+            int[] point = getGridPointForItemCode(item_code);
+            D2SharedStash.D2SharedStashPane stashPane = sharedStashPanel.getSelectedStashPane();
+            D2Item item = stashPane.getItemCovering(point[1], point[0]);
+            moveItemToClipboardMatStahs(stashPane, item);*/
+            return;
+        }
+
         int col = SharedStashPanel.getColForXCoord(e.getX());
         int row = SharedStashPanel.getRowForYCoord(e.getY());
         if (col < 0 || row < 0 || col > 9 || row > 9) return;
+        //System.err.println("ism=" + isMaterialStash + " col=" + col + " row=" + row);
         D2SharedStash.D2SharedStashPane stashPane = sharedStashPanel.getSelectedStashPane();
         D2Item item = stashPane.getItemCovering(col, row);
         if (item != null) {
@@ -100,6 +115,21 @@ class SharedStashPanelMouseClickHandler extends MouseAdapter {
         sharedStashPanel.setSelectedStashPaneIndex(possibleStashTabClick);
         sharedStashPanel.build();
     }
+
+    //material stash moving
+    private void moveItemToClipboardMatStahs(D2SharedStash.D2SharedStashPane stashPane, D2Item item)  {
+        //removeItem(stashPane, item);
+        D2BitReader br = new D2BitReader(item.GetItemFileData());
+        item.SetMaterialCount(item.GetStashCount() - 1);
+        //System.err.println("new file len=" + br.get_length());
+        try {
+            D2Item itemnew = new D2Item(".lll", br, 75);
+            itemnew.RemoveMatStashCount();
+            D2ViewClipboard.addItem(itemnew);
+        } catch (Exception e) {   }
+    }
+
+    //end mat stash part
 
     private Integer getPossibleStashTabClick(int x, int y, int pane_count) {
         //D2R version, 3 panes

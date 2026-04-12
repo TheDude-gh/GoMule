@@ -122,13 +122,13 @@ public class D2SharedStash extends D2ItemListAdapter {
         private static D2Item[][] constructPaneGrid(List<D2Item> items, int stash_num) {
             //D2Item[][] grid = new D2Item[10][10];
             D2Item[][] grid;
-            
+
             if(stash_num >= 6) {
-                grid = new D2Item[11][9];
+                grid = new D2Item[9][11]; //[col][row]
                 for (D2Item item : items) {
                     int[] point = getGridPointForItemCode(item.getItemCode());
-                    int x = point[0]; //row
-                    int y = point[1]; //col
+                    int x = point[1]; //row
+                    int y = point[0]; //col
                     if(x == -1) continue;
                     grid[x][y] = item;
                 }
@@ -140,8 +140,12 @@ public class D2SharedStash extends D2ItemListAdapter {
             for (D2Item item : items) {
                 for (int i = item.get_col(); i < (int) item.get_col() + (int) item.get_width(); i++) {
                     for (int j = item.get_row(); j < (int) item.get_row() + (int) item.get_height(); j++) {
-                        if (grid[i][j] != null) throw new RuntimeException("Failed to create shared stash pane");
+                        if (grid[i][j] != null) {
+                            throw new RuntimeException("Failed to create shared stash pane. col=" + i + " row=" + j + ", w=" + item.get_width() + " h=" + item.get_height());
+                            //System.err.println("Failed to create shared stash pane " + stash_num + ". col=" + i + " row=" + j + ", w=" + item.get_width() + " h=" + item.get_height());
+                        }
                         grid[i][j] = item;
+                        //System.err.println("Added Item to stash " + stash_num + ", col=" + i + " row=" + j + ", w=" + item.get_width() + " h=" + item.get_height());
                     }
                 }
             }

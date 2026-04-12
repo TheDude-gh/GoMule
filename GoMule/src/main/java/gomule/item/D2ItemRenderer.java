@@ -1,9 +1,13 @@
 package gomule.item;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 
 public class D2ItemRenderer {
+
+    private static final String FONTPRE = "<font size=4 color=\"#";
+    private static final String FONTSUF = "\">";
+    private static final String FONTEND = "</font>";
 
     public static String itemDumpHtml(D2Item d2Item, boolean extended) {
         return generatePropString(d2Item, extended).toString();
@@ -20,7 +24,7 @@ public class D2ItemRenderer {
     }
 
     private static StringBuilder generatePropString(D2Item d2Item, boolean extended) {
-        StringBuilder propString = new StringBuilder("<html>");
+        StringBuilder propString = new StringBuilder("<html><head><style></style></head>");
         propString.append(generatePropStringNoHtmlTags(d2Item, extended));
         return propString.append("</html>");
     }
@@ -32,39 +36,39 @@ public class D2ItemRenderer {
         String rgb = (Integer.toHexString(d2Item.getItemColor().getRGB())).substring(2);
         String iItemName = d2Item.getItemName();
         if (d2Item.getPersonalization() == null) {
-            dispStr.append("<font color=\"#")
+            dispStr.append(FONTPRE)
                     .append(base)
-                    .append("\">")
-                    .append("<font color=\"#")
+                    .append(FONTSUF)
+                    .append(FONTPRE)
                     .append(rgb)
-                    .append("\">")
+                    .append(FONTSUF)
                     .append(iItemName)
-                    .append("</font>")
+                    .append(FONTEND)
                     .append("<br>&#10;");
         } else {
-            dispStr.append("<font color=\"#")
+            dispStr.append(FONTPRE)
                     .append(base)
-                    .append("\">")
-                    .append("<font color=\"#")
+                    .append(FONTSUF)
+                    .append(FONTPRE)
                     .append(rgb)
-                    .append("\">")
+                    .append(FONTSUF)
                     .append(d2Item.getPersonalization())
                     .append("'s ")
                     .append(iItemName)
-                    .append("</font>")
+                    .append(FONTEND)
                     .append("<br>&#10;");
         }
         String iBaseItemName = d2Item.getBaseItemName();
         ArrayList<D2Item> iSocketedItems = d2Item.getiSocketedItems();
         if (!iBaseItemName.equals(iItemName))
-            dispStr.append("<font color=\"#")
+            dispStr.append(FONTPRE)
                     .append(rgb)
-                    .append("\">")
+                    .append(FONTSUF)
                     .append(iBaseItemName)
-                    .append("</font>")
+                    .append(FONTEND)
                     .append("<br>&#10;");
         if (d2Item.isRuneWord()) {
-            dispStr.append("<font color=\"#").append(rgb).append("\">");
+            dispStr.append(FONTPRE).append(rgb).append(FONTSUF);
             for (D2Item iSocketedItem : iSocketedItems) {
                 dispStr.append(
                         (iSocketedItem.getName()), 0, iSocketedItem.getName().length() - 5);
@@ -135,30 +139,36 @@ public class D2ItemRenderer {
                 }
             }
         }
-        if (d2Item.getReqLvl() > 0)
-            dispStr.append("Required Level: ").append(d2Item.getReqLvl()).append("<br>&#10;");
+
         if (d2Item.getReqStr() > 0)
             dispStr.append("Required Strength: ").append(d2Item.getReqStr()).append("<br>&#10;");
         if (d2Item.getReqDex() > 0)
             dispStr.append("Required Dexterity: ").append(d2Item.getReqDex()).append("<br>&#10;");
+        if (d2Item.getReqLvl() > 0)
+            dispStr.append("Required Level: ").append(d2Item.getReqLvl()).append("<br>&#10;");
+
+        String speed = d2Item.getSpeed();
+        if(!speed.equals("")) {
+            dispStr.append("Base Speed: ").append(speed).append("<br>&#10;");
+        }
+
         if (d2Item.getFingerprint() != null)
-            dispStr.append("Fingerprint: ").append(d2Item.getFingerprint()).append("<br>&#10;");
+            dispStr.append(FONTEND + FONTPRE + "37EFA0" + FONTSUF).append("Fingerprint: ").append(d2Item.getFingerprint()).append("<br>&#10;");
         if (d2Item.getiGUID() != null)
             dispStr.append("GUID: ").append(d2Item.getiGUID()).append("<br>&#10;");
         if (d2Item.getIlvl() != 0)
             dispStr.append("Item Level: ").append(d2Item.getIlvl()).append("<br>&#10;");
-        dispStr.append("Version: ").append(d2Item.get_version()).append("<br>&#10;");
+        //dispStr.append("Version: ").append(d2Item.get_version()).append("<br>&#10;");
         if (!d2Item.isiIdentified()) dispStr.append("Unidentified" + "<br>&#10;");
 
-        if(d2Item.getDifficulty() != "") {
-            dispStr.append("Difficulty: ").append(d2Item.getDifficulty()).append("<br>&#10;");
+        if(!d2Item.getDifficulty().equals("")) {
+            dispStr.append("Difficulty: ").append(d2Item.getDifficulty()).append(FONTEND + "<br>&#10;");
         }
 
         dispStr.append(getItemPropertyString(d2Item));
 
         if (extended) {
             if (d2Item.isSocketed()) {
-
                 if (iSocketedItems != null) {
                     dispStr.append("<br>&#10;");
                     for (int x = 0; x < iSocketedItems.size(); x = x + 1) {
@@ -193,18 +203,25 @@ public class D2ItemRenderer {
             dispStr.append("Shields: ");
             dispStr.append(iProps.generateDisplay(9, iCharLvl));
         }
-        if (d2Item.getQuality() == 5) {
+        //SET
+        if (d2Item.getQuality() == D2Item.Q_SET) {
             for (int x = 12; x < 17; x++) {
                 StringBuilder setBuf = iProps.generateDisplay(x, iCharLvl);
+                if(setBuf.isEmpty()) {
+                    continue;
+                }
                 if (setBuf.length() > 29) {
-                    dispStr.append("<font color=\"red\">Set (").append(x - 10).append(" items): ");
+                    dispStr.append("<font size=4 color=\"green\">Set (").append(x - 10).append(" items): ");
                     dispStr.append(setBuf);
-                    dispStr.append("</font>");
+                    dispStr.append(FONTEND);
                 }
             }
 
             for (int x = 2; x < 7; x++) {
                 StringBuilder setBuf = iProps.generateDisplay(x, iCharLvl);
+                if(setBuf.isEmpty()) {
+                    continue;
+                }
                 if (setBuf.length() > 29) {
                     dispStr.append("Set (").append(x).append(" items): ");
                     dispStr.append(setBuf);
@@ -212,7 +229,7 @@ public class D2ItemRenderer {
             }
         }
         if (d2Item.isEthereal()) {
-            dispStr.append("<font color=\"#4850b8\">Ethereal</font><br>&#10;");
+            dispStr.append("<font size=4 color=\"#4850b8\">Ethereal</font><br>&#10;");
         }
         if (d2Item.getSocketNrTotal() > 0) {
             dispStr.append(d2Item.getSocketNrTotal())
@@ -227,14 +244,18 @@ public class D2ItemRenderer {
                 }
             }
         }
-        if (d2Item.getQuality() == 5) {
+        //SET
+        if (d2Item.getQuality() == D2Item.Q_SET) {
             dispStr.append("<br>&#10;");
             for (int x = 32; x < 36; x++) {
                 StringBuilder setBuf = iProps.generateDisplay(x, iCharLvl);
+                if(setBuf.isEmpty()) {
+                    continue;
+                }
                 if (setBuf.length() > 29) {
-                    dispStr.append("<font color=\"red\">(").append(x - 30).append(" items): ");
+                    dispStr.append("<font size=4 color=\"green\">(").append(x - 30).append(" items): ");
                     dispStr.append(setBuf);
-                    dispStr.append("</font>");
+                    dispStr.append(FONTEND);
                 }
             }
             StringBuilder setBuf = iProps.generateDisplay(36, iCharLvl);

@@ -20,6 +20,28 @@
  ******************************************************************************/
 package gomule.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.io.File;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+
 import gomule.d2x.D2Stash;
 import gomule.item.D2Item;
 import gomule.item.D2ItemRenderer;
@@ -27,18 +49,6 @@ import gomule.util.D2CellStringRenderer;
 import gomule.util.D2CellValue;
 import gomule.util.D2Project;
 import randall.util.RandallPanel;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class D2ViewClipboard extends RandallPanel implements D2ItemContainer, D2ItemListListener {
     /**
@@ -154,7 +164,8 @@ public class D2ViewClipboard extends RandallPanel implements D2ItemContainer, D2
     }
 
     public static void refreshBank(D2Project pProject) {
-        iMouseItem.iBank.setText(Integer.toString(pProject.getBankValue()));
+        DecimalFormat df = new DecimalFormat("###,###,###");
+        iMouseItem.iBank.setText(df.format(pProject.getBankValue()));
     }
 
     public static ArrayList getItemList() {
@@ -213,7 +224,10 @@ public class D2ViewClipboard extends RandallPanel implements D2ItemContainer, D2
             }
         }
 
-        iBank.setText(Integer.toString(pProject.getBankValue()));
+        DecimalFormat df = new DecimalFormat("###,###,###");
+        iBank.setText(df.format(pProject.getBankValue()));
+        //iBank.setText(Integer.toString(pProject.getBankValue()));
+
         if (iItemModel != null) {
             itemListChanged();
         }

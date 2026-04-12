@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Transparency;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import static java.util.Collections.emptyList;
 import java.util.LinkedHashMap;
@@ -96,7 +97,9 @@ public class SharedStashPanel extends JPanel {
         });
 
         if (pane.getStashNum() < 6) {
-            background.getGraphics().drawString(Long.toString(pane.getGold()), 155, 417);
+            DecimalFormat df = new DecimalFormat("###,###,###");
+            background.getGraphics().drawString(df.format(pane.getGold()), 155, 417);
+            //background.getGraphics().drawString(Long.toString(pane.getGold()), 155, 417);
         }
     }
 
