@@ -94,6 +94,7 @@ public class D2Character extends D2ItemListAdapter {
     private int curWep = 0;
     private long lCharCode;
     private String iCharClass;
+    private int CharType = 0;
     private boolean iHC;
     private boolean[][] iStashGrid;
     private boolean[][] iInventoryGrid;
@@ -132,6 +133,10 @@ public class D2Character extends D2ItemListAdapter {
     private byte iBetweenItems[];
     private byte iAfterItems[];
 
+    private static final int CHAR_CLASSIC   = 1;
+    private static final int CHAR_EXPANSION = 2;
+    private static final int CHAR_ROTW      = 3;
+
     public D2Character(String pFileName) throws Exception {
         super(pFileName);
         if (iFileName == null || !iFileName.toLowerCase().endsWith(".d2s"))
@@ -166,7 +171,7 @@ public class D2Character extends D2ItemListAdapter {
         }
         iCharName = lCharName.toString();
 
-        int revoff = -16;
+        int revoff = -16; //rotw offset to D2R LOD
 
         iReader.set_byte_pos(36 + revoff);
         iReader.skipBits(2);
@@ -228,6 +233,11 @@ public class D2Character extends D2ItemListAdapter {
         } else {
             iReader.skipBits(64);
         }
+
+        iReader.set_byte_pos(248);
+        this.CharType = (int)iReader.read(8);
+
+
         lWoo = iReader.findNextFlag("Woo!", 0);
         if (lWoo == -1) throw new Exception("Error: Act Quests block not found");
         if (lWoo != 403) System.err.println("Warning: Act Quests block not on expected position");
@@ -242,7 +252,7 @@ public class D2Character extends D2ItemListAdapter {
         iIF = iReader.findNextFlag("if", iGF);
         if (iIF == -1) throw new Exception("Error: Skills block not found");
         iJF = iReader.findNextFlag("jf", iIF);
-        if (iJF == -1) System.out.println("WTF is going on. Looks like it might be classic? USE WITH CARE!");
+        if (iJF == -1) System.out.println("When missing, it might be classic char. USE WITH CARE!");
         iKF = iReader.findNextFlag("kf", iIF);
         if (iKF != -1) readGolem();
         if (iIF < iGF) throw new Exception("Error: Stats / Skills not correct");
@@ -1319,6 +1329,9 @@ public class D2Character extends D2ItemListAdapter {
         // entire item list and insert it into
         // the open file in place of its current item list
         int lCharSize = 0;
+        //has merc - if classic character, merc has no items, so skip it too
+        boolean hasMerc = this.hasMerc() && this.CharType != this.CHAR_CLASSIC;
+
         for (int i = 0; i < iCharItems.size(); i++) {
             lCharSize += ((D2Item) iCharItems.get(i)).get_bytes().length;
         }
@@ -1326,7 +1339,7 @@ public class D2Character extends D2ItemListAdapter {
             lCharSize += iCharCursorItem.get_bytes().length;
         }
         int lMercSize = 0;
-        if (hasMerc()) {
+        if (hasMerc) {
             for (int i = 0; i < iMercItems.size(); i++) {
                 lMercSize += ((D2Item) iMercItems.get(i)).get_bytes().length;
             }
@@ -1352,7 +1365,7 @@ public class D2Character extends D2ItemListAdapter {
             System.arraycopy(item_bytes, 0, lNewbytes, lPos, item_bytes.length);
             lPos += item_bytes.length;
         }
-        if (hasMerc()) {
+        if (hasMerc) {
             System.arraycopy(iBetweenItems, 0, lNewbytes, lPos, iBetweenItems.length);
             lPos += iBetweenItems.length;
             lMercItemCountPos = lPos - 2;
@@ -1372,10 +1385,11 @@ public class D2Character extends D2ItemListAdapter {
             lCharItemsCount++;
         }
         iReader.write(lCharItemsCount, 16);
-        if (hasMerc()) {
+        if (hasMerc) {
             iReader.set_byte_pos(lMercItemCountPos);
             iReader.write(iMercItems.size(), 16);
         }
+        //System.err.println("hasmerc " + hasMerc() + " chpos:" + lCharItemCountPos + " mpos:" + lMercItemCountPos);
         // get all the bytes
         iReader.set_byte_pos(0);
         byte[] data = iReader.get_bytes(iReader.get_length());

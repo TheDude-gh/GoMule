@@ -1240,22 +1240,29 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                 public int compare(Object pObj1, Object pObj2) {
                     D2Item lItem1 = (D2Item) pObj1;
                     D2Item lItem2 = (D2Item) pObj2;
+                    int sort_res = 0;
                     try {
                         for (int i = 0; i < iSortList.size(); i++) {
                             Object lSort = iSortList.get(i);
 
                             if (lSort == HEADER[0]) {
-                                return lItem1.getName().compareTo(lItem2.getName());
+                                sort_res = lItem1.getName().compareTo(lItem2.getName());
                             } else if (lSort == HEADER[1]) {
-                                return lItem1.getReqLvl() - lItem2.getReqLvl();
+                                sort_res = lItem1.getReqLvl() - lItem2.getReqLvl();
                             } else if (lSort == HEADER[2]) {
-                                return lItem1.getReqStr() - lItem2.getReqStr();
+                                sort_res = lItem1.getReqStr() - lItem2.getReqStr();
                             } else if (lSort == HEADER[3]) {
-                                return lItem1.getReqDex() - lItem2.getReqDex();
+                                sort_res = lItem1.getReqDex() - lItem2.getReqDex();
                             } else if (lSort == HEADER[4]) {
                                 String lFileName1 = ((D2ItemListAll) iStash).getFilename(lItem1);
                                 String lFileName2 = ((D2ItemListAll) iStash).getFilename(lItem2);
                                 return lFileName1.compareTo(lFileName2);
+                            }
+                            if(sort_res == 0) {
+                                return lItem1.getName().compareTo(lItem2.getName());
+                            }
+                            else {
+                                return sort_res;
                             }
                         }
 

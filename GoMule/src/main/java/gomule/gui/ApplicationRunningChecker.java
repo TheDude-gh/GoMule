@@ -1,13 +1,13 @@
 package gomule.gui;
 
-import com.google.common.base.Charsets;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Charsets;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 public class ApplicationRunningChecker implements Runnable {
 
@@ -19,7 +19,7 @@ public class ApplicationRunningChecker implements Runnable {
         this.runtime = runtime;
         this.applicationName = applicationName;
         this.action = action;
-        Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setDaemon(true).build()).scheduleWithFixedDelay(this, 0, 5, TimeUnit.MINUTES);
+        Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setDaemon(true).build()).scheduleWithFixedDelay(this, 0, 600, TimeUnit.MINUTES);
     }
 
     @Override

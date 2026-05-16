@@ -36,6 +36,9 @@ public class MapBasedTranslations implements Translations {
                 if (key != null) {
                     mapBuilder.put(key, valueStr);
                 }
+                //add also id values. Crude solution, but doing new array would be more work
+                String strid = Integer.toString(node.getInt("id", 0));
+                mapBuilder.put(strid, valueStr);
             }
             return new MapBasedTranslations(mapBuilder.build());
         } catch (IOException e) {

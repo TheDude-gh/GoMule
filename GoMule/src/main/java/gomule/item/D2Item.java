@@ -89,6 +89,7 @@ public class D2Item implements Comparable, D2ItemInterface {
     private boolean iSet;
     private boolean iUnique;
     private boolean iRuneWord;
+    private int iRuneWordStringId = 0;
     private boolean iSmallCharm;
     private boolean iLargeCharm;
 
@@ -511,7 +512,9 @@ public class D2Item implements Comparable, D2ItemInterface {
 
             D2TxtFileItemProperties lRuneWord = D2TxtFile.RUNES.searchRuneWord(lList);
             if (lRuneWord != null) {
-                String lookedUpName = D2Files.getInstance().getTranslations().getTranslation(lRuneWord.get("Name"));
+                String lookedUpName = (this.iRuneWordStringId == 0)
+                    ? D2Files.getInstance().getTranslations().getTranslation(lRuneWord.get("Name"))
+                    : D2Files.getInstance().getTranslations().getTranslation(Integer.toString(this.iRuneWordStringId));
                 iItemName = lookedUpName == null ? lRuneWord.get("*Rune Name") : lookedUpName;
             }
         }
@@ -814,8 +817,7 @@ public class D2Item implements Comparable, D2ItemInterface {
 
         // rune word
         if (iRuneWord) {
-            pFile.skipBits(12);
-            pFile.skipBits(4);
+            this.iRuneWordStringId = (int)pFile.read(16);
         }
         // personalized
         if (check_flag(this.FLAG_PERSONALIZED)) {
@@ -1538,7 +1540,7 @@ public class D2Item implements Comparable, D2ItemInterface {
             return Color.orange;
         }
         if (isRuneWord()) {
-            return new Color(255, 222, 173);
+            return new Color(0xff, 0x66, 0xff);
         }
         if (isEthereal() || isSocketed()) {
             return Color.gray;
