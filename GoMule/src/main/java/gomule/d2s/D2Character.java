@@ -23,9 +23,12 @@ package gomule.d2s;
 
 import java.awt.Point;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
@@ -127,11 +130,30 @@ public class D2Character extends D2ItemListAdapter {
     private int iIF;
     private int iKF;
     private int iJF;
+    private int iLF;
     private int iItemEnd;
     private byte iBeforeStats[];
     private byte iBeforeItems[];
     private byte iBetweenItems[];
     private byte iAfterItems[];
+
+    private String demon_monster = "";
+    private int    demon_type = 0; //0:none, 1:normal, 2:superunique
+    private int    demon_seed = 0; //seed for name and aura
+    private int    demon_bitmask = 0; //bitmask for some features
+    private short  demon_diff1 = 0; //difficulty 1
+    private short  demon_diff2 = 0; //difficulty 2
+    private short  demon_diff3 = 0; //difficulty 3
+    private int    demon_area_id = 0; //area level id where demon was bound
+    private String demon_area_name = "";
+    private int    demon_area_level = 0; //demon monster level
+    private short  demon_is_desecrated = 0;
+    private String demon_mods = ""; //monster mods
+    private int    demon_hitpoints = 0;
+    private int    demon_maxhp = 0;
+    private int    demon_level = 0;
+    private int    demon_experience = 0;
+
 
     private static final int CHAR_CLASSIC   = 1;
     private static final int CHAR_EXPANSION = 2;
@@ -256,6 +278,7 @@ public class D2Character extends D2ItemListAdapter {
         iKF = iReader.findNextFlag("kf", iIF);
         if (iKF != -1) readGolem();
         if (iIF < iGF) throw new Exception("Error: Stats / Skills not correct");
+        this.iLF = iReader.findNextFlag("lf", this.iKF);
         readWaypoints();
         readQuests();
         try {
@@ -278,6 +301,7 @@ public class D2Character extends D2ItemListAdapter {
         readItems();
         readCorpse();
         readSkills();
+        readDemon();
         resetStats();
     }
 
@@ -511,6 +535,78 @@ public class D2Character extends D2ItemListAdapter {
             initSkills[tree - 1][skillC[tree - 1]] = skillReader.getCounterInt(8);
             skillC[tree - 1]++;
         }
+    }
+
+    private void readDemon() {
+        if(this.iLF == -1) return;
+
+        this.iReader.set_byte_pos(this.iLF);
+        this.iReader.skipBytes(2); //lf 0-1
+        int hasDemon = this.iReader.getShort(); //2-3
+        if(hasDemon == 0) {
+            return;
+        }
+
+        this.iReader.skipBytes(2); //unk 4-5
+
+        this.demon_type = this.iReader.getShort(); //6-7
+        int mon_row = this.iReader.getShort(); //8-9
+        this.demon_seed = this.iReader.getShort(); //10-11
+        this.demon_bitmask = this.iReader.getShort(); //12-13
+        this.iReader.skipBytes(2); //unk 14-15
+        this.demon_diff1 = this.iReader.getByte(); //16
+        this.iReader.skipBytes(11); //unk 17-27
+        this.demon_area_id = (int)this.iReader.getShort(); //28-29
+        this.iReader.skipBytes(2); //unk 30-31
+        this.demon_area_level = (int)this.iReader.getByte(); //32
+        this.demon_is_desecrated = this.iReader.getByte(); //33
+        this.iReader.skipBytes(22); //unk 34-55
+        this.demon_diff2 = this.iReader.getByte(); //56
+        this.iReader.skipBytes(3); //unk 57-59
+        this.demon_diff3 = this.iReader.getByte(); //60
+        this.iReader.skipBytes(23); //unk 61-83
+
+        for (int i = 0; i < 8; i++) { //84-91 mon mods, 6-12 bytes
+            short mod = this.iReader.getByte();
+            if(mod == 0) continue;
+            D2TxtFileItemProperties monstat = D2TxtFile.MONUMOD.searchColumns("id", Short.toString(mod));
+            if(monstat != null) {
+                this.demon_mods += monstat.get("uniquemod") + " ";
+            }
+        }
+        this.iReader.skipBytes(4); //unk 92-95
+        this.iReader.skipBytes(2); //96-97 gf
+        while(true) {
+            int id = (int)this.iReader.read(9);
+            if(id == 0x1ff) {
+                break;
+            }
+            int value = (int)this.iReader.read(32);
+            if (id == 6 || id == 7) { //valshift from itemstatcost, would be better to read from file, then hardcoded
+                value = value >> 8;
+            }
+            if      (id == 6)  this.demon_hitpoints = value;
+            else if (id == 7)  this.demon_maxhp = value; //maxhp
+            else if (id == 12) this.demon_level = value;
+            else if (id == 13) this.demon_experience = value;
+        }
+
+        if(this.demon_type == 1) {
+            D2TxtFileItemProperties monstat = D2TxtFile.MONSTATS.getRow(mon_row);
+            this.demon_monster = D2Files.getInstance().getTranslations().getTranslation(monstat.get("NameStr"));
+        }
+        else if (this.demon_type == 2) {
+            D2TxtFileItemProperties monstat = D2TxtFile.SUPER_UNIQUES.getRow(mon_row);
+            this.demon_monster = D2Files.getInstance().getTranslations().getTranslation(monstat.get("Name"));
+        }
+
+        D2TxtFileItemProperties level = D2TxtFile.LEVELS.searchColumns("Id", Integer.toString(this.demon_area_id));
+        System.err.println("level id " + this.demon_area_id + " monrow " + mon_row);
+        if(level != null) {
+            this.demon_area_name = level.get("*StringName");
+        }
+
+        //String difficulty[] = {"Normal", "Nightname", "Hell"};
     }
 
     private void readCorpse() throws Exception {
@@ -2039,6 +2135,27 @@ public class D2Character extends D2ItemListAdapter {
             return "";
         }
 
+    }
+
+    public String getDemonStatString() {
+        if(this.demon_type == 0) return "";
+
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.ENGLISH);
+        DecimalFormat df = new DecimalFormat("###,###,###", dfs);
+
+        return "Demon type : " + this.demon_type + "\n"
+             + "Demon monster : " + this.demon_monster + "\n"
+                + "Level : " + this.demon_level + "\n"
+                + "Hit Points : " + df.format(this.demon_maxhp) + "\n"
+                + "Experience : " + df.format(this.demon_experience) + "\n"
+                + "Mods : " + this.demon_mods + "\n"
+                + "Seed : " +String.format("%04X", this.demon_seed) + "\n"
+                + "Bitmask : " + String.format("%04X", this.demon_bitmask) + "\n"
+                + "Area : " + this.demon_area_name + " (" + this.demon_area_level + ")\n"
+                + "Desecrated? : " + this.demon_is_desecrated + "\n"
+                + "Diff 1 : " + this.demon_diff1 + "\n"
+                + "Diff 2 : " + this.demon_diff2 + "\n"
+                + "Diff 3 : " + this.demon_diff3 + "\n";
     }
 
 }

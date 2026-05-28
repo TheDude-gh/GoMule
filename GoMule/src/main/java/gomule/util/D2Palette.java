@@ -69,7 +69,7 @@ public class D2Palette {
             //remap tables each have 256 bytes
             for (int r = 0; r < rtables_num; r++) {
                 for (int i = 0; i < 256; i++) {
-                    this.remapColors[num][r][i] = (short)(br.getByte() & 0xff);
+                    this.remapColors[num][r][i] = br.getByte();
                 }
             }
         }

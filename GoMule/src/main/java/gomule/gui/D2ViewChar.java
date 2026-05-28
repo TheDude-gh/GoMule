@@ -20,17 +20,42 @@
  ******************************************************************************/
 package gomule.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Transparency;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
+
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ToolTipManager;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+
 import gomule.d2s.D2Character;
 import gomule.item.D2Item;
 import gomule.item.D2ItemRenderer;
 import randall.util.RandallPanel;
-
-import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
 
 /**
  * @author Marco
@@ -85,6 +110,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
     private JTextArea iMessage;
     private JTextArea CJT = new JTextArea();
     private JTextArea MJT = new JTextArea();
+    private JTextArea DJT = new JTextArea();
     private String iFileName;
     private D2FileManager iFileManager;
 
@@ -205,63 +231,23 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
         iMercPainter = new D2MercPainterPanel();
 
         Box mercMainBox = Box.createHorizontalBox();
-        Box mercMainBox2 = Box.createHorizontalBox();
-        Box mercStatsBox = Box.createHorizontalBox();
-        Box mercLabelBox = Box.createVerticalBox();
-        Box mercValueBox = Box.createVerticalBox();
+        Box mercMainBox2 = Box.createVerticalBox();
+        Box mercItemsBox = Box.createVerticalBox();
+        Box demonBox = Box.createVerticalBox();
 
         MJT.setEditable(false);
         MJT.setFont(new Font("monospaced", Font.PLAIN, 11));
 
-        mercMainBox2.add(iMercPainter);
-//		mercMainBox.add(mercStatsBox);
+        this.DJT.setEditable(false);
+        this.DJT.setFont(new Font("monospaced", Font.PLAIN, 11));
+
+        mercItemsBox.add(iMercPainter);
+        demonBox.add(this.DJT);
+
         mercMainBox.add(MJT);
-        mercStatsBox.add(mercLabelBox);
-        mercStatsBox.add(Box.createRigidArea(new Dimension(10, 0)));
-        mercStatsBox.add(mercValueBox);
+        mercMainBox2.add(mercItemsBox);
+        mercMainBox2.add(this.DJT);
 
-//		mercLabelBox.add(new JLabel("Name: "));
-//		mercLabelBox.add(new JLabel("Race: "));
-//		mercLabelBox.add(new JLabel("Type: "));
-//		mercLabelBox.add(new JLabel("Experience: "));
-//		mercLabelBox.add(new JLabel("Level:"));
-//		mercLabelBox.add(new JLabel("Dead?: "));
-//		mercLabelBox.add(Box.createRigidArea(new Dimension(0,10)));
-//		mercLabelBox.add(new JLabel(" "));
-//		mercLabelBox.add(new JLabel("Strength: "));
-//		mercLabelBox.add(new JLabel("Dexterity: "));
-//		mercLabelBox.add(new JLabel("HP: "));
-//		mercLabelBox.add(new JLabel("Defense: "));
-//		mercLabelBox.add(new JLabel("AR: "));
-//		mercLabelBox.add(Box.createRigidArea(new Dimension(0,10)));
-//		mercLabelBox.add(new JLabel("Fire: "));
-//		mercLabelBox.add(new JLabel("Lightning: "));
-//		mercLabelBox.add(new JLabel("Cold: "));
-//		mercLabelBox.add(new JLabel("Poision: "));
-//		mercLabelBox.add(Box.createRigidArea(new Dimension(0,120)));
-
-//		mercValueBox.add(iMercName);
-//		mercValueBox.add(iMercRace);
-//		mercValueBox.add(iMercType);
-//		mercValueBox.add(iMercExp);
-//		mercValueBox.add(iMercLevel);
-//		mercValueBox.add(iMercDead);
-//		mercValueBox.add(Box.createRigidArea(new Dimension(0,10)));
-//		mercValueBox.add(new JLabel("Naked/Gear"));
-//		mercValueBox.add(iMercStr);
-//		mercValueBox.add(iMercDex);
-//		mercValueBox.add(iMercHP);
-//		mercValueBox.add(iMercDef);
-//		mercValueBox.add(iMercAR);
-//		mercValueBox.add(Box.createRigidArea(new Dimension(0,10)));
-//		mercValueBox.add(iMercFireRes);
-//		mercValueBox.add(iMercLightRes);
-//		mercValueBox.add(iMercColdRes);
-//		mercValueBox.add(iMercPoisRes);
-//		mercValueBox.add(Box.createRigidArea(new Dimension(0,120)));
-
-
-//		lMercPanel.add(mercMainBox);
         lMercPanel.add(mercMainBox, BorderLayout.LINE_START);
         lMercPanel.add(mercMainBox2, BorderLayout.LINE_END);
         lTabs.addTab("Mercenary", lMercPanel);
@@ -436,7 +422,11 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
 
         CJT.setText(iCharacter.getStatString());
         lSkillPanel.build();
+    }
 
+    public void paintDemonStats() {
+
+        this.DJT.setText(iCharacter.getDemonStatString());
     }
 
     public void connect() {
@@ -449,6 +439,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
 
             paintMercStats();
             paintCharStats();
+            this.paintDemonStats();
             lSkillPanel.build();
             lQuestPanel.build();
             lWayPanel.build();

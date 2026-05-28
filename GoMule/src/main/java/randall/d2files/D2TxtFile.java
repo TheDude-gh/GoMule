@@ -61,8 +61,9 @@ public final class D2TxtFile {
 //	*/
     public static D2TxtFile MONSTATS;
     //public static D2TxtFile TCS;
-    //public static D2TxtFile LEVELS;
-    //public static D2TxtFile SUPUNIQ;
+    public static D2TxtFile LEVELS;
+    public static D2TxtFile SUPER_UNIQUES;
+    public static D2TxtFile MONUMOD;
     //public static D2TxtFile ITEMRATIO;
     private static String sMod;
     private static boolean read = false;
@@ -101,8 +102,9 @@ public final class D2TxtFile {
         CHARSTATS = new D2TxtFile("charstats");
         AUTOMAGIC = new D2TxtFile("automagic");
         //TCS = new D2TxtFile("treasureclassex");
-        //LEVELS = new D2TxtFile("levels");
-        //SUPUNIQ = new D2TxtFile("superuniques");
+        LEVELS = new D2TxtFile("levels");
+        SUPER_UNIQUES = new D2TxtFile("superuniques");
+        MONUMOD = new D2TxtFile("monumod");
         //ITEMRATIO = new D2TxtFile("itemRatio");
 
         read = true;

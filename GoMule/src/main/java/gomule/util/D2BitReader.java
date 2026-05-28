@@ -308,10 +308,16 @@ public class D2BitReader {
         return ret;
     }
 
-    public byte getByte() {
+    public short getByte() {
         int bytepos = position / 8;
         position += 8;
-        return filedata[bytepos];
+        return (short)(filedata[bytepos] & 0xff);
+    }
+
+    public int getShort() {
+        int bytepos = position / 8;
+        position += 16;
+        return (int)((filedata[bytepos++] & 0xff) + ((filedata[bytepos++] & 0xff) << 8));
     }
 
     public int getInt() {

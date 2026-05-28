@@ -41545,14 +41545,14 @@
         "enUS": "The game must be restarted if a purchase was made."
     },
     {
-        "id": 28082,
-        "Key": "ChronicleRewardsTitle",
-        "enUS": "Rewards"
-    },
-    {
         "id": 28083,
         "Key": "UILearnMore",
         "enUS": "Learn More"
+    },
+    {
+        "id": 28085,
+        "Key": "ChronicleRewardsTitle",
+        "enUS": "Rewards"
     },
     {
         "id": 28086,

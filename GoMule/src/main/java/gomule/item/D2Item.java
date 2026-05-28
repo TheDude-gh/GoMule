@@ -102,6 +102,8 @@ public class D2Item implements Comparable, D2ItemInterface {
     private boolean iIdentified;
     private boolean iTypeWeapon;
     private boolean iTypeArmor;
+    private boolean isShield = false;;
+    private boolean hasDamage = false;
     private short iCurDur;
     private boolean questItem;
     private int iStashCount = 0;
@@ -111,8 +113,6 @@ public class D2Item implements Comparable, D2ItemInterface {
     private short iDef;
 
     private short cBlock;
-
-    private short iBlock;
 
     private short iInitDef;
     private short iSpeed = 0;
@@ -322,7 +322,8 @@ public class D2Item implements Comparable, D2ItemInterface {
         }
 
         // Shields - block chance.
-        if (isShield()) {
+        if (iType.equals("ashd") || iType.equals("shie") || iType.equals("head") || iType.equals("grim")) {
+            this.isShield = true;
             cBlock = Short.parseShort(iItemType.get("block"));
         }
 
@@ -859,6 +860,13 @@ public class D2Item implements Comparable, D2ItemInterface {
                 iCurDur = (short) pFile.read(9);
             }
 
+            if (!(D2TxtFile.ARMOR.searchColumns("code", item_type)).get("mindam").equals("0")) {
+                this.hasDamage = true;
+                i1Dmg = new short[4];
+                i1Dmg[0] = i1Dmg[1] = Short.parseShort((D2TxtFile.ARMOR.searchColumns("code", item_type)).get("mindam"));
+                i1Dmg[2] = i1Dmg[3] = Short.parseShort((D2TxtFile.ARMOR.searchColumns("code", item_type)).get("maxdam"));
+            }
+
         } else if (isTypeWeapon()) {
             if (iType.equals("tkni") || iType.equals("taxe")
                     || iType.equals("jave") || iType.equals("ajav")) {
@@ -870,12 +878,8 @@ public class D2Item implements Comparable, D2ItemInterface {
                 iCurDur = (short) pFile.read(9);
             }
 
-            if ((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get(
-                    "1or2handed").equals("")
-                    && !iThrow) {
-
-                if ((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get(
-                        "2handed").equals("1")) {
+            if ((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("1or2handed").equals("") && !iThrow) {
+                if ((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("2handed").equals("1")) {
                     iWhichHand = 2;
                     i1Dmg = new short[4];
                     i1Dmg[0] = i1Dmg[1] = Short.parseShort((D2TxtFile.WEAPONS.searchColumns("code", item_type)).get("2handmindam"));
@@ -1136,10 +1140,9 @@ public class D2Item implements Comparable, D2ItemInterface {
                             + ((D2Prop) iProps.get(x)).getPVals()[0];
                 }
 
-                if (isShield()) {
+                if (this.isShield) {
                     if (((D2Prop) iProps.get(x)).getPNum() == 20) {
-                        iBlock = (short) (cBlock + ((D2Prop) iProps.get(x))
-                                .getPVals()[0]);
+                        this.cBlock += (short) (((D2Prop) iProps.get(x)).getPVals()[0]);
                     }
                 }
 
@@ -1573,13 +1576,11 @@ public class D2Item implements Comparable, D2ItemInterface {
     }
 
     public boolean isShield() {
-        if (iType != null) {
-            if (iType.equals("ashd") || iType.equals("shie")
-                    || iType.equals("head")) {
-                return true;
-            }
-        }
-        return false;
+        return this.isShield;
+    }
+
+    public boolean hasDamage() {
+        return this.hasDamage;
     }
 
     public boolean isNormal() {
@@ -1884,10 +1885,6 @@ public class D2Item implements Comparable, D2ItemInterface {
 
     public short[] getI2Dmg() {
         return i2Dmg;
-    }
-
-    public short getiBlock() {
-        return iBlock;
     }
 
     public short getiCurDur() {

@@ -119,9 +119,23 @@ public class D2ItemRenderer {
                 }
             } else if (d2Item.isTypeArmor()) {
                 dispStr.append("Defense: ").append(d2Item.getiDef()).append("<br>&#10;");
+                if(d2Item.hasDamage()) {
+                    short[] i1Dmg = d2Item.getI1Dmg();
+                    if (d2Item.isShield()) {
+                        dispStr.append("Smite ");
+                    }
+                    else {
+                        dispStr.append("Kick ");
+                    }
+                    dispStr.append("Damage: ")
+                            .append(i1Dmg[1])
+                            .append(" - ")
+                            .append(i1Dmg[3])
+                            .append("<br>&#10;");
+                }
                 if (d2Item.isShield()) {
                     dispStr.append("Chance to Block: ")
-                            .append(d2Item.getiBlock())
+                            .append(d2Item.getBlock() + 20) //20 is min char toblock
                             .append("<br>&#10;");
                 }
             }
