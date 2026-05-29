@@ -117,6 +117,7 @@ public class D2Character extends D2ItemListAdapter {
 //	private boolean fullChanged = false;
 //	private ArrayList partialSetProps = new ArrayList();
 //	private ArrayList fullSetProps = new ArrayList();
+    private long mapseed = 0;
     private final Map<Integer, int[]> setTracker = new HashMap<>();
     private ArrayList plSkill;
     private long[] iReadStats = new long[16];
@@ -237,6 +238,9 @@ public class D2Character extends D2ItemListAdapter {
 
         iCharClass = D2TxtFile.getCharacterCode((int) lCharCode);
         iTitleString = " Lvl " + iCharLevel + " " + D2TxtFile.getCharacterCode((int) lCharCode);
+
+        iReader.set_byte_pos(171 + revoff);
+        this.mapseed = this.iReader.read(32);
 
         iReader.set_byte_pos(177 + revoff);
         if (iReader.read(8) == 1) ;//MERC IS DEAD?
@@ -2093,6 +2097,7 @@ public class D2Character extends D2ItemListAdapter {
                         "Class:      " + getCharClass() + "\n" +
                         "Experience: " + getCharExp() + "\n" +
                         "Level:      " + getCharLevel() + "\n" +
+                        "Map Seed:   " + this.mapseed + "\n" +
                         /*"NOTIMP:     " + getCharDead() + "\n"+*/ "\n" + "            Naked/Gear" + "\n" +
                         "Strength:   " + getCharInitStr() + "/" + getCharStr() + "\n" +
                         "Dexterity:  " + getCharInitDex() + "/" + getCharDex() + "\n" +
