@@ -147,7 +147,6 @@ public class D2Prop {
                 : D2Files.getInstance().getTranslations().getTranslation(descstrpos);
         //FUNCTION 0 means that you should use the txt files to find the print function to use. Otherwise, it should be a case of looking for custom funcs
         if (funcN == 0) {
-
             if (itemStatCostRow.get("descfunc") != null && !itemStatCostRow.get("descfunc").equals("")) {
                 funcN = Integer.parseInt(itemStatCostRow.get("descfunc"));
             }
@@ -385,6 +384,11 @@ public class D2Prop {
                 return "By time!? Oh shi....";
 
             case (19):
+                if(oString != null) {
+                    //return oString.replace("%d", String.valueOf(pVals[0])).replace("%%", "%");
+                    return String.format(oString, pVals[0]);
+                }
+                //return "";
             case (29):
                 List<D2TxtFileItemProperties> matchingPropsRecords = ((ArrayList<D2TxtFileItemProperties>) D2TxtFile.PROPS.searchColumnsMultipleHits("stat1", itemStatCostRow.get("Stat")))
                         .stream()

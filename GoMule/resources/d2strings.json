@@ -31585,6 +31585,11 @@
         "enUS": "Max Demons: %d"
     },
     {
+        "id": 28105,
+        "Key": "StrSkillChainMaxCount",
+        "enUS": "Max Chains: %d"
+    },
+    {
         "id": 1633,
         "Key": "CapsJoinMenu4",
         "enUS": "     "
@@ -37682,7 +37687,7 @@
     {
         "id": 26352,
         "Key": "GoOnlineNotification",
-        "enUS": "You have not been online in the last 30 days. Please start the game while online to check for any login agreements."
+        "enUS": "You have not been online in the last 30 days. Please start the game while online to verify the product license."
     },
     {
         "id": 26353,
@@ -41588,5 +41593,15 @@
         "id": 28101,
         "Key": "LF_NameProfaneOrReserved",
         "enUS": "Name contains profane or reserved words. Please try another name."
+    },
+    {
+        "id": 28102,
+        "Key": "DesktopModeSettingName",
+        "enUS": "Desktop Mode"
+    },
+    {
+        "id": 28104,
+        "Key": "HandheldTitle",
+        "enUS": "Handheld"
     }
 ]

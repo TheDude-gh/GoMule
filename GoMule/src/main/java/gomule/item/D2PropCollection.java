@@ -381,19 +381,15 @@ public class D2PropCollection extends ArrayList {
     }
 
     public void addAll(D2PropCollection propCollection, int qFlag) {
-
         addAll(propCollection.getPartialList(qFlag));
     }
 
     public void addAll(D2PropCollection propCollection) {
         addAll(propCollection.getFullList());
-
     }
 
     public void calcStats(int[] outStats, ArrayList plSkill, int cLvl, int op, int qFlagM) {
-
         for (int x = 0; x < size(); x++) {
-
             ((D2Prop) get(x)).addCharMods(outStats, plSkill, cLvl, op, qFlagM);
         }
     }

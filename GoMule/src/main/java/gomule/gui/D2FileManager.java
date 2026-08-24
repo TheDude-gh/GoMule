@@ -67,7 +67,7 @@ public class D2FileManager extends JFrame {
      */
     private static final long serialVersionUID = 4010435064410504579L;
 
-    private static final String CURRENT_VERSION = "R3.2.92777 Resurrected RoW";
+    private static final String CURRENT_VERSION = "R3.3.1 Resurrected RotW";
     private static final D2FileManager iCurrent = new D2FileManager();
     private final D2SharedStashReader sharedStashReader;
     private final JSplitPane lSplit;
@@ -113,7 +113,7 @@ public class D2FileManager extends JFrame {
     private JButton flavieSingle;
 
     private D2FileManager() {
-        D2TxtFile.constructTxtFiles("d3191");
+        D2TxtFile.constructTxtFiles("d2data");
         sharedStashReader = new D2SharedStashReader();
         iOpenWindows = new ArrayList();
         iContentPane = new JPanel();
@@ -1668,6 +1668,7 @@ public class D2FileManager extends JFrame {
                 this,
                 "A java-based Diablo II muling application\n\noriniginally created by Andy Theuninck (Gohanman)\nVersion 0.1a"
                         + "\n\ncurrent release by Randall & Silospen\nVersion " + CURRENT_VERSION
+                        + "\nGIT https://github.com/GoMule/GoMule\nThis fork GIT https://github.com/TheDude-gh/GoMule by The Dude"
                         + "\n\nAnd special thanks to:"
                         + "\n\tHakai_no_Tenshi & Gohanman for helping me out with the file formats"
                         + "\nRTB for all his help.\n\tThe Super Beta Testers:\nSkinhead On The MBTA\nnubikon\nOscuro\nThyiad\nMoiselvus\nPurpleLocust\nAnd anyone else I've forgotten..!",

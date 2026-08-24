@@ -292,38 +292,38 @@ public class D2BodyLocations {
                 break;
             case 7:
 //          cClass = "war";
-                iSkillLocs[0] = new Point(91, 86);
-                iSkillLocs[1] = new Point(250, 86);
-                iSkillLocs[2] = new Point(91, 141);
-                iSkillLocs[3] = new Point(171, 141);
-                iSkillLocs[4] = new Point(250, 194);
-                iSkillLocs[5] = new Point(171, 250);
-                iSkillLocs[6] = new Point(250, 250);
-                iSkillLocs[7] = new Point(171, 305);
-                iSkillLocs[8] = new Point(91, 360);
-                iSkillLocs[9] = new Point(250, 360);
+                iSkillLocs[0] = new Point(250, 86); //Summon Goatman
+                iSkillLocs[1] = new Point(91, 86); //Demonic Mastery
+                iSkillLocs[2] = new Point(171, 141); //Death Mark
+                iSkillLocs[3] = new Point(250, 194); //Summon Tainted
+                iSkillLocs[4] = new Point(250, 250); //Summon Defiler
+                iSkillLocs[5] = new Point(91, 141); //Blood Oath
+                iSkillLocs[6] = new Point(171, 305); //Engorge
+                iSkillLocs[7] = new Point(171, 250); //Blood Boil
+                iSkillLocs[8] = new Point(91, 360); //Consume
+                iSkillLocs[9] = new Point(250, 360); //Bind Demon
 
-                iSkillLocs[10] = new Point(91, 86);
-                iSkillLocs[11] = new Point(250, 86);
-                iSkillLocs[12] = new Point(171, 141);
-                iSkillLocs[13] = new Point(91, 194);
-                iSkillLocs[14] = new Point(250, 194);
-                iSkillLocs[15] = new Point(91, 250);
-                iSkillLocs[16] = new Point(171, 250);
-                iSkillLocs[17] = new Point(171, 305);
-                iSkillLocs[18] = new Point(250, 305);
-                iSkillLocs[19] = new Point(171, 360);
+                iSkillLocs[10] = new Point(91, 86); //Levitate
+                iSkillLocs[11] = new Point(171, 305); //Eldritch Blast
+                iSkillLocs[12] = new Point(250, 86); //Hex Bane
+                iSkillLocs[13] = new Point(250, 305); //Hex Siphon
+                iSkillLocs[14] = new Point(171, 250); //Psychic Ward
+                iSkillLocs[15] = new Point(91, 194); //Echoing Strike
+                iSkillLocs[16] = new Point(250, 194); //Hex Purge
+                iSkillLocs[17] = new Point(91, 250); //Blade Warp
+                iSkillLocs[18] = new Point(171, 141); //Cleave
+                iSkillLocs[19] = new Point(171, 360); //Mirrored Blades
 
-                iSkillLocs[20] = new Point(250, 86);
-                iSkillLocs[21] = new Point(91, 141);
-                iSkillLocs[22] = new Point(171, 141);
-                iSkillLocs[23] = new Point(171, 194);
-                iSkillLocs[24] = new Point(250, 194);
-                iSkillLocs[25] = new Point(91, 250);
-                iSkillLocs[26] = new Point(171, 305);
-                iSkillLocs[27] = new Point(250, 305);
-                iSkillLocs[28] = new Point(91, 360);
-                iSkillLocs[29] = new Point(250, 360);
+                iSkillLocs[20] = new Point(171, 141); //lethargy
+                iSkillLocs[21] = new Point(91, 141);  //ring of fire
+                iSkillLocs[22] = new Point(250, 86); //Miasma Bolt
+                iSkillLocs[23] = new Point(171, 194); //Sigil Rancor
+                iSkillLocs[24] = new Point(250, 305); //Enhanced Entropy
+                iSkillLocs[25] = new Point(91, 250); //Flame Wave
+                iSkillLocs[26] = new Point(250, 194); //Miasma Chains
+                iSkillLocs[27] = new Point(171, 305); //Sigil Death
+                iSkillLocs[28] = new Point(91, 360); //Apocalypse
+                iSkillLocs[29] = new Point(250, 360); //Abyss
                 break;
         }
         return iSkillLocs;

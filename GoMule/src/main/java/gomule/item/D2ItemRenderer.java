@@ -174,6 +174,7 @@ public class D2ItemRenderer {
             dispStr.append("Item Level: ").append(d2Item.getIlvl()).append("<br>&#10;");
         //dispStr.append("Version: ").append(d2Item.get_version()).append("<br>&#10;");
         if (!d2Item.isiIdentified()) dispStr.append("Unidentified" + "<br>&#10;");
+        if (d2Item.isEligible()) dispStr.append("Eligible for Chronicle" + "<br>&#10;");
 
         if(!d2Item.getDifficulty().equals("")) {
             dispStr.append("Difficulty: ").append(d2Item.getDifficulty()).append(FONTEND + "<br>&#10;");

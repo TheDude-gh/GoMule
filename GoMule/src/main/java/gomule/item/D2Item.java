@@ -100,6 +100,7 @@ public class D2Item implements Comparable, D2ItemInterface {
     private boolean iRune;
     private boolean iTypeMisc;
     private boolean iIdentified;
+    private boolean iEligible; //contains eligible for chronicle data
     private boolean iTypeWeapon;
     private boolean iTypeArmor;
     private boolean isShield = false;;
@@ -213,7 +214,7 @@ public class D2Item implements Comparable, D2ItemInterface {
             throw pEx;
         } catch (Exception pEx) {
             pEx.printStackTrace();
-            throw new D2ItemException("Error: " + pEx.getMessage() + getExStr() + " :: " + item_type);
+            throw new D2ItemException("Error: " + pEx.getMessage() + getExStr() + " :: " + item_type + ", pos " + pFile.get_byte_pos());
         }
     }
 
@@ -592,31 +593,24 @@ public class D2Item implements Comparable, D2ItemInterface {
             case Q_LOWQUALITY: // low quality item
             {
                 short low_quality = (short) pFile.read(3);
-
                 switch (low_quality) {
-
                     case 0: {
                         iItemName = "Crude " + iItemName;
                         break;
                     }
-
                     case 1: {
                         iItemName = "Cracked " + iItemName;
                         break;
                     }
-
                     case 2: {
                         iItemName = "Damaged " + iItemName;
                         break;
                     }
-
                     case 3: {
                         iItemName = "Low Quality " + iItemName;
                         break;
                     }
-
                 }
-
                 break;
             }
             case Q_HIGHQUALITY: // high quality item
@@ -946,7 +940,13 @@ public class D2Item implements Comparable, D2ItemInterface {
 
         //D2R ROW if item is unidentified AND (set OR unique), there will be chronicle info
         if(iChronicle && (quality == Q_SET || quality == Q_UNIQUE)) {
-            pFile.skipBits(16 + 32 + 4); //16 monster id + 32 time found + 4 unknown
+            pFile.skipBits(16 + 32); //16 monster id + 32 time found
+            //4bits : possibly should be there, unknown
+            this.iEligible = pFile.read(1) == 1; //eligible bit
+            pFile.skipBits(3);
+            if(this.iEligible) {
+                pFile.skipBits(64); //when item is eligible for chronicle, there is 64 bits of unknown data (so far always zeroes)
+            }
         }
 
         //new in D2R ROW, flag if item is in material stash, and if yes, count follows
@@ -1068,6 +1068,13 @@ public class D2Item implements Comparable, D2ItemInterface {
             rootProp = (int) pFile.read(9);
         }
 
+        /*for (int x = 0; x < iProps.size(); x++) {
+            String ps = "prop : num=" + ((D2Prop) iProps.get(x)).getPNum();
+            for(int y = 0; y < ((D2Prop) iProps.get(x)).getPVals().length; y++) {
+                ps += " val" + y + "=" + ((D2Prop) iProps.get(x)).getPVals()[y];
+            }
+            System.err.println(this.iItemName + " :: " + ps);
+        }*/
     }
 
     private void applyItemMods() {
@@ -1929,6 +1936,10 @@ public class D2Item implements Comparable, D2ItemInterface {
 
     public boolean isiIdentified() {
         return iIdentified;
+    }
+
+    public boolean isEligible() {
+        return this.iEligible;
     }
 
     public int getiCharLvl() {

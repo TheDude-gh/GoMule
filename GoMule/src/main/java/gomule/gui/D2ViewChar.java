@@ -1846,11 +1846,11 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                         //warlock
                         if (iCharacter.getCharCode() == 7) {
                             if ((lX >= 6 && lX <= 96) && (lY >= 6 && lY <= 31)) {
-                                setSkillSlot(0);
+                                setSkillSlot(2);
                             } else if ((lX >= 97 && lX <= 187) && (lY >= 6 && lY <= 31)) {
                                 setSkillSlot(1);
                             } else if ((lX >= 188 && lX <= 278) && (lY >= 6 && lY <= 31)) {
-                                setSkillSlot(2);
+                                setSkillSlot(0);
                             }
                             return;
                         }
@@ -2022,13 +2022,10 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
             }
 
 
-//			lEmptyBackground = D2ImageCache.getImage("AmaArr.jpg");
-
             int lWidth = lEmptyBackground.getWidth(D2SkillPainterPanel.this);
             int lHeight = lEmptyBackground.getHeight(D2SkillPainterPanel.this);
 
             iBackground = iFileManager.getGraphicsConfiguration().createCompatibleImage(lWidth, lHeight, Transparency.BITMASK);
-//			iBackground = new BufferedImage(lEmptyBackground.getWidth(lWidth, lHeight, BufferedImage.TYPE_3BYTE_BGR);
 
             Graphics2D lGraphics = (Graphics2D) iBackground.getGraphics();
 
@@ -2036,68 +2033,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
 
             if (iCharacter != null) {
                 drawText(lGraphics, iSkillSlot);
-
             }
-//			if ( iCharacter != null )
-//			{
-//			for (int i = 0; i < iCharacter.getMercItemNr(); i++)
-//			{
-//			D2Item temp_item = iCharacter.getMercItem(i);
-//			Image lImage = D2ImageCache.getDC6Image(temp_item);
-//			int location = temp_item.get_location();
-//			// on the body
-//			{
-//			int body_position = temp_item.get_body_position();
-//			int w, h, wbias, hbias;
-//			switch (body_position)
-//			{
-//			// head (assume 2x2)
-//			case 1:
-//			lGraphics.drawImage(lImage, HEAD_X, HEAD_Y, D2SkillPainterPanel.this);
-//			break;
-//			case 3:
-//			// body (assume 2x3
-//			lGraphics.drawImage(lImage, BODY_X, BODY_Y, D2SkillPainterPanel.this);
-//			break;
-//			// right arm (give the whole 2x4)
-//			// biases are to center non-2x4 items
-//			case 4:
-//			if ((iWeaponSlot == 1 && body_position == 4) || (iWeaponSlot == 2 && body_position == 11))
-//			{
-//			w = temp_item.get_width();
-//			h = temp_item.get_height();
-//			wbias = 0;
-//			hbias = 0;
-//			if (w == 1)
-//			wbias += GRID_SIZE / 2;
-//			if (h == 3)
-//			hbias += GRID_SIZE / 2;
-//			else if (h == 2)
-//			hbias += GRID_SIZE;
-//			lGraphics.drawImage(lImage, R_ARM_X + wbias, R_ARM_Y + hbias, D2SkillPainterPanel.this);
-//			}
-//			break;
-//			// left arm (give the whole 2x4)
-//			case 5:
-//			if ((iWeaponSlot == 1 && body_position == 5) || (iWeaponSlot == 2 && body_position == 12))
-//			{
-//			w = temp_item.get_width();
-//			h = temp_item.get_height();
-//			wbias = 0;
-//			hbias = 0;
-//			if (w == 1)
-//			wbias += GRID_SIZE / 2;
-//			if (h == 3)
-//			hbias += GRID_SIZE / 2;
-//			else if (h == 2)
-//			hbias += GRID_SIZE;
-//			lGraphics.drawImage(lImage, L_ARM_X + wbias, L_ARM_Y + hbias, D2SkillPainterPanel.this);
-//			}
-//			break;
-//			}
-//			}
-//			}
-//			}
             repaint();
         }
 
@@ -2109,46 +2045,41 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                 lGraphics.drawString(iCharacter.getCharSkillRem() + "", 238, 69);
             }
 
-            switch (iSkillSlot) {
-                case 0:
-                    for (int x = 0; x < 10; x = x + 1) {
-                        lGraphics.setColor(Color.white);
-                        lGraphics.drawString(iCharacter.getInitSkillListA()[x] + "/", iCharacter.getSkillLocs()[x].x - 10, iCharacter.getSkillLocs()[x].y + 2);
-                        if (iCharacter.getInitSkillListA()[x] != (iCharacter.getSkillListA()[x])) {
-                            lGraphics.setColor(Color.orange.brighter());
-                        }
-                        lGraphics.drawString(iCharacter.getSkillListA()[x] + "", iCharacter.getSkillLocs()[x].x + 11, iCharacter.getSkillLocs()[x].y + 2);
+            int skill_level, skill_bonus, locx, locy, offset;
 
-                    }
-                    break;
-                case 1:
-                    for (int x = 0; x < 10; x = x + 1) {
-                        lGraphics.setColor(Color.white);
-                        lGraphics.drawString(iCharacter.getInitSkillListB()[x] + "/", iCharacter.getSkillLocs()[x + 10].x - 10, iCharacter.getSkillLocs()[x + 10].y + 2);
+            for (int x = 0; x < 10; x = x + 1) {
+                switch(skillSlot) {
+                    default:
+                    case 0:
+                        skill_level = iCharacter.getInitSkillListA()[x];
+                        skill_bonus = iCharacter.getSkillListA()[x];
+                        locx = iCharacter.getSkillLocs()[x].x;
+                        locy = iCharacter.getSkillLocs()[x].y;
+                        offset = 0;
+                        break;
+                    case 1:
+                        skill_level = iCharacter.getInitSkillListB()[x];
+                        skill_bonus = iCharacter.getSkillListB()[x];
+                        locx = iCharacter.getSkillLocs()[x + 10].x;
+                        locy = iCharacter.getSkillLocs()[x + 10].y;
+                        offset = 10;
+                        break;
+                    case 2:
+                        skill_level = iCharacter.getInitSkillListC()[x];
+                        skill_bonus = iCharacter.getSkillListC()[x];
+                        locx = iCharacter.getSkillLocs()[x + 20].x;
+                        locy = iCharacter.getSkillLocs()[x + 20].y;
+                        offset = 20;
+                        break;
+                }
 
-                        if (iCharacter.getInitSkillListB()[x] != (iCharacter.getSkillListB()[x])) {
-                            lGraphics.setColor(Color.orange.brighter());
-                        } else {
-                            lGraphics.setColor(Color.white);
-                        }
-                        lGraphics.drawString(iCharacter.getSkillListB()[x] + "", iCharacter.getSkillLocs()[x + 10].x + 11, iCharacter.getSkillLocs()[x + 10].y + 2);
-
-                    }
-                    break;
-                case 2:
-                    for (int x = 0; x < 10; x = x + 1) {
-                        lGraphics.setColor(Color.white);
-                        lGraphics.drawString(iCharacter.getInitSkillListC()[x] + "/", iCharacter.getSkillLocs()[x + 20].x - 10, iCharacter.getSkillLocs()[x + 20].y + 2);
-
-                        if (iCharacter.getInitSkillListC()[x] != (iCharacter.getSkillListC()[x])) {
-                            lGraphics.setColor(Color.orange.brighter());
-                        } else {
-                            lGraphics.setColor(Color.white);
-                        }
-
-                        lGraphics.drawString(iCharacter.getSkillListC()[x] + "", iCharacter.getSkillLocs()[x + 20].x + 11, iCharacter.getSkillLocs()[x + 20].y + 2);
-                    }
-                    break;
+                lGraphics.setColor(Color.white);
+                lGraphics.drawString(skill_level + "/", locx - 10, locy + 2);
+                if (skill_level != skill_bonus) {
+                    lGraphics.setColor(Color.orange.brighter());
+                }
+                lGraphics.drawString(skill_bonus + "", locx + 11, locy + 2);
+                //lGraphics.drawString(iCharacter.getSkillName(skillSlot, x), locx - 25, locy + 12);
             }
         }
 
@@ -2180,15 +2111,6 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
             setSize(286, 383);
             Dimension lSize = new Dimension(284, 383);
             setPreferredSize(lSize);
-//			this.build();
-
-//			addMouseMotionListener(new MouseMotionAdapter()
-//			{
-//			public void mouseMoved(MouseEvent pEvent)
-//			{
-//			System.out.println(pEvent.getX()  + " , " + pEvent.getY());
-//			}
-//			});
 
             addMouseListener(new MouseAdapter() {
 
@@ -2293,15 +2215,6 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
             setSize(286, 383);
             Dimension lSize = new Dimension(263, 360);
             setPreferredSize(lSize);
-//			this.build();
-
-//			addMouseMotionListener(new MouseMotionAdapter()
-//			{
-//			public void mouseMoved(MouseEvent pEvent)
-//			{
-//			System.out.println(pEvent.getX()  + " , " + pEvent.getY());
-//			}
-//			});
 
             addMouseListener(new MouseAdapter() {
 
@@ -2385,101 +2298,6 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
             }
 
 
-//			switch(questSlot){
-
-//			case 1:
-
-//			for(int f = 0;f<3;f=f+1){
-//			for(int y=0;y<iCharacter.getWaypoints()[f][questSlot -1].length();y=y+1){
-//			if(iCharacter.getWaypoints()[f][questSlot -1].charAt(y) == '1'){
-//			if(f==0){
-//			lGraphics.drawImage(tick, questLoc[y].x, questLoc[y].y, D2WayPainterPanel.this);
-//			}else if(f==1){
-//			lGraphics.drawImage(tick, questLoc[y].x+10, questLoc[y].y, D2WayPainterPanel.this);
-//			}else if(f==2){
-//			lGraphics.drawImage(tick, questLoc[y].x+20, questLoc[y].y, D2WayPainterPanel.this);
-//			}
-//			}
-
-//			}
-//			}
-
-////			for(int x = 0;x<iCharacter.getWaypoints().length;x=x+1){
-////			for(int y=0;y<iCharacter.getWaypoints()[x].length;x=x+1){
-////			lGraphics.drawImage(tick, questLoc[x].x, questLoc[x].y, D2WayPainterPanel.this);
-////			lGraphics.drawImage(tick, questLoc[x].x+10, questLoc[x].y, D2WayPainterPanel.this);
-////			lGraphics.drawImage(tick, questLoc[x].x+20, questLoc[x].y, D2WayPainterPanel.this);
-////			}
-////			}
-//			break;
-//			case 2:
-//			for(int f = 0;f<3;f=f+1){
-//			for(int y=0;y<iCharacter.getWaypoints()[f][questSlot -1].length();y=y+1){
-//			if(iCharacter.getWaypoints()[f][questSlot -1].charAt(y) == '1'){
-//			if(f==0){
-//			lGraphics.drawImage(tick, questLoc[y].x, questLoc[y].y, D2WayPainterPanel.this);
-//			}else if(f==1){
-//			lGraphics.drawImage(tick, questLoc[y].x+10, questLoc[y].y, D2WayPainterPanel.this);
-//			}else if(f==2){
-//			lGraphics.drawImage(tick, questLoc[y].x+20, questLoc[y].y, D2WayPainterPanel.this);
-//			}
-//			}
-
-//			}
-//			}
-//			break;
-//			case 3:
-//			for(int f = 0;f<3;f=f+1){
-//			for(int y=0;y<iCharacter.getWaypoints()[f][questSlot -1].length();y=y+1){
-//			if(iCharacter.getWaypoints()[f][questSlot -1].charAt(y) == '1'){
-//			if(f==0){
-//			lGraphics.drawImage(tick, questLoc[y].x, questLoc[y].y, D2WayPainterPanel.this);
-//			}else if(f==1){
-//			lGraphics.drawImage(tick, questLoc[y].x+10, questLoc[y].y, D2WayPainterPanel.this);
-//			}else if(f==2){
-//			lGraphics.drawImage(tick, questLoc[y].x+20, questLoc[y].y, D2WayPainterPanel.this);
-//			}
-//			}
-
-//			}
-//			}
-//			break;
-//			case 4:
-//			for(int f = 0;f<3;f=f+1){
-//			for(int y=0;y<3;y=y+1){
-//			if(iCharacter.getWaypoints()[f][questSlot -1].charAt(y) == '1'){
-//			if(f==0){
-//			lGraphics.drawImage(tick, questLoc[y].x, questLoc[y].y, D2WayPainterPanel.this);
-//			}else if(f==1){
-//			lGraphics.drawImage(tick, questLoc[y].x+10, questLoc[y].y, D2WayPainterPanel.this);
-//			}else if(f==2){
-//			lGraphics.drawImage(tick, questLoc[y].x+20, questLoc[y].y, D2WayPainterPanel.this);
-//			}
-//			}
-
-//			}
-//			}
-//			break;
-//			case 5:
-//			for(int f = 0;f<3;f=f+1){
-//			for(int y=0;y<iCharacter.getWaypoints()[f][questSlot -1].length();y=y+1){
-//			if(iCharacter.getWaypoints()[f][questSlot -1].charAt(y) == '1'){
-//			if(f==0){
-//			lGraphics.drawImage(tick, questLoc[y].x, questLoc[y].y, D2WayPainterPanel.this);
-//			}else if(f==1){
-//			lGraphics.drawImage(tick, questLoc[y].x+10, questLoc[y].y, D2WayPainterPanel.this);
-//			}else if(f==2){
-//			lGraphics.drawImage(tick, questLoc[y].x+20, questLoc[y].y, D2WayPainterPanel.this);
-//			}
-//			}
-
-//			}
-//			}
-//			break;
-
-//			}
-
-
         }
 
         public void paint(Graphics pGraphics) {
@@ -2538,59 +2356,6 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                             }
                         }
 
-//						// MBR: for now, disable dropping completely,
-//						// it's not working
-//						//	// System.err.println("Drop item");
-//						//		                        // since there is an item on the mouse, try
-//						// to drop it here
-//						//
-//						//		                        D2Item lDropItem = D2MouseItem.getItem();
-//						//// int lDropWidth = lDropItem.get_width();
-//						//// int lDropHeight = lDropItem.get_height();
-//						//	// int r = 0, c = 0;
-//						//		                        boolean drop = false;
-//						//		                        // non-equipped items, handle differently
-//						//		                        // because they require a row and column
-//						//		                        // equipped items, a bit simpler
-//						//		                        // if that equipment slot is empty, update
-//						// the
-//						//		                        // item's fields and set drop to true
-//						//		                        // r and c are set to width and height
-//						//		                        // for find_corner to deal with variable-size
-//						//		                        // objects in the hands
-//						//		                        // (note lack of item-type checking)
-//						//	                            if
-//						// (!iChar.checkCharPanel(lItemPanel.getPanel(),
-//						// 0, 0, lDropItem))
-//						//	                            {
-//						//	                            	lDropItem.set_location((short) 1);
-//						//	                            	lDropItem.set_body_position((short)
-//						// (lItemPanel.getPanel() - 10));
-//						//	                            	lDropItem.set_col((short) 0);
-//						//	                            	lDropItem.set_row((short) 0);
-//						//	                            	lDropItem.set_panel((short) 0);
-//						//	                                drop = true;
-//						//// r = lDropWidth;
-//						//// c = lDropHeight;
-//						//	                            }
-//						//		                        // if the space to set the item is empty
-//						//		                        if (drop)
-//						//		                        {
-//						//		                            iChar.markCharGrid(lDropItem);
-//						//		                            // move the item to a new charcter, if needed
-//						//	                                iChar.addCharItem(D2MouseItem.removeItem());
-//						//
-//						//		                            setModified( true );
-//						//
-//						//		                            // redraw
-//						//		                            build();
-//						//		                            repaint();
-//						//
-//						//		                            setCursorPickupItem();
-//						//		                            //my_char.show_grid();
-//						//		                        }
-//						}
-//						}
                     }
                 }
 
@@ -2622,28 +2387,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                             if (D2ViewClipboard.getItem() == null) {
                                 setCursorNormal();
                             } else {
-                                //								setCursorNormal();
                                 setCursorDropItem();
-
-                                //								MBR: for now, disable dropping completely
-                                //								D2Item lDropItem = D2ViewClipboard.getItem();
-                                //								// int lDropWidth = lDropItem.get_width();
-                                //								// int lDropHeight = lDropItem.get_height();
-
-                                //								boolean drop = false;
-
-                                //								if (!iChar.checkCharPanel(lItemPanel.getPanel(), 0, 0, lDropItem))
-                                //								{
-                                //								drop = true;
-                                //								}
-                                //								if (drop)
-                                //								{
-                                //								setCursorDropItem();
-                                //								}
-                                //								else
-                                //								{
-                                //								setCursorNormal();
-                                //								}
                             }
                         }
                     } else {

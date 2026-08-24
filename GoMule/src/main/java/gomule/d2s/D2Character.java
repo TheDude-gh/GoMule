@@ -112,6 +112,7 @@ public class D2Character extends D2ItemListAdapter {
     private int[][] initSkills;
     private int[][] cSkills;
     private Point[] iSkillLocs;
+    private String[][] SkillNames;
 
     //	private int testCounter = 0;
 //	private boolean fullChanged = false;
@@ -524,20 +525,25 @@ public class D2Character extends D2ItemListAdapter {
     private void readSkills() {
 
         int[] skillC = new int[3];
+        this.SkillNames = new String[3][10];
         iSkillLocs = D2BodyLocations.generateSkillLocs((int) lCharCode);
         initSkills = new int[3][10];
         cSkills = new int[3][10];
         D2TxtFileItemProperties initRow = D2TxtFile.SKILLS.searchColumns("charclass", cClass);
-        iReader.set_byte_pos(iIF);
-        byte skillInitialBytes[] = iReader.get_bytes(32);
-        D2FileReader skillReader = new D2FileReader(skillInitialBytes);
-        skillReader.getCounterInt(8);
-        skillReader.getCounterInt(8);
+        iReader.set_byte_pos(iIF + 2);
+        //byte skillInitialBytes[] = iReader.get_bytes(32);
+        //D2FileReader skillReader = new D2FileReader(skillInitialBytes);
+        //skillReader.getCounterInt(8);
+        //skillReader.getCounterInt(8);
         int tree = 0;
         for (int x = 0; x < 30; x = x + 1) {
-            tree = Integer.parseInt((getSkillDescRow(D2TxtFile.SKILLS.getRow(initRow.getRowNum() + x).get("skilldesc"))).get("SkillPage"));
-            initSkills[tree - 1][skillC[tree - 1]] = skillReader.getCounterInt(8);
+            String skillname = D2TxtFile.SKILLS.getRow(initRow.getRowNum() + x).get("skilldesc");
+            tree = Integer.parseInt(getSkillDescRow(skillname).get("SkillPage"));
+            //initSkills[tree - 1][skillC[tree - 1]] = skillReader.getCounterInt(8);
+            initSkills[tree - 1][skillC[tree - 1]] = (int)iReader.read(8);
+            this.SkillNames[tree - 1][skillC[tree - 1]] = skillname;
             skillC[tree - 1]++;
+            //System.err.println(skillname + "  " + tree);
         }
     }
 
@@ -1837,6 +1843,10 @@ public class D2Character extends D2ItemListAdapter {
         return initSkills[2];
     }
 
+    public String getSkillName(int tab, int num) {
+        return this.SkillNames[tab][num];
+    }
+
     public boolean[][][] getQuests() {
         return iQuests;
     }
@@ -2154,7 +2164,7 @@ public class D2Character extends D2ItemListAdapter {
                 + "Hit Points : " + df.format(this.demon_maxhp) + "\n"
                 + "Experience : " + df.format(this.demon_experience) + "\n"
                 + "Mods : " + this.demon_mods + "\n"
-                + "Seed : " +String.format("%04X", this.demon_seed) + "\n"
+                + "Seed : " + String.format("%04X", this.demon_seed) + "\n"
                 + "Bitmask : " + String.format("%04X", this.demon_bitmask) + "\n"
                 + "Area : " + this.demon_area_name + " (" + this.demon_area_level + ")\n"
                 + "Desecrated? : " + this.demon_is_desecrated + "\n"
